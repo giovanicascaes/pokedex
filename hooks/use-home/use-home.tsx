@@ -1,11 +1,11 @@
-import { fetchAsJson, server } from "lib";
+import { fetchAsJson, PokemonSimple } from "lib";
 import { useCallback, useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
 import { UseHomeArgs, UseHomeReturn } from "./use-home.types";
 
 export default function useHome(pokemonsPerLoad: UseHomeArgs): UseHomeReturn {
   const { data, error, size, setSize } = useSWRInfinite<{
-    result: server.PokemonSimple[];
+    result: PokemonSimple[];
   }>(
     (pageIndex) =>
       `/api/pokemon?limit=${pokemonsPerLoad}&offset=${
@@ -24,20 +24,13 @@ export default function useHome(pokemonsPerLoad: UseHomeArgs): UseHomeReturn {
   return useMemo(() => {
     const isLoadingMore = data ? size > 0 && !data[size - 1] : !error;
     const pages = data?.map(({ result }) => result) ?? [];
-    let hiddenPage = pages.pop() ?? [];
-    let lastPage;
-
-    if (isLoadingMore) {
-      lastPage = hiddenPage;
-      hiddenPage = [];
-    } else {
-      lastPage = pages.pop() ?? [];
-    }
-
+    const hiddenPage = pages.pop() ?? [];
     const oldPages = pages.flat();
 
     return {
-      pages: [oldPages, lastPage, hiddenPage],
+      pages: isLoadingMore
+        ? [oldPages.concat(...hiddenPage), []]
+        : [oldPages, hiddenPage],
       isLoadingMore,
       error,
       loadNext,

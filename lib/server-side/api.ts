@@ -36,7 +36,6 @@ export async function getPokemons(
   const { results } = await fetchPathAsJson<ApiNamedResourceList>(
     join(`/pokemon?limit=${limit}`, offset && `&offset=${offset}`)
   );
-  console.log("🚀 ~ file: api.ts:37 ~ results", results);
   return Promise.all(
     results.map(({ url }) => fetchAsJson<ApiPokemon>(url).then(toPokemonSimple))
   );

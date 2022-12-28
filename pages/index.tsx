@@ -1,22 +1,17 @@
-import { PokemonSimpleCard } from "components";
+import { PokemonGrid, PokemonSimpleCard } from "components";
 import { useHome, useIntersectionObserver } from "hooks";
-import { server } from "lib";
+import { getPokemons } from "lib";
 import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 
-const LIMIT = 19;
+const LIMIT = 12;
 
 type HomeProps = InferGetStaticPropsType<typeof getStaticProps>;
 
-const pokemonToCard = ({ id, ...other }: server.PokemonSimple) => (
-  <PokemonSimpleCard key={id} {...other} identifier={id} />
-);
-
 export default function Home({ serverLoadedPokemons }: HomeProps) {
   const {
-    pages: [visiblePages, lastPage, hiddenPage],
-    isLoadingMore,
+    pages: [visiblePages, hiddenPage],
     error,
     loadNext,
   } = useHome(LIMIT);
@@ -35,14 +30,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-14 py-4 bg-slate-50/50">
-        <div className="grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-6 max-w-[1200px] overflow-hidden p-10 mx-auto">
-          {[...serverLoadedPokemons, ...visiblePages, ...lastPage].map(
-            pokemonToCard
-          )}
-          {hiddenPage.length > 0 && (
-            <div className="hidden">{hiddenPage.map(pokemonToCard)}</div>
-          )}
-        </div>
+        <PokemonGrid
+          pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
+          className="max-w-[1200px] overflow-hidden mx-auto"
+        />
         <div
           className="w-full text-center font-light text-slate-400 mb-32"
           ref={intersectionObserverRef}
@@ -57,7 +48,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
 export async function getStaticProps() {
   return {
     props: {
-      serverLoadedPokemons: await server.getPokemons(LIMIT),
+      serverLoadedPokemons: await getPokemons(LIMIT),
     },
   };
 }

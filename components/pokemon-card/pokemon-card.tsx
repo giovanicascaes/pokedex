@@ -8,7 +8,7 @@ export default function PokemonSimpleCard({
   name,
   onClick,
   className,
-  ...other
+  ...otherProps
 }: PokemonCardProps) {
   return (
     <div
@@ -16,7 +16,7 @@ export default function PokemonSimpleCard({
         className,
         "flex flex-col items-center space-y-2 [perspective:1000px]"
       )}
-      {...other}
+      {...otherProps}
     >
       <div
         className="flex items-center justify-center px-4 py-10 shadow-md rounded-lg bg-white cursor-pointer hover:[transform:rotateX(8deg)_rotateY(-2deg)_rotateZ(-2deg)] active:translate-y-2 hover:shadow-2xl transition-all"

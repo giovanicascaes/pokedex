@@ -1,2 +1,2 @@
-export * from "./button";
 export * from "./pokemon-card";
+export * from "./pokemon-grid";
