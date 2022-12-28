@@ -23,8 +23,12 @@ export default function useHome(pokemonsPerLoad: UseHomeArgs): UseHomeReturn {
 
   return useMemo(() => {
     const isLoadingMore = data ? size > 0 && !data[size - 1] : !error;
+    const isEmpty = data?.[0]?.result.length === 0;
+    const hasReachedEnd =
+      isEmpty ||
+      (!!data && data[data.length - 1]?.result.length < pokemonsPerLoad);
     const pages = data?.map(({ result }) => result) ?? [];
-    const hiddenPage = pages.pop() ?? [];
+    const hiddenPage = hasReachedEnd ? [] : pages.pop() ?? [];
     const oldPages = pages.flat();
 
     return {
@@ -32,8 +36,9 @@ export default function useHome(pokemonsPerLoad: UseHomeArgs): UseHomeReturn {
         ? [oldPages.concat(...hiddenPage), []]
         : [oldPages, hiddenPage],
       isLoadingMore,
+      hasReachedEnd,
       error,
       loadNext,
     };
-  }, [data, error, loadNext, size]);
+  }, [data, error, loadNext, pokemonsPerLoad, size]);
 }

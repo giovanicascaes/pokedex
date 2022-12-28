@@ -12,6 +12,7 @@ type HomeProps = InferGetStaticPropsType<typeof getStaticProps>;
 export default function Home({ serverLoadedPokemons }: HomeProps) {
   const {
     pages: [visiblePages, hiddenPage],
+    hasReachedEnd,
     error,
     loadNext,
   } = useHome(LIMIT);
@@ -19,8 +20,8 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
     useIntersectionObserver();
 
   useEffect(() => {
-    if (isIntersecting) loadNext();
-  }, [isIntersecting, loadNext]);
+    if (isIntersecting && !hasReachedEnd) loadNext();
+  }, [isIntersecting, loadNext, hasReachedEnd]);
 
   return (
     <>
@@ -38,7 +39,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
           className="w-full text-center font-light text-slate-400 mb-32"
           ref={intersectionObserverRef}
         >
-          Loading...
+          {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
         </div>
       </div>
     </>
