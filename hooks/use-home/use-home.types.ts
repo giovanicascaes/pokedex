@@ -1,9 +1,9 @@
-import { PokemonSimple } from "lib";
+import { PokemonSpeciesSimple } from "lib";
 
 export type UseHomeArgs = number;
 
 export interface UseHomeReturn {
-  pages: [PokemonSimple[], PokemonSimple[]];
+  pages: [PokemonSpeciesSimple[], PokemonSpeciesSimple[]];
   isLoadingMore: boolean;
   hasReachedEnd: boolean;
   error: any;

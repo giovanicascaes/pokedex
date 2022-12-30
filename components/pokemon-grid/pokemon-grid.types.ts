@@ -1,12 +1,15 @@
-import { PokemonSimple } from "lib";
+import { PokemonSpeciesSimple } from "lib";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
-export type PokemonGridPokemonListTuple = [PokemonSimple[], PokemonSimple[]];
+export type PokemonGridPokemonListTuple = [PokemonSpeciesSimple[], PokemonSpeciesSimple[]];
 
-export type PokemonGridPokemonList = PokemonSimple[];
+export type PokemonGridPokemonList = PokemonSpeciesSimple[];
 
 export interface PokemonGridProps
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  extends DetailedHTMLProps<
+    HTMLAttributes<HTMLUListElement>,
+    HTMLUListElement
+  > {
   pokemons: PokemonGridPokemonList | PokemonGridPokemonListTuple;
   duration?: number;
 }

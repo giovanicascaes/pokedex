@@ -1,6 +1,6 @@
 import { animated, useTransition } from "@react-spring/web";
 import { PokemonSimpleCard } from "components/pokemon-card";
-import { PokemonSimple } from "lib";
+import { PokemonSpeciesSimple } from "lib";
 import { twMerge } from "tailwind-merge";
 import {
   PokemonGridPokemonList,
@@ -8,10 +8,10 @@ import {
   PokemonGridProps,
 } from "./pokemon-grid.types";
 
-const DEFAULT_DURATION = 200;
+const DEFAULT_DURATION = 150;
 
 interface TrailProps extends Pick<PokemonGridProps, "duration"> {
-  pokemons: PokemonSimple[];
+  pokemons: PokemonSpeciesSimple[];
 }
 
 function PokemonTrail({ pokemons, duration }: TrailProps) {
@@ -29,12 +29,12 @@ function PokemonTrail({ pokemons, duration }: TrailProps) {
   return (
     <>
       {transitions((style, { id, ...other }) => (
-        <animated.div
+        <animated.li
           key={id}
           style={{ ...style, willChange: "transform, opacity" }}
         >
           <PokemonSimpleCard key={id} identifier={id} {...other} />
-        </animated.div>
+        </animated.li>
       ))}
     </>
   );
@@ -58,21 +58,21 @@ export default function PokemonGrid({
   }
 
   return (
-    <div
+    <ul
       className={twMerge(
         className,
-        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-6 overflow-hidden p-10"
+        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 overflow-hidden p-10"
       )}
       {...otherProps}
     >
       <PokemonTrail pokemons={visiblePokemons} duration={duration} />
       {pokemonsToPrefetch.length > 0 && (
-        <div className="hidden">
+        <li className="hidden">
           {pokemonsToPrefetch.map(({ id, ...other }) => (
             <PokemonSimpleCard key={id} identifier={id} {...other} />
           ))}
-        </div>
+        </li>
       )}
-    </div>
+    </ul>
   );
 }

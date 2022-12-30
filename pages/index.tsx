@@ -30,17 +30,15 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-14 py-4 bg-slate-50/50">
-        <PokemonGrid
-          pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
-          className="max-w-[1200px] overflow-hidden mx-auto"
-        />
-        <div
-          className="w-full text-center font-light text-slate-400 mb-32"
-          ref={intersectionObserverRef}
-        >
-          {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
-        </div>
+      <PokemonGrid
+        pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
+        className="max-w-[1200px] overflow-hidden mx-auto"
+      />
+      <div
+        className="w-full text-center font-light text-slate-400 mb-32"
+        ref={intersectionObserverRef}
+      >
+        {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
       </div>
     </>
   );
