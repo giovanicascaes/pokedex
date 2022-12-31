@@ -1,5 +1,3 @@
-import { WithOptional } from "types";
-
 export type ApiOptional<T> = T | null;
 
 export interface ApiNamed {
@@ -198,6 +196,7 @@ export interface Type {
 }
 
 export interface PokemonVariety {
+  id: number;
   name: string | null;
   height: number;
   weight: number;

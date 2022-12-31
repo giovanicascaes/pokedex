@@ -10,20 +10,24 @@ import {
 
 const DEFAULT_DURATION = 150;
 
-interface TrailProps extends Pick<PokemonGridProps, "duration"> {
+interface TrailProps extends Pick<PokemonGridProps, "transitionDuration"> {
   pokemons: PokemonSpeciesSimple[];
 }
 
-function PokemonTrail({ pokemons, duration }: TrailProps) {
+function Trail({ pokemons, transitionDuration }: TrailProps) {
   const transitions = useTransition(pokemons, {
-    config: { mass: 1, tension: 500, friction: 18, duration },
+    config: {
+      mass: 1,
+      tension: 500,
+      friction: 18,
+      duration: transitionDuration,
+    },
     from: { opacity: 0, transform: "translateY(-20px)" },
     enter: {
       opacity: 1,
       transform: "translateY(0)",
     },
-    delay: 100,
-    trail: 100,
+    trail: 50,
   });
 
   return (
@@ -42,7 +46,7 @@ function PokemonTrail({ pokemons, duration }: TrailProps) {
 
 export default function PokemonGrid({
   pokemons,
-  duration = DEFAULT_DURATION,
+  transitionDuration = DEFAULT_DURATION,
   className,
   ...otherProps
 }: PokemonGridProps) {
@@ -65,7 +69,10 @@ export default function PokemonGrid({
       )}
       {...otherProps}
     >
-      <PokemonTrail pokemons={visiblePokemons} duration={duration} />
+      <Trail
+        pokemons={visiblePokemons}
+        transitionDuration={transitionDuration}
+      />
       {pokemonsToPrefetch.length > 0 && (
         <li className="hidden">
           {pokemonsToPrefetch.map(({ id, ...other }) => (

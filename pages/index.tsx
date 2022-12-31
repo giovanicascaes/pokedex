@@ -1,4 +1,4 @@
-import { PokemonGrid, PokemonSimpleCard } from "components";
+import { PokemonGrid } from "components";
 import { useHome, useIntersectionObserver } from "hooks";
 import { getPokemons } from "lib";
 import { InferGetStaticPropsType } from "next";
@@ -30,15 +30,17 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <PokemonGrid
-        pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
-        className="max-w-[1200px] overflow-hidden mx-auto"
-      />
-      <div
-        className="w-full text-center font-light text-slate-400 mb-32"
-        ref={intersectionObserverRef}
-      >
-        {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
+      <div className="px-14 py-4">
+        <PokemonGrid
+          pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
+          className="max-w-[1200px] overflow-hidden mx-auto"
+        />
+        <div
+          className="w-full text-center font-light text-slate-400 mb-32"
+          ref={intersectionObserverRef}
+        >
+          {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
+        </div>
       </div>
     </>
   );

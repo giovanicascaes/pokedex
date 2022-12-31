@@ -11,5 +11,5 @@ export interface PokemonGridProps
     HTMLUListElement
   > {
   pokemons: PokemonGridPokemonList | PokemonGridPokemonListTuple;
-  duration?: number;
+  transitionDuration?: number;
 }
