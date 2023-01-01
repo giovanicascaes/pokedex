@@ -41,6 +41,7 @@ export type SelectActions =
 
 export interface SelectContextData extends SelectState {
   value: any;
+  disabled?: boolean;
   isSelected: (value: any) => boolean;
 }
 

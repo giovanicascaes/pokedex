@@ -24,8 +24,8 @@ export default function Options({
         <animated.ul
           {...other}
           className={twMerge(
-            className,
-            "absolute z-10 w-full shadow-md rounded-lg bg-white py-1.5 flex flex-col justify-center"
+            "absolute z-20 w-full shadow-md rounded-lg bg-white py-1.5 flex flex-col",
+            className
           )}
           style={{
             top: buttonRef?.current?.getBoundingClientRect().height! + 4,

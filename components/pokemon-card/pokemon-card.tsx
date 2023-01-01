@@ -1,4 +1,5 @@
 import { PokemonArt } from "components/pokemon-art";
+import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { PokemonCardProps } from "./pokemon-card.types";
 
@@ -12,19 +13,19 @@ export default function PokemonSimpleCard({
 }: PokemonCardProps) {
   return (
     <div
-      className={twMerge(
-        className,
-        "flex flex-col items-center space-y-2 [perspective:1000px]"
-      )}
       {...otherProps}
+      className={twMerge(
+        "flex flex-col items-center [perspective:1000px]",
+        className
+      )}
     >
-      <div
+      <Link
         className="flex px-4 py-10 shadow-md rounded-lg bg-white cursor-pointer hover:[transform:rotateX(8deg)_rotateY(-2deg)_rotateZ(-2deg)] active:translate-y-2 hover:shadow-2xl transition-all"
-        onClick={onClick}
+        href={`/pokemon/${id}`}
       >
         <PokemonArt artSrc={artSrc} name={name} width={220} height={220} />
-      </div>
-      <span className="text-slate-400 text-sm font-semibold">#{id}</span>
+      </Link>
+      <span className="text-slate-400 text-sm font-semibol mt-2">#{id}</span>
       <span className="text-slate-600 text-2xl font-light truncate">
         {name}
       </span>

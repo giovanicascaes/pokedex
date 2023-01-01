@@ -96,6 +96,7 @@ export interface ApiPokemonType {
 
 export interface ApiPokemonForm extends ApiNamed, ApiLocalized {
   is_default: boolean;
+  is_mega: boolean;
 }
 
 export interface ApiPokemon extends ApiNamed, ApiIdentified {
@@ -124,6 +125,8 @@ export interface ApiEvolutionChain extends ApiIdentified {
   chain: ApiEvolutionChainLink;
 }
 
+export interface ApiPokemonShape extends ApiNamed, ApiLocalized {}
+
 export interface ApiPokemonSpecies
   extends ApiNamed,
     ApiIdentified,
@@ -134,6 +137,8 @@ export interface ApiPokemonSpecies
   gender_rate: number;
   varieties: ApiPokemonSpeciesVariety[];
   evolution_chain: ApiResourced;
+  color: ApiNamedResource;
+  shape: ApiNamedResource;
 }
 
 export interface PokemonSpeciesSimple {
@@ -154,15 +159,13 @@ export interface Stat {
   value: number;
 }
 
-export type TypeRelation = Omit<Type, "slot" | "damageRelations">;
+export interface TypeRelation extends Omit<Type, "slot" | "damageRelations"> {
+  isDouble?: boolean;
+}
 
 export interface TypeRelations {
-  noDamageTo: TypeRelation[];
-  halfDamageTo: TypeRelation[];
-  doubleDamageTo: TypeRelation[];
-  noDamageFrom: TypeRelation[];
-  halfDamageFrom: TypeRelation[];
-  doubleDamageFrom: TypeRelation[];
+  causeDamageTo: TypeRelation[];
+  takeDamageFrom: TypeRelation[];
 }
 
 export type TypeValue =
@@ -201,6 +204,7 @@ export interface PokemonVariety {
   height: number;
   weight: number;
   isDefault: boolean;
+  isMega: boolean;
   artSrc: string;
   abilities: Ability[];
   stats: Stat[];
@@ -224,4 +228,6 @@ export interface PokemonSpeciesDetailed {
   gender: PokemonGender;
   varieties: PokemonVariety[];
   evolutionChain: EvolutionChainLink;
+  color: string;
+  shape: string;
 }

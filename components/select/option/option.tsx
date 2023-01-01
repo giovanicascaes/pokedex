@@ -39,7 +39,7 @@ export default function Option({
     clickedOption !== null ? clickedOption === id : isSelected(value);
 
   const styles = useSpring({
-    config: { duration: 45 },
+    config: { duration: 50 },
     to: {
       backgroundColor: blink ? TRANSPARENT_COLOR : SELECTED_COLOR,
     },
@@ -60,20 +60,26 @@ export default function Option({
         }
       }}
       className={twMerge(
-        className,
-        "w-full pl-11 pr-3 py-2 text-start text-sm text-slate-800 hover:bg-red-50 hover:text-red-800 flex items-center select-none cursor-pointer",
+        "w-full pl-11 pr-3 py-2 text-start text-sm text-slate-700 hover:bg-red-50 hover:text-red-800 flex items-center select-none cursor-pointer",
         popupState !== SelectPopupState.Open && "pointer-events-none",
         selected && "font-medium",
         disabled &&
-          "cursor-default text-slate-800/50 hover:bg-transparent pointer-events-none"
+          "cursor-default text-slate-800/50 hover:bg-transparent pointer-events-none",
+        className
       )}
       style={{
-        ...(clicked && styles),
+        ...(clicked && { ...styles }),
       }}
       ref={ref}
     >
       {selected && (
-        <MdDone className="fill-red-600 absolute left-3" size={22} />
+        <MdDone
+          className={twMerge(
+            "fill-red-600 absolute left-3",
+            disabled && "fill-slate-600"
+          )}
+          size={22}
+        />
       )}
       {children}
     </animated.li>

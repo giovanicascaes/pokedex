@@ -10,17 +10,18 @@ import {
 
 const DEFAULT_DURATION = 150;
 
-interface TrailProps extends Pick<PokemonGridProps, "transitionDuration"> {
+interface TrailProps {
   pokemons: PokemonSpeciesSimple[];
+  duration: number;
 }
 
-function Trail({ pokemons, transitionDuration }: TrailProps) {
+function TrailTransition({ pokemons, duration }: TrailProps) {
   const transitions = useTransition(pokemons, {
     config: {
       mass: 1,
       tension: 500,
       friction: 18,
-      duration: transitionDuration,
+      duration,
     },
     from: { opacity: 0, transform: "translateY(-20px)" },
     enter: {
@@ -33,10 +34,7 @@ function Trail({ pokemons, transitionDuration }: TrailProps) {
   return (
     <>
       {transitions((style, { id, ...other }) => (
-        <animated.li
-          key={id}
-          style={{ ...style, willChange: "transform, opacity" }}
-        >
+        <animated.li key={id} style={{ ...style }}>
           <PokemonSimpleCard key={id} identifier={id} {...other} />
         </animated.li>
       ))}
@@ -63,15 +61,15 @@ export default function PokemonGrid({
 
   return (
     <ul
-      className={twMerge(
-        className,
-        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 overflow-hidden p-10"
-      )}
       {...otherProps}
+      className={twMerge(
+        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 overflow-hidden p-10",
+        className
+      )}
     >
-      <Trail
+      <TrailTransition
         pokemons={visiblePokemons}
-        transitionDuration={transitionDuration}
+        duration={transitionDuration}
       />
       {pokemonsToPrefetch.length > 0 && (
         <li className="hidden">

@@ -12,6 +12,9 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
       },
+      fontSize: {
+        "2xs": ["0.625rem" /* 10px */, "0.875rem" /* 14px */],
+      },
     },
   },
   plugins: [],

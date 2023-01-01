@@ -12,3 +12,11 @@ export function pick<
       {}
     ) as { [K in A[number]]: T[K] };
 }
+
+export function match<K extends PropertyKey = string, V = any>(
+  lookup: { [p in K]?: V },
+  key: K,
+  fallback?: V
+): V | undefined {
+  return lookup[key] ?? fallback;
+}

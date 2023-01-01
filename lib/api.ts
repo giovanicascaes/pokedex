@@ -11,6 +11,7 @@ import {
   ApiPokemon,
   ApiPokemonAbility,
   ApiPokemonForm,
+  ApiPokemonShape,
   ApiPokemonSpecies,
   ApiPokemonSpeciesVariety,
   ApiPokemonSprites,
@@ -135,10 +136,37 @@ async function toStat({
   };
 }
 
-async function namedResourceToType<T extends Type | TypeRelation = Type>(
-  { url }: ApiNamedResource,
-  includeDamageRelations: boolean = true
-): Promise<Omit<T, "slot">> {
+async function namedResourceToTypeRelation({
+  url,
+}: ApiNamedResource): Promise<TypeRelation> {
+  const type = await fetchAsJson<ApiType>(url);
+  const value = type.name as TypeValue;
+
+  return {
+    value,
+    name: getLocalizedName(type)!,
+    color: ApiTypesColors[value],
+  };
+}
+
+async function toDamageRelation(
+  doubleDamage: ApiNamedResource[],
+  halfDamage: ApiNamedResource[]
+) {
+  return Promise.all([
+    ...doubleDamage.map((damage) =>
+      namedResourceToTypeRelation(damage).then((res) => ({
+        ...res,
+        isDouble: true,
+      }))
+    ),
+    ...halfDamage.map(namedResourceToTypeRelation),
+  ]);
+}
+
+async function namedResourceToType({
+  url,
+}: ApiNamedResource): Promise<Omit<Type, "slot">> {
   const type = await fetchAsJson<ApiType>(url);
   const {
     name,
@@ -147,8 +175,6 @@ async function namedResourceToType<T extends Type | TypeRelation = Type>(
       double_damage_to,
       half_damage_from,
       half_damage_to,
-      no_damage_from,
-      no_damage_to,
     },
   } = type;
   const value = name as TypeValue;
@@ -156,42 +182,15 @@ async function namedResourceToType<T extends Type | TypeRelation = Type>(
   return {
     value,
     name: getLocalizedName(type)!,
-    ...(includeDamageRelations && {
-      damageRelations: {
-        doubleDamageFrom: await Promise.all(
-          double_damage_from.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-        doubleDamageTo: await Promise.all(
-          double_damage_to.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-        halfDamageFrom: await Promise.all(
-          half_damage_from.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-        halfDamageTo: await Promise.all(
-          half_damage_to.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-        noDamageFrom: await Promise.all(
-          no_damage_from.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-        noDamageTo: await Promise.all(
-          no_damage_to.map((damage) =>
-            namedResourceToType<TypeRelation>(damage, false)
-          )
-        ),
-      },
-    }),
+    damageRelations: {
+      causeDamageTo: await toDamageRelation(double_damage_to, half_damage_to),
+      takeDamageFrom: await toDamageRelation(
+        double_damage_from,
+        half_damage_from
+      ),
+    },
     color: ApiTypesColors[value],
-  } as T;
+  };
 }
 
 async function toType({ type, ...other }: ApiPokemonType): Promise<Type> {
@@ -216,9 +215,8 @@ async function toPokemonVariety({
     artSrc: getOfficialArtwork(sprites),
     name: getLocalizedName(defaultForm) ?? null,
     isDefault: is_default,
-    abilities: (await Promise.all(abilities.map(toAbility))).sort(
-      ({ slot: slot1 }, { slot: slot2 }) => (slot1 < slot2 ? -1 : 1)
-    ),
+    isMega: defaultForm.is_mega,
+    abilities: await Promise.all(abilities.map(toAbility)),
     stats: await Promise.all(stats.map(toStat)),
     types: await Promise.all(types.map(toType)),
   };
@@ -271,6 +269,8 @@ async function toPokemonSpeciesDetailed(
     gender_rate,
     varieties,
     evolution_chain,
+    color: { name: color },
+    shape,
     ...rest
   } = species;
   return {
@@ -282,6 +282,8 @@ async function toPokemonSpeciesDetailed(
     gender: toGender(gender_rate),
     varieties: await Promise.all(varieties.map(toPokemonVariety)),
     evolutionChain: await toEvolutionChain(evolution_chain),
+    color,
+    shape: getLocalizedName(await fetchAsJson<ApiPokemonShape>(shape.url))!,
   };
 }
 

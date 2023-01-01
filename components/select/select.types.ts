@@ -7,6 +7,7 @@ export interface SelectProps
   > {
   value?: any;
   defaultValue?: any;
+  disabled?: boolean;
   onChange: (value: any) => void;
   by?: string | ((a: any, b: any) => boolean);
 }

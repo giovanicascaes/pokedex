@@ -93,6 +93,7 @@ function Select({
   onChange,
   defaultValue,
   value = defaultValue,
+  disabled = false,
   by = (a: any, b: any) => a === b,
   className,
   ...other
@@ -111,8 +112,8 @@ function Select({
   );
 
   const data: SelectContextData = useMemo(
-    () => ({ ...state, isSelected, value }),
-    [isSelected, state, value]
+    () => ({ ...state, value, disabled, isSelected }),
+    [disabled, isSelected, state, value]
   );
 
   const actions: SelectContextActions = useMemo(
@@ -165,7 +166,7 @@ function Select({
     <SelectContext.Provider value={[data, actions]}>
       <div
         {...other}
-        className={twMerge(className, "relative w-full")}
+        className={twMerge("relative w-full", className)}
         ref={ref}
       >
         {children}
