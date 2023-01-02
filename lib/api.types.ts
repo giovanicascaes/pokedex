@@ -143,6 +143,7 @@ export interface ApiPokemonSpecies
 
 export interface PokemonSpeciesSimple {
   id: number;
+  resourceName: string;
   artSrc: string;
   name: string;
 }
@@ -191,7 +192,7 @@ export type TypeValue =
   | "shadow";
 
 export interface Type {
-  value: TypeValue;
+  resourceName: TypeValue;
   name: string;
   damageRelations: TypeRelations;
   color: string | [string, string] | null;
@@ -221,6 +222,7 @@ export type PokemonGender = "male" | "female" | "both" | "unknown";
 
 export interface PokemonSpeciesDetailed {
   id: number;
+  resourceName: string;
   name: string;
   isBaby: boolean;
   isLegendary: boolean;

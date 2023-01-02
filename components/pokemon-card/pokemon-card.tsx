@@ -5,6 +5,7 @@ import { PokemonCardProps } from "./pokemon-card.types";
 
 export default function PokemonSimpleCard({
   identifier: id,
+  resourceName,
   artSrc,
   name,
   onClick,
@@ -21,7 +22,7 @@ export default function PokemonSimpleCard({
     >
       <Link
         className="flex px-4 py-10 shadow-md rounded-lg bg-white cursor-pointer hover:[transform:rotateX(8deg)_rotateY(-2deg)_rotateZ(-2deg)] active:translate-y-2 hover:shadow-2xl transition-all"
-        href={`/pokemon/${id}`}
+        href={`/pokemon/${resourceName}`}
       >
         <PokemonArt artSrc={artSrc} name={name} width={220} height={220} />
       </Link>

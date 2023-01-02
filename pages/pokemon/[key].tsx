@@ -4,7 +4,7 @@ import {
   PokemonArt,
   PokemonProfile,
   PokemonSection,
-  PokemonStat,
+  PokemonStatMeter,
   PokemonTypes,
   Select,
 } from "components";
@@ -68,12 +68,10 @@ export default function Pokemon({
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-24 pt-24 pb-12 flex flex-col items-center h-full overflow-y-auto">
-        <span className="space-x-2 text-center ">
-          <span className="text-[2rem] leading-[2.25rem] font-light text-slate-600">
-            #{id}
-          </span>
-          <span className="text-4xl text-slate-800 font-medium">{name}</span>
+      <div className="px-24 pb-12 pt-24 flex flex-col items-center h-full overflow-y-auto">
+        <span className="space-x-2 text-center text-4xl">
+          <span className="text-slate-600 font-light">#{id}</span>
+          <span className="text-slate-800 font-medium">{name}</span>
         </span>
         <SpeciesBadgeContainer className="mt-4">
           {isBaby && <Badge color="red">Mythical</Badge>}
@@ -103,7 +101,7 @@ export default function Pokemon({
               Mega
             </Badge>
           )}
-          <div className="flex space-x-16 mt-8">
+          <div className="flex space-x-16 mt-28">
             <div className="space-y-8">
               <div
                 className="h-min rounded-lg"
@@ -120,12 +118,12 @@ export default function Pokemon({
               <PokemonSection label="Stats" className="mt-8">
                 <div className="flex space-x-2.5">
                   {stats.map(({ name: statName, value }) => (
-                    <PokemonStat
+                    <PokemonStatMeter
                       key={statName}
                       label={statName}
                       totalBars={15}
                       value={(value * 15) / 255}
-                      barPileClassName="h-[220px]"
+                      barContainerClassName="h-[220px]"
                     />
                   ))}
                 </div>

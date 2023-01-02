@@ -1,10 +1,10 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
-export interface PokemonStatProps
+export interface PokemonStatMeterProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   totalBars?: number;
   value: number;
   label: string;
   transitionDuration?: number;
-  barPileClassName?: string;
+  barContainerClassName?: string;
 }

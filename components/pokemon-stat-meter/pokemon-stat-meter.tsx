@@ -2,9 +2,11 @@ import { animated, easings, useTransition } from "@react-spring/web";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { range } from "utils";
-import { PokemonStatProps } from "./pokemon-stat.types";
+import { PokemonStatMeterProps } from "./pokemon-stat-meter.types";
 
-const DEFAULT_DURATION = 60;
+const DEFAULT_DURATION = 20;
+
+const INITIAL_DELAY = 500;
 
 interface TrailProps {
   indexes: number[];
@@ -12,7 +14,7 @@ interface TrailProps {
   duration: number;
 }
 
-function TrailTransition({ indexes, duration, value }: TrailProps) {
+function Trail({ indexes, duration, value }: TrailProps) {
   const filledBarsIndexes = useMemo(
     () => indexes.filter((i) => i < value),
     [indexes, value]
@@ -23,13 +25,14 @@ function TrailTransition({ indexes, duration, value }: TrailProps) {
   );
   const transitions = useTransition(indexes, {
     config: {
-      easing: easings.easeOutCirc,
+      easing: easings.easeInOutSine,
+      duration: fillBarsDuration,
     },
-    from: { opacity: 0 },
+    from: { height: "0%" },
     enter: {
       opacity: 1,
+      height: "100%",
     },
-    trail: 50,
     delay: (key) => {
       const keyAsNumber = key as unknown as number;
 
@@ -38,7 +41,8 @@ function TrailTransition({ indexes, duration, value }: TrailProps) {
         : (filledBarsIndexes.length -
             1 -
             filledBarsIndexes.indexOf(keyAsNumber)) *
-            fillBarsDuration;
+            fillBarsDuration +
+            INITIAL_DELAY;
     },
   });
 
@@ -51,7 +55,7 @@ function TrailTransition({ indexes, duration, value }: TrailProps) {
         >
           {i < value && (
             <animated.div
-              className="absolute top-0 left-0 z-10 w-full h-full bg-sky-500 group-last:rounded-b group-first:rounded-t"
+              className="absolute bottom-0 left-0 z-10 w-full h-full bg-sky-500 group-last:rounded-b group-first:rounded-t"
               style={{ ...style }}
             />
           )}
@@ -61,15 +65,15 @@ function TrailTransition({ indexes, duration, value }: TrailProps) {
   );
 }
 
-export default function PokemonStat({
+export default function PokemonStatMeter({
   totalBars = 10,
   value,
   label,
   transitionDuration = DEFAULT_DURATION,
   className,
-  barPileClassName,
+  barContainerClassName,
   ...other
-}: PokemonStatProps) {
+}: PokemonStatMeterProps) {
   return (
     <div
       {...other}
@@ -78,10 +82,10 @@ export default function PokemonStat({
       <div
         className={twMerge(
           "flex flex-col w-full h-full space-y-1.5",
-          barPileClassName
+          barContainerClassName
         )}
       >
-        <TrailTransition
+        <Trail
           indexes={range(1, totalBars).reverse()}
           value={totalBars - value}
           duration={transitionDuration}

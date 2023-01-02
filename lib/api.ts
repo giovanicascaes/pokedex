@@ -77,12 +77,13 @@ function getOfficialArtwork(sprites: ApiPokemonSprites) {
 async function toPokemonSpeciesSimple(
   species: ApiPokemonSpecies
 ): Promise<PokemonSpeciesSimple> {
-  const { varieties, ...rest } = species;
+  const { varieties, name, ...rest } = species;
   const { pokemon } = varieties.find(({ is_default }) => is_default)!;
   const { sprites } = await fetchAsJson<ApiPokemon>(pokemon.url);
 
   return {
     ...pick(rest, "id"),
+    resourceName: name,
     artSrc: getOfficialArtwork(sprites),
     name: getLocalizedName(species)!,
   };
@@ -143,7 +144,7 @@ async function namedResourceToTypeRelation({
   const value = type.name as TypeValue;
 
   return {
-    value,
+    resourceName: value,
     name: getLocalizedName(type)!,
     color: ApiTypesColors[value],
   };
@@ -177,10 +178,10 @@ async function namedResourceToType({
       half_damage_to,
     },
   } = type;
-  const value = name as TypeValue;
+  const resourceName = name as TypeValue;
 
   return {
-    value,
+    resourceName,
     name: getLocalizedName(type)!,
     damageRelations: {
       causeDamageTo: await toDamageRelation(double_damage_to, half_damage_to),
@@ -189,7 +190,7 @@ async function namedResourceToType({
         half_damage_from
       ),
     },
-    color: ApiTypesColors[value],
+    color: ApiTypesColors[resourceName],
   };
 }
 
@@ -263,6 +264,7 @@ async function toPokemonSpeciesDetailed(
   species: ApiPokemonSpecies
 ): Promise<PokemonSpeciesDetailed> {
   const {
+    name,
     is_baby,
     is_legendary,
     is_mythical,
@@ -275,6 +277,7 @@ async function toPokemonSpeciesDetailed(
   } = species;
   return {
     ...pick(rest, "id"),
+    resourceName: name,
     name: getLocalizedName(species)!,
     isBaby: is_baby,
     isLegendary: is_legendary,

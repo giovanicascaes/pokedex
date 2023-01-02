@@ -50,7 +50,7 @@ export default function PokemonProfile({
         male: maleIcon,
         female: femaleIcon,
         both: (
-          <div className="flex">
+          <div className="flex space-x-1">
             {maleIcon}
             {femaleIcon}
           </div>
@@ -108,21 +108,21 @@ export default function PokemonProfile({
         (styles, ability) =>
           ability && (
             <animated.div
-              className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full overflow-y-scroll bg-slate-700/80 border border-slate-700 backdrop-blur-sm rounded-md"
+              className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border border-slate-600/70 backdrop-blur-md rounded-md"
               style={{ ...styles }}
             >
-              <div className="text-slate-300 p-6 text-sm flex flex-col">
-                <span className="text-2xl mb-5 text-white">
+              <div className="text-slate-300 text-sm flex flex-col h-full">
+                <span className="text-2xl mb-5 text-white px-6 pt-6">
                   {ability?.name}
                 </span>
-                {ability?.description}
+                <button
+                  onClick={() => setDisplayingAbility(undefined)}
+                  className="absolute z-10 top-3 right-3 text-slate-300 hover:text-slate-200 p-0.5 rounded cursor-pointer bg-slate-600 hover:bg-slate-700 transition-colors"
+                >
+                  <MdClose size={20} />
+                </button>
+                <span className="overflow-auto px-6 pb-6">{ability?.description}</span>
               </div>
-              <button
-                onClick={() => setDisplayingAbility(undefined)}
-                className="absolute z-10 top-3 right-3 text-slate-400 hover:text-slate-300 p-0.5 rounded cursor-pointer bg-slate-700 hover:bg-slate-800 transition-colors"
-              >
-                <MdClose size={20} />
-              </button>
             </animated.div>
           )
       )}
