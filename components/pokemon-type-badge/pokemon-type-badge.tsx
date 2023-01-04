@@ -41,7 +41,7 @@ export default function PokemonTypeBadge({
       {doubleDamage && (
         <span
           className={twMerge(
-            "absolute right-2.5 rounded-full cursor-pointer text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold",
+            "absolute right-2.5 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold",
             textColor,
             foregroundStyle === "light" && "bg-black/50"
           )}

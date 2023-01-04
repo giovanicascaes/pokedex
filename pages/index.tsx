@@ -17,7 +17,9 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
     loadNext,
   } = useHome(LIMIT);
   const { isIntersecting, ref: intersectionObserverRef } =
-    useIntersectionObserver();
+    useIntersectionObserver({
+      rootMargin: "20%",
+    });
 
   useEffect(() => {
     if (isIntersecting && !hasReachedEnd) loadNext();

@@ -1,6 +1,8 @@
+import PokemonLogo from "assets/img/pokemon-logo.png";
 import Image from "next/image";
 import Link from "next/link";
-import { Children, forwardRef, useState } from "react";
+import { useRouter } from "next/router";
+import { Children, forwardRef, Fragment } from "react";
 import { twMerge } from "tailwind-merge";
 import {
   AppHeaderBreadcrumbItemLinkProps,
@@ -8,8 +10,6 @@ import {
   AppHeaderBreadcrumbProps,
   AppHeaderProps,
 } from "./app-header.types";
-import PokemonLogo from "assets/img/pokemon-logo.png";
-import { useRouter } from "next/router";
 
 function BreadcrumbItemLink({
   href,
@@ -20,7 +20,10 @@ function BreadcrumbItemLink({
     <Link
       {...props}
       href={href}
-      className={twMerge("cursor-pointer", className)}
+      className={twMerge(
+        "cursor-pointer focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 focus-visible:border-opacity-50",
+        className
+      )}
     />
   );
 }
@@ -30,7 +33,7 @@ function BreadcrumbItem({ className, ...other }: AppHeaderBreadcrumbItemProps) {
     <span
       {...other}
       className={twMerge(
-        "font-medium text-sm text-slate-500 rounded-full hover:bg-slate-400/10 hover:text-black px-2.5 py-1",
+        "font-medium text-sm text-slate-500 rounded-full hover:bg-slate-400/10 active:bg-slate-400/20 hover:text-black px-2.5 py-1 transition-colors",
         className
       )}
     />
@@ -45,12 +48,12 @@ function Breadcrumb({
   return (
     <div {...other} className={twMerge("space-x-1", className)}>
       {Children.map(children, (child, i) => (
-        <>
+        <Fragment key={i}>
           {child}
           {i !== Children.count(children) - 1 && (
             <span className="text-slate-300 font-semibold">/</span>
           )}
-        </>
+        </Fragment>
       ))}
     </div>
   );
@@ -79,7 +82,9 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
           <BreadcrumbItem>
             <BreadcrumbItemLink href="/">pokemon</BreadcrumbItemLink>
           </BreadcrumbItem>
-          <BreadcrumbItem>{asPath.split("/").slice(-1)[0]}</BreadcrumbItem>
+          <BreadcrumbItem className="pointer-events-none">
+            {asPath.split("/").slice(-1)[0]}
+          </BreadcrumbItem>
         </Breadcrumb>
       )}
     </header>

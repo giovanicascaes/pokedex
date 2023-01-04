@@ -19,13 +19,13 @@ function DataContainer({
       <span className="text-xs uppercase font-semibold text-slate-400">
         {title}
       </span>
-      <div className="text-xl text-slate-700">{children}</div>
+      <div className="text-md text-slate-700">{children}</div>
     </div>
   );
 }
 
 function DataUnit({ children }: { children: ReactNode }) {
-  return <span className="text-sm">{children}</span>;
+  return <span className="text-sm font-light text-slate-500">{children}</span>;
 }
 
 export default function PokemonProfile({
@@ -50,7 +50,7 @@ export default function PokemonProfile({
         male: maleIcon,
         female: femaleIcon,
         both: (
-          <div className="flex space-x-1">
+          <div className="flex space-x-1.5">
             {maleIcon}
             {femaleIcon}
           </div>
@@ -121,7 +121,9 @@ export default function PokemonProfile({
                 >
                   <MdClose size={20} />
                 </button>
-                <span className="overflow-auto px-6 pb-6">{ability?.description}</span>
+                <span className="overflow-auto px-6 pb-6">
+                  {ability?.description}
+                </span>
               </div>
             </animated.div>
           )

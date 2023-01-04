@@ -2,10 +2,12 @@ import {
   AnimateOnChange,
   Badge,
   PokemonArt,
+  PokemonEvolutionChain,
   PokemonProfile,
   PokemonSection,
   PokemonStatMeter,
-  PokemonTypes,
+  PokemonStats,
+  PokemonTypeSections,
   Select,
 } from "components";
 import { getPokemon } from "lib";
@@ -16,6 +18,7 @@ import {
   DetailedHTMLProps,
   HTMLAttributes,
   isValidElement,
+  useEffect,
   useState,
 } from "react";
 import { twMerge } from "tailwind-merge";
@@ -61,20 +64,24 @@ export default function Pokemon({
   } = selectedForm;
   const displayedFormName = formName ?? name;
 
+  useEffect(() => {
+    setSelectedForm(varieties[0]);
+  }, [varieties]);
+
   return (
     <>
       <Head>
-        <title>{name} | A Pokédex</title>
+        <title>{`${name} | A Pokédex`}</title>
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-24 pb-12 pt-24 flex flex-col items-center h-full overflow-y-auto">
+      <div className="px-32 pb-12 pt-24 flex flex-col items-center h-full overflow-x-hidden">
         <span className="space-x-2 text-center text-4xl">
           <span className="text-slate-600 font-light">#{id}</span>
           <span className="text-slate-800 font-medium">{name}</span>
         </span>
         <SpeciesBadgeContainer className="mt-4">
-          {isBaby && <Badge color="red">Mythical</Badge>}
+          {isBaby && <Badge color="red">Baby</Badge>}
           {isLegendary && <Badge color="pink">Legendary</Badge>}
           {isMythical && <Badge color="yellow">Mythical</Badge>}
         </SpeciesBadgeContainer>
@@ -82,11 +89,11 @@ export default function Pokemon({
           <Select
             value={selectedForm}
             onChange={setSelectedForm}
-            by={(a, b) => a.id === b.id}
+            by="id"
             className="max-w-[300px] mt-8"
           >
             <Select.Button>{displayedFormName}</Select.Button>
-            <Select.Options className="max-h-[350px] overflow-y-scroll">
+            <Select.Options className="max-h-[350px] overflow-y-auto">
               {varieties.map((variety) => (
                 <Select.Option key={variety.id} value={variety}>
                   {variety.name ?? name}
@@ -95,8 +102,8 @@ export default function Pokemon({
             </Select.Options>
           </Select>
         )}
-        <AnimateOnChange animationKey={selectedForm}>
-          {selectedForm.isMega && (
+        <AnimateOnChange animationKey={selectedForm} className="w-full">
+          {isMega && (
             <Badge color="purple" className="w-min mx-auto mt-4">
               Mega
             </Badge>
@@ -129,16 +136,21 @@ export default function Pokemon({
                 </PokemonStats>
               </PokemonSection>
             </div>
-            <div className="space-y-8">
+            <div className="space-y-8 w-full">
               <PokemonSection label="Profile">
                 <PokemonProfile
                   {...{ height, weight, shape, abilities, gender }}
                 />
               </PokemonSection>
-              <PokemonTypes types={types} />
+              <PokemonTypeSections types={types} />
             </div>
           </div>
         </AnimateOnChange>
+        <div className="w-full">
+          <PokemonSection label="Evolution Chain" className="mt-12">
+            <PokemonEvolutionChain evolutionChain={evolutionChain} />
+          </PokemonSection>
+        </div>
       </div>
     </>
   );

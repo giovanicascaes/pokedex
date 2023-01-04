@@ -12,7 +12,7 @@ export default function PokemonDetailsSection({
       {...other}
       className={twMerge("flex flex-col space-y-4", className)}
     >
-      <span className="text-md text-slate-800 font-semibold">{label}</span>
+      <span className="text-lg text-slate-800 font-semibold">{label}</span>
       {children}
     </section>
   );

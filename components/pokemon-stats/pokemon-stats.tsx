@@ -9,6 +9,7 @@ export default function PokemonStats({
   const { isIntersecting, ref: intersectionObserverRef } =
     useIntersectionObserver({
       freezeOnceVisible: true,
+      threshold: 0.5,
     });
 
   const transition = useTransition(isIntersecting, {

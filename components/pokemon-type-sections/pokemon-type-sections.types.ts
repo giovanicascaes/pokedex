@@ -1,5 +1,5 @@
 import { Type } from "lib";
 
-export interface PokemonTypesProps {
+export interface PokemonTypeSectionsProps {
   types: Type[];
 }

@@ -2,7 +2,7 @@ import { PokemonSection } from "components/pokemon-section";
 import { PokemonTypeBadge } from "components/pokemon-type-badge";
 import { TypeRelation } from "lib";
 import { ReactNode } from "react";
-import { PokemonTypesProps } from "./pokemon-types.types";
+import { PokemonTypeSectionsProps } from "./pokemon-type-sections.types";
 
 function toTypeBadge({ color, name, isDouble }: TypeRelation) {
   return (
@@ -27,10 +27,16 @@ function toTypeRelationBadge(types: TypeRelation[]) {
 }
 
 function TypeListContainer({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-3 gap-2">{children}</div>;
+  return (
+    <div className="grid grid-cols-[repeat(3,minmax(min-content,max-content))] gap-2">
+      {children}
+    </div>
+  );
 }
 
-export default function PokemonTypes({ types }: PokemonTypesProps) {
+export default function PokemonTypeSections({
+  types,
+}: PokemonTypeSectionsProps) {
   return (
     <>
       <PokemonSection label="Type">
