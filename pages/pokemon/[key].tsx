@@ -116,17 +116,17 @@ export default function Pokemon({
                 />
               </div>
               <PokemonSection label="Stats" className="mt-8">
-                <div className="flex space-x-2.5">
+                <PokemonStats>
                   {stats.map(({ name: statName, value }) => (
                     <PokemonStatMeter
                       key={statName}
                       label={statName}
                       totalBars={15}
-                      value={(value * 15) / 255}
+                      value={value}
                       barContainerClassName="h-[220px]"
                     />
                   ))}
-                </div>
+                </PokemonStats>
               </PokemonSection>
             </div>
             <div className="space-y-8">

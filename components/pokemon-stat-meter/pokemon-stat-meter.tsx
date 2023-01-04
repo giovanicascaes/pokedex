@@ -1,67 +1,78 @@
-import { animated, easings, useTransition } from "@react-spring/web";
+import { animated, easings, useSpring } from "@react-spring/web";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
-import { range } from "utils";
+import { match, range } from "utils";
 import { PokemonStatMeterProps } from "./pokemon-stat-meter.types";
 
-const DEFAULT_DURATION = 20;
+const DEFAULT_DURATION = 700;
 
 const INITIAL_DELAY = 500;
 
+const MAX_VALUE = 255;
+
 interface TrailProps {
-  indexes: number[];
+  totalBars: number;
   value: number;
   duration: number;
 }
 
-function Trail({ indexes, duration, value }: TrailProps) {
-  const filledBarsIndexes = useMemo(
-    () => indexes.filter((i) => i < value),
-    [indexes, value]
-  );
-  const fillBarsDuration = useMemo(
-    () => (duration * indexes.length) / filledBarsIndexes.length,
-    [duration, filledBarsIndexes.length, indexes.length]
-  );
-  const transitions = useTransition(indexes, {
-    config: {
-      easing: easings.easeInOutSine,
-      duration: fillBarsDuration,
-    },
-    from: { height: "0%" },
-    enter: {
-      opacity: 1,
-      height: "100%",
-    },
-    delay: (key) => {
-      const keyAsNumber = key as unknown as number;
+function Trail({ totalBars, duration, value }: TrailProps) {
+  const valueAsNumberOfBars = useMemo(() => {
+    const numberOfBars = (value * totalBars) / MAX_VALUE;
 
-      return keyAsNumber >= value
-        ? 0
-        : (filledBarsIndexes.length -
-            1 -
-            filledBarsIndexes.indexOf(keyAsNumber)) *
-            fillBarsDuration +
-            INITIAL_DELAY;
+    return numberOfBars < totalBars - 1
+      ? Math.ceil(numberOfBars)
+      : Math.floor(numberOfBars);
+  }, [totalBars, value]);
+  const styles = useSpring({
+    config: {
+      easing: easings.easeOutBack,
+      duration,
     },
+    from: {
+      opacity: 0,
+      bottom: "-100%",
+    },
+    to: {
+      opacity: 1,
+      bottom: `-${match(
+        range(1, totalBars).reduce<{ [K in number]: number }>(
+          (acc, i) => ({ ...acc, [i]: (i * 100) / totalBars }),
+          {}
+        ),
+        totalBars - valueAsNumberOfBars,
+        0
+      )}%`,
+    },
+    delay: INITIAL_DELAY,
   });
 
+  const linearGradient = range(1, totalBars * 2 - 1)
+    .map((i) => {
+      const step = (100 / (totalBars * 2 - 1)) * i;
+
+      return `${
+        i % 2 === 0
+          ? `transparent ${step}%,#000 ${step}%`
+          : `#000 ${step}%,transparent ${step}%`
+      }`;
+    })
+    .join(",");
+  const mask = `linear-gradient(${linearGradient})`;
+
   return (
-    <>
-      {transitions((style, i) => (
-        <div
-          key={i}
-          className="relative bg-slate-200 first:rounded-t last:rounded-b group h-full w-full"
-        >
-          {i < value && (
-            <animated.div
-              className="absolute bottom-0 left-0 z-10 w-full h-full bg-sky-500 group-last:rounded-b group-first:rounded-t"
-              style={{ ...style }}
-            />
-          )}
-        </div>
-      ))}
-    </>
+    <div
+      className="relative bg-slate-200 first:rounded-t last:rounded-b h-full w-full"
+      style={{
+        mask,
+        WebkitMask: mask,
+      }}
+    >
+      <animated.div
+        className="absolute left-0 w-full h-full bg-sky-600 before:content-[''] before:absolute before:bg-sky-600 before:-bottom-10 before:w-full before:h-10"
+        style={{ ...styles }}
+      />
+    </div>
   );
 }
 
@@ -86,8 +97,8 @@ export default function PokemonStatMeter({
         )}
       >
         <Trail
-          indexes={range(1, totalBars).reverse()}
-          value={totalBars - value}
+          totalBars={totalBars}
+          value={value}
           duration={transitionDuration}
         />
       </div>
