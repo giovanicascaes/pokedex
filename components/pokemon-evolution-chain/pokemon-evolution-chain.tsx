@@ -1,4 +1,4 @@
-import { PokemonEvolutionChainLinkCard } from "components/pokemon-evolution-chain-link-card";
+import { PokemonEvolutionChainLinkCard } from "components";
 import { EvolutionChainLink } from "lib";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
@@ -6,6 +6,7 @@ import {
   PokemonEvolutionChainArrowProps,
   PokemonEvolutionChainLinkProps,
   PokemonEvolutionChainNodeContainerProps,
+  PokemonEvolutionChainPathProps,
   PokemonEvolutionChainProps,
 } from "./pokemon-evolution-chain.types";
 
@@ -22,7 +23,7 @@ function evolutionChainToLevelCountMap(
   return [chainLevel, ...nextChainLevels];
 }
 
-function getEvolutionChainNodesDisposeDirection(
+function getEvolutionChainLinksDisposeDirection(
   evolution: EvolutionChainLink
 ): "vertical" | "horizontal" {
   const map = evolutionChainToLevelCountMap(evolution).reduce<{
@@ -46,7 +47,7 @@ function Arrow({
       {...other}
       size={52}
       className={twMerge(
-        "fill-slate-500",
+        "text-slate-400 dark:text-slate-500",
         vertical ? "rotate-90" : "mb-5",
         className
       )}
@@ -55,9 +56,9 @@ function Arrow({
 }
 
 function NodeContainer({
+  vertical,
   children,
   className,
-  vertical,
   ...other
 }: PokemonEvolutionChainNodeContainerProps) {
   return (
@@ -79,7 +80,7 @@ function EvolutionChainPath({
   isBaby,
   species,
   ...other
-}: PokemonEvolutionChainLinkProps) {
+}: PokemonEvolutionChainPathProps) {
   return (
     <NodeContainer {...other}>
       <PokemonEvolutionChainLinkCard pokemon={species} isBaby={isBaby} />
@@ -88,10 +89,7 @@ function EvolutionChainPath({
           <Arrow />
           <NodeContainer vertical>
             {evolvesTo.map((evolution) => (
-              <EvolutionChainLinkHorizontal
-                key={evolution.species.id}
-                {...evolution}
-              />
+              <EvolutionChainLink key={evolution.species.id} {...evolution} />
             ))}
           </NodeContainer>
         </NodeContainer>
@@ -100,42 +98,20 @@ function EvolutionChainPath({
   );
 }
 
-function EvolutionChainLinkHorizontal({
+function EvolutionChainLink({
   evolvesTo,
   isBaby,
   species,
+  vertical,
   ...other
 }: PokemonEvolutionChainLinkProps) {
   return (
-    <NodeContainer {...other}>
+    <NodeContainer {...other} vertical={vertical}>
       <PokemonEvolutionChainLinkCard pokemon={species} isBaby={isBaby} />
       {evolvesTo.length > 0 && (
         <>
-          <Arrow />
-          <NodeContainer vertical>
-            {evolvesTo.map((evolution) => (
-              <EvolutionChainPath key={evolution.species.id} {...evolution} />
-            ))}
-          </NodeContainer>
-        </>
-      )}
-    </NodeContainer>
-  );
-}
-
-function EvolutionChainLinkVertical({
-  evolvesTo,
-  isBaby,
-  species,
-  ...other
-}: PokemonEvolutionChainLinkProps) {
-  return (
-    <NodeContainer {...other} vertical>
-      <PokemonEvolutionChainLinkCard pokemon={species} isBaby={isBaby} />
-      {evolvesTo.length > 0 && (
-        <>
-          <Arrow vertical />
-          <NodeContainer>
+          <Arrow vertical={vertical} />
+          <NodeContainer vertical={!vertical}>
             {evolvesTo.map((evolution) => (
               <EvolutionChainPath key={evolution.species.id} {...evolution} />
             ))}
@@ -152,24 +128,26 @@ export default function PokemonEvolutionChain({
   className,
   ...other
 }: PokemonEvolutionChainProps) {
-  const direction = getEvolutionChainNodesDisposeDirection(evolutionChain);
-  const initialChainProps = { ...{ ...evolutionChain }, className: "p-10" };
+  const direction = getEvolutionChainLinksDisposeDirection(evolutionChain);
 
   return (
     <div
       {...other}
-      className={twMerge("flex flex-col bg-slate-200/40 rounded-xl", className)}
+      className={twMerge(
+        "flex flex-col bg-slate-200/40 dark:bg-slate-600/30 rounded-xl",
+        className
+      )}
     >
       {evolutionChain.evolvesTo.length === 0 && (
         <span className="text-slate-500 text-sm mt-4 text-center">
           This pokemon does not evolve
         </span>
       )}
-      {direction === "vertical" ? (
-        <EvolutionChainLinkVertical {...initialChainProps} />
-      ) : (
-        <EvolutionChainLinkHorizontal {...initialChainProps} />
-      )}
+      <EvolutionChainLink
+        {...evolutionChain}
+        vertical={direction === "vertical"}
+        className="p-10"
+      />
     </div>
   );
 }

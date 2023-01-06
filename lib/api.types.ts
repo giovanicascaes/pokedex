@@ -150,7 +150,7 @@ export interface PokemonSpeciesSimple {
 
 export interface Ability {
   name: string;
-  description: string;
+  description: string | null;
   isHidden: boolean;
   slot: number;
 }

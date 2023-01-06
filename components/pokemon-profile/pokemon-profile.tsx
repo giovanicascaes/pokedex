@@ -1,8 +1,7 @@
-import { animated, useTransition } from "@react-spring/web";
+import { AbilityOverlay } from "components/ability-overlay";
 import { Ability } from "lib";
 import { ReactNode, useMemo, useState } from "react";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
-import { MdClose } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { match } from "utils";
 import { PokemonProfileProps } from "./pokemon-profile.types";
@@ -16,16 +15,22 @@ function DataContainer({
 }) {
   return (
     <div className="space-y-3">
-      <span className="text-xs uppercase font-semibold text-slate-400">
+      <span className="text-xs uppercase font-semibold text-slate-400 dark:text-slate-400/90">
         {title}
       </span>
-      <div className="text-md text-slate-700">{children}</div>
+      <div className="text-md text-slate-700 dark:text-slate-200">
+        {children}
+      </div>
     </div>
   );
 }
 
 function DataUnit({ children }: { children: ReactNode }) {
-  return <span className="text-sm font-light text-slate-500">{children}</span>;
+  return (
+    <span className="text-sm font-light text-slate-500 dark:text-slate-300">
+      {children}
+    </span>
+  );
 }
 
 export default function PokemonProfile({
@@ -37,9 +42,7 @@ export default function PokemonProfile({
   className,
   ...other
 }: PokemonProfileProps) {
-  const [displayingAbility, setDisplayingAbility] = useState<
-    Ability | undefined
-  >();
+  const [displayingAbility, setDisplayingAbility] = useState<Ability>();
 
   const genderIcons = useMemo(() => {
     const maleIcon = <IoMaleOutline size={28} />;
@@ -60,13 +63,6 @@ export default function PokemonProfile({
       gender
     );
   }, [gender]);
-
-  const transition = useTransition(displayingAbility, {
-    config: { duration: 150 },
-    from: { opacity: 0, transform: "translateY(-20px)" },
-    enter: { opacity: 1, transform: "translateY(0px)" },
-    leave: { opacity: 0, transform: "translateY(-20px)" },
-  });
 
   return (
     <div
@@ -92,42 +88,24 @@ export default function PokemonProfile({
               return (
                 <div key={name} className="flex items-center">
                   {name}
-                  <div
-                    onClick={() => setDisplayingAbility(ability)}
-                    className="bg-gray-200 text-slate-700 rounded-full cursor-pointer w-5 h-5 flex items-center justify-center text-base ml-1.5"
-                  >
-                    ?
-                  </div>
+                  {ability.description && (
+                    <div
+                      onClick={() => setDisplayingAbility(ability)}
+                      className="bg-gray-200 dark:bg-gray-600 text-slate-700 dark:text-slate-300/90 rounded-full cursor-pointer w-5 h-5 flex items-center justify-center text-base ml-1.5"
+                    >
+                      ?
+                    </div>
+                  )}
                 </div>
               );
             })}
         </div>
       </DataContainer>
       <DataContainer title="Gender">{genderIcons}</DataContainer>
-      {transition(
-        (styles, ability) =>
-          ability && (
-            <animated.div
-              className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border border-slate-600/70 backdrop-blur-md rounded-md"
-              style={{ ...styles }}
-            >
-              <div className="text-slate-300 text-sm flex flex-col h-full">
-                <span className="text-2xl mb-5 text-white px-6 pt-6">
-                  {ability?.name}
-                </span>
-                <button
-                  onClick={() => setDisplayingAbility(undefined)}
-                  className="absolute z-10 top-3 right-3 text-slate-300 hover:text-slate-200 p-0.5 rounded cursor-pointer bg-slate-600 hover:bg-slate-700 transition-colors"
-                >
-                  <MdClose size={20} />
-                </button>
-                <span className="overflow-auto px-6 pb-6">
-                  {ability?.description}
-                </span>
-              </div>
-            </animated.div>
-          )
-      )}
+      <AbilityOverlay
+        ability={displayingAbility}
+        onClose={() => setDisplayingAbility(undefined)}
+      />
     </div>
   );
 }

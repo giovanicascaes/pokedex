@@ -1,4 +1,5 @@
 import PokemonLogo from "assets/img/pokemon-logo.png";
+import { ThemeSwitcher } from "components";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -21,19 +22,24 @@ function BreadcrumbItemLink({
       {...props}
       href={href}
       className={twMerge(
-        "cursor-pointer focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 focus-visible:border-opacity-50",
+        "cursor-pointer focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 focus-visible:border-opacity-50 dark:focus-visible:border-red-400",
         className
       )}
     />
   );
 }
 
-function BreadcrumbItem({ className, ...other }: AppHeaderBreadcrumbItemProps) {
+function BreadcrumbItem({
+  disabled,
+  className,
+  ...other
+}: AppHeaderBreadcrumbItemProps) {
   return (
     <span
       {...other}
       className={twMerge(
-        "font-medium text-sm text-slate-500 rounded-full hover:bg-slate-400/10 active:bg-slate-400/20 hover:text-black px-2.5 py-1 transition-colors",
+        "font-medium text-sm text-slate-500 dark:text-slate-300 rounded-full px-2.5 py-1 transition-colors",
+        !disabled && "hover:text-black dark:hover:text-white",
         className
       )}
     />
@@ -51,7 +57,9 @@ function Breadcrumb({
         <Fragment key={i}>
           {child}
           {i !== Children.count(children) - 1 && (
-            <span className="text-slate-300 font-semibold">/</span>
+            <span className="text-slate-300 dark:text-slate-500 font-semibold">
+              /
+            </span>
           )}
         </Fragment>
       ))}
@@ -69,24 +77,30 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
     <header
       {...other}
       className={twMerge(
-        "w-full bg-white/70 backdrop-blur-lg border-b border-slate-900/10 px-6 h-[70px] flex items-center",
+        "relative w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-lg border-b border-slate-900/10 dark:border-slate-300/10 px-6 h-[70px] flex items-center justify-between",
         className
       )}
       ref={ref}
     >
-      <div>
-        <Image src={PokemonLogo} alt="Pokémon logo" height={40} />
+      <div className="flex items-center">
+        <div>
+          <Image src={PokemonLogo} alt="Pokémon logo" height={40} />
+        </div>
+        {pathname !== "/" && (
+          <Breadcrumb className="ml-4">
+            <BreadcrumbItem>
+              <BreadcrumbItemLink href="/">pokemon</BreadcrumbItemLink>
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              disabled
+              className="font-semibold text-red-500 dark:text-red-400"
+            >
+              {asPath.split("/").slice(-1)[0]}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        )}
       </div>
-      {pathname !== "/" && (
-        <Breadcrumb className="ml-4">
-          <BreadcrumbItem>
-            <BreadcrumbItemLink href="/">pokemon</BreadcrumbItemLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem className="pointer-events-none">
-            {asPath.split("/").slice(-1)[0]}
-          </BreadcrumbItem>
-        </Breadcrumb>
-      )}
+      <ThemeSwitcher />
     </header>
   );
 });

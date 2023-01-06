@@ -62,14 +62,14 @@ function Trail({ totalBars, duration, value }: TrailProps) {
 
   return (
     <div
-      className="relative bg-slate-200 first:rounded-t last:rounded-b h-full w-full"
+      className="relative bg-slate-200 dark:bg-slate-700/90 first:rounded-t last:rounded-b h-full w-full"
       style={{
         mask,
         WebkitMask: mask,
       }}
     >
       <animated.div
-        className="absolute left-0 w-full h-full bg-sky-600 before:content-[''] before:absolute before:bg-sky-600 before:-bottom-10 before:w-full before:h-10"
+        className="absolute left-0 w-full h-full bg-sky-600 dark:bg-sky-400 before:content-[''] before:absolute before:bg-sky-600 dark:before:bg-sky-400 before:-bottom-10 before:w-full before:h-10"
         style={{ ...styles }}
       />
     </div>

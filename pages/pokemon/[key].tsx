@@ -1,5 +1,5 @@
 import {
-  AnimateOnChange,
+  FadeOnChange,
   Badge,
   PokemonArt,
   PokemonEvolutionChain,
@@ -77,8 +77,12 @@ export default function Pokemon({
       </Head>
       <div className="px-32 pb-12 pt-24 flex flex-col items-center h-full overflow-x-hidden">
         <span className="space-x-2 text-center text-4xl">
-          <span className="text-slate-600 font-light">#{id}</span>
-          <span className="text-slate-800 font-medium">{name}</span>
+          <span className="text-slate-600 dark:text-slate-400 font-light">
+            #{id}
+          </span>
+          <span className="text-slate-800 dark:text-slate-100 font-medium">
+            {name}
+          </span>
         </span>
         <SpeciesBadgeContainer className="mt-4">
           {isBaby && <Badge color="red">Baby</Badge>}
@@ -90,28 +94,50 @@ export default function Pokemon({
             value={selectedForm}
             onChange={setSelectedForm}
             by="id"
-            className="max-w-[300px] mt-8"
+            className="max-w-[320px] mt-8 relative"
           >
-            <Select.Button>{displayedFormName}</Select.Button>
+            <Select.Button>
+              <div className="flex items-baseline w-full">
+                {displayedFormName}
+                {isMega && (
+                  <Badge
+                    color="purple"
+                    variant="rounded"
+                    className="w-min ml-2.5"
+                  >
+                    Mega
+                  </Badge>
+                )}
+              </div>
+            </Select.Button>
             <Select.Options className="max-h-[350px] overflow-y-auto">
               {varieties.map((variety) => (
                 <Select.Option key={variety.id} value={variety}>
-                  {variety.name ?? name}
+                  <div className="flex items-baseline">
+                    {variety.name ?? name}
+                    {variety.isMega && (
+                      <Badge
+                        color="purple"
+                        variant="rounded"
+                        className="w-min ml-2.5"
+                      >
+                        Mega
+                      </Badge>
+                    )}
+                  </div>
                 </Select.Option>
               ))}
             </Select.Options>
           </Select>
         )}
-        <AnimateOnChange animationKey={selectedForm} className="w-full">
-          {isMega && (
-            <Badge color="purple" className="w-min mx-auto mt-4">
-              Mega
-            </Badge>
-          )}
+        <FadeOnChange
+          animationKey={selectedForm}
+          className="w-full relative flex justify-center"
+        >
           <div className="flex space-x-16 mt-28">
             <div className="space-y-8">
               <div
-                className="h-min rounded-lg"
+                className="h-min rounded-md"
                 style={{ backgroundColor: color }}
               >
                 <PokemonArt
@@ -119,7 +145,7 @@ export default function Pokemon({
                   width={450}
                   height={450}
                   name={displayedFormName}
-                  className="bg-white/75 pb-8 pt-4"
+                  className="rounded-md bg-white/75 dark:bg-slate-400/70 pb-8 pt-4"
                 />
               </div>
               <PokemonSection label="Stats" className="mt-8">
@@ -145,7 +171,7 @@ export default function Pokemon({
               <PokemonTypeSections types={types} />
             </div>
           </div>
-        </AnimateOnChange>
+        </FadeOnChange>
         <div className="w-full">
           <PokemonSection label="Evolution Chain" className="mt-12">
             <PokemonEvolutionChain evolutionChain={evolutionChain} />
@@ -160,6 +186,12 @@ export async function getServerSideProps({
   params,
 }: GetServerSidePropsContext<{ key: string }>) {
   const pokemon = await getPokemon(params!.key);
+
+  if (!pokemon) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {

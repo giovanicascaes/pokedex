@@ -30,6 +30,7 @@ import {
   TypeRelation,
   TypeValue,
 } from "./api.types";
+import { FetchError } from "./fetch.types";
 
 const DEFAULT_LIMIT = 20;
 
@@ -114,9 +115,9 @@ async function toAbility({
   return {
     ...pick(other, "slot"),
     name: getLocalizedName(ability)!,
-    description: effect_entries.find(
-      ({ language }) => language.name === DEFAULT_LANGUAGE
-    )!.effect,
+    description:
+      effect_entries?.find(({ language }) => language.name === DEFAULT_LANGUAGE)
+        ?.effect ?? null,
     isHidden: is_hidden,
   };
 }
@@ -290,10 +291,22 @@ async function toPokemonSpeciesDetailed(
   };
 }
 
-export async function getPokemon(key: string): Promise<PokemonSpeciesDetailed> {
-  const species = await fetchPathAsJson<ApiPokemonSpecies>(
-    `/pokemon-species/${key}`
-  );
+export async function getPokemon(
+  key: string
+): Promise<PokemonSpeciesDetailed | undefined> {
+  let species: ApiPokemonSpecies;
+
+  try {
+    species = (await fetchPathAsJson<ApiPokemonSpecies>(
+      `/pokemon-species/${key}`
+    )) as ApiPokemonSpecies;
+  } catch (e) {
+    const fetchError = e as FetchError;
+
+    if (fetchError.status === 404) return undefined;
+
+    throw fetchError;
+  }
 
   return toPokemonSpeciesDetailed(species);
 }

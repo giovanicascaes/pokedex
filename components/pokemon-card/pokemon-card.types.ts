@@ -1,4 +1,4 @@
-import { PokemonArtProps } from "components/pokemon-art";
+import { PokemonArtProps } from "components";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
 export interface PokemonCardProps

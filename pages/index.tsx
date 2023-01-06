@@ -32,10 +32,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-14 py-4">
+      <div className="px-14 py-4 h-full">
         <PokemonGrid
           pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
-          className="max-w-[1200px] overflow-hidden mx-auto"
+          className="max-w-[1200px] mx-auto"
         />
         <div
           className="w-full text-center font-light text-slate-400 mb-32"

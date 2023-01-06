@@ -1,3 +1,12 @@
+import {
+  SelectActions,
+  SelectActionTypes,
+  SelectContext,
+  SelectContextActions,
+  SelectContextData,
+  SelectPopupState,
+  SelectState,
+} from "contexts";
 import { useOnClickOutside } from "hooks";
 import {
   RefObject,
@@ -9,15 +18,6 @@ import {
 } from "react";
 import { twMerge } from "tailwind-merge";
 import { SelectButton } from "./button";
-import { SelectContext } from "./context";
-import {
-  SelectActions,
-  SelectActionTypes,
-  SelectContextActions,
-  SelectContextData,
-  SelectPopupState,
-  SelectState,
-} from "./context.types";
 import { SelectOption } from "./option";
 import { SelectOptions } from "./options";
 import { SelectProps } from "./select.types";
@@ -164,11 +164,7 @@ function Select({
 
   return (
     <SelectContext.Provider value={[data, actions]}>
-      <div
-        {...other}
-        className={twMerge("relative w-full", className)}
-        ref={ref}
-      >
+      <div {...other} className={twMerge("w-full", className)} ref={ref}>
         {children}
       </div>
     </SelectContext.Provider>

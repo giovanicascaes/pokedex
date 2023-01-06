@@ -11,10 +11,10 @@ export type AppHeaderBreadcrumbProps = DetailedHTMLProps<
   HTMLDivElement
 >;
 
-export type AppHeaderBreadcrumbItemProps = DetailedHTMLProps<
-  HTMLAttributes<HTMLElement>,
-  HTMLElement
->;
+export interface AppHeaderBreadcrumbItemProps
+  extends DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> {
+  disabled?: boolean;
+}
 
 export interface AppHeaderBreadcrumbItemLinkProps
   extends Omit<

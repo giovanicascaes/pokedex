@@ -1,7 +1,9 @@
-export * from "./animate-on-change";
+export * from "./ability-overlay";
 export * from "./app-header";
 export * from "./app-shell";
 export * from "./badge";
+export * from "./fade-on-change";
+export * from "./page-loading-indicator";
 export * from "./pokemon-art";
 export * from "./pokemon-card";
 export * from "./pokemon-evolution-chain";
@@ -14,3 +16,4 @@ export * from "./pokemon-stats";
 export * from "./pokemon-type-badge";
 export * from "./pokemon-type-sections";
 export * from "./select";
+export * from "./theme-switcher";

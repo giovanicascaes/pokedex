@@ -11,9 +11,14 @@ export interface PokemonEvolutionChainNodeContainerProps
   vertical?: boolean;
 }
 
-export interface PokemonEvolutionChainLinkProps
+export interface PokemonEvolutionChainPathProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     EvolutionChainLink {}
+
+export interface PokemonEvolutionChainLinkProps
+  extends PokemonEvolutionChainPathProps {
+  vertical?: boolean;
+}
 
 export interface PokemonEvolutionChainArrowProps
   extends DetailedHTMLProps<HTMLAttributes<SVGElement>, SVGElement> {

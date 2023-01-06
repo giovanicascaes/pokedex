@@ -1,5 +1,4 @@
-import { PokemonSection } from "components/pokemon-section";
-import { PokemonTypeBadge } from "components/pokemon-type-badge";
+import { PokemonSection, PokemonTypeBadge } from "components";
 import { TypeRelation } from "lib";
 import { ReactNode } from "react";
 import { PokemonTypeSectionsProps } from "./pokemon-type-sections.types";

@@ -1,7 +1,6 @@
 import { animated, useTransition } from "@react-spring/web";
+import { SelectPopupState, useSelect } from "contexts";
 import { twMerge } from "tailwind-merge";
-import { useSelect } from "../context";
-import { SelectPopupState } from "../context.types";
 import { SelectOptionsProps } from "./options.types";
 
 export default function Options({
@@ -9,7 +8,7 @@ export default function Options({
   className,
   ...other
 }: SelectOptionsProps) {
-  const [{ buttonRef, popupState }] = useSelect();
+  const [{ popupState }] = useSelect();
 
   const transition = useTransition(popupState !== SelectPopupState.Closed, {
     config: { duration: 80 },
@@ -24,11 +23,10 @@ export default function Options({
         <animated.ul
           {...other}
           className={twMerge(
-            "absolute z-20 w-full shadow-md rounded-lg bg-white py-1.5 flex flex-col",
+            "absolute z-20 w-full shadow-md rounded-lg bg-white dark:bg-slate-700 py-1.5 flex flex-col top-[calc(100%+4px)]",
             className
           )}
           style={{
-            top: buttonRef?.current?.getBoundingClientRect().height! + 4,
             ...styles,
           }}
         >

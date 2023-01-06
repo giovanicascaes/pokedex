@@ -19,7 +19,10 @@ export default function PokemonArt({
   return artSrc && !error ? (
     <div
       {...other}
-      className={twMerge("flex items-center justify-center", className)}
+      className={twMerge(
+        "flex items-center justify-center",
+        className
+      )}
       style={{
         minWidth: width,
         minHeight: height,
@@ -36,7 +39,10 @@ export default function PokemonArt({
   ) : (
     <div
       {...other}
-      className={twMerge("text-center text-black/50", className)}
+      className={twMerge(
+        "text-center text-black/50 dark:text-white/50",
+        className
+      )}
       style={{ width, height, fontSize: height, lineHeight: `${height}px` }}
     >
       ?

@@ -3,5 +3,11 @@ export async function fetchAsJson<T>(url: string) {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then<T>((res) => res.json());
+  }).then<T>((res) => {
+    if (!res.ok) {
+      throw { status: res.status, message: `Error fetching from ${url}` };
+    }
+
+    return res.json();
+  });
 }

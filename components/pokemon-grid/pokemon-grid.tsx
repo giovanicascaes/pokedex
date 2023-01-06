@@ -1,5 +1,5 @@
 import { animated, useTransition } from "@react-spring/web";
-import { PokemonSimpleCard } from "components/pokemon-card";
+import { PokemonSimpleCard } from "components";
 import { PokemonSpeciesSimple } from "lib";
 import { twMerge } from "tailwind-merge";
 import {
@@ -15,7 +15,7 @@ interface TrailProps {
   duration: number;
 }
 
-function TrailTransition({ pokemons, duration }: TrailProps) {
+function Trail({ pokemons, duration }: TrailProps) {
   const transitions = useTransition(pokemons, {
     config: {
       mass: 1,
@@ -63,14 +63,11 @@ export default function PokemonGrid({
     <ul
       {...otherProps}
       className={twMerge(
-        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 overflow-hidden p-10",
+        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 p-10",
         className
       )}
     >
-      <TrailTransition
-        pokemons={visiblePokemons}
-        duration={transitionDuration}
-      />
+      <Trail pokemons={visiblePokemons} duration={transitionDuration} />
       {pokemonsToPrefetch.length > 0 && (
         <li className="hidden">
           {pokemonsToPrefetch.map(({ id, ...other }) => (
