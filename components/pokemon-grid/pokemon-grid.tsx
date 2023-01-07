@@ -63,7 +63,7 @@ export default function PokemonGrid({
     <ul
       {...otherProps}
       className={twMerge(
-        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 p-10",
+        "grid auto-rows-auto auto-cols-max grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-x-6 gap-y-8 p-10",
         className
       )}
     >

@@ -78,7 +78,7 @@ export default function Pokemon({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-32 pb-12 pt-8 h-full overflow-x-hidden space-y-12">
-        <FadeOnChange animationKey={id}>
+        <FadeOnChange watchChangesOn={id}>
           <div className="flex w-full">
             {previousPokemon && (
               <PokemonNavigationButton toPokemon={previousPokemon} />
@@ -93,7 +93,10 @@ export default function Pokemon({
           </div>
         </FadeOnChange>
         <div className="flex flex-col items-center">
-          <FadeOnChange animationKey={id}>
+          <FadeOnChange
+            watchChangesOn={id}
+            className=" flex flex-col items-center w-full"
+          >
             <span className="space-x-2 text-center text-4xl">
               <span className="text-slate-600 dark:text-slate-400 font-light">
                 #{id}
@@ -150,7 +153,7 @@ export default function Pokemon({
             )}
           </FadeOnChange>
           <FadeOnChange
-            animationKey={selectedForm}
+            watchChangesOn={selectedForm}
             className="w-full relative flex justify-center"
           >
             <div className="flex flex-1 space-x-16 mt-28">
@@ -164,7 +167,7 @@ export default function Pokemon({
                     width={450}
                     height={450}
                     name={displayedFormName}
-                    className="rounded-md bg-white/75 dark:bg-slate-400/70 pb-8 pt-4 outline outline-1 -outline-offset-1 outline-black/[0.12] dark:outline-white/[0.28]"
+                    className="rounded-md bg-white/75 dark:bg-slate-400/70 pb-8 pt-4 outline outline-1 -outline-offset-1 outline-black/[0.14] dark:outline-white/[0.28]"
                   />
                 </div>
                 <PokemonSection label="Stats" className="mt-8">

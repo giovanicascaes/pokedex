@@ -10,12 +10,16 @@ export default function Options({
 }: SelectOptionsProps) {
   const [{ popupState }] = useSelect();
 
-  const transition = useTransition(popupState !== SelectPopupState.Closed, {
+  const isOpen = popupState !== SelectPopupState.Closed;
+
+  const transition = useTransition(isOpen, {
     config: { duration: 80 },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
   });
+
+  if (typeof children === "function") return <>{children({ open: isOpen })}</>;
 
   return transition(
     (styles, open) =>
