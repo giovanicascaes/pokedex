@@ -24,7 +24,7 @@ export default function AbilityDescriptionOverlay({
       item && (
         <animated.div
           {...other}
-          className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 dark:bg-slate-600/70 border border-slate-600/70 dark:border-slate-500/40 backdrop-blur-md rounded-md"
+          className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md"
           style={{ ...styles }}
         >
           <div className="text-slate-300 dark:text-slate-400 text-sm flex flex-col h-full">

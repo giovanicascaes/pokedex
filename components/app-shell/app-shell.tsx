@@ -6,6 +6,7 @@ import {
   ThemeContextData,
   ThemeMode,
 } from "contexts";
+import { useMedia } from "hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { twJoin } from "tailwind-merge";
 import { AppShellProps } from "./app-shell.types";
@@ -24,6 +25,8 @@ export default function AppShell({ children }: AppShellProps) {
       setHeaderHeight(node.getBoundingClientRect().height);
     }
   }, []);
+
+  const isMediaDark = useMedia("(prefers-color-scheme: dark)");
 
   const updateThemeMode = useCallback((mode: ThemeMode) => {
     setThemeMode(mode);
@@ -51,8 +54,13 @@ export default function AppShell({ children }: AppShellProps) {
   }, []);
 
   const data: ThemeContextData = useMemo(
-    () => ({ mode: themeMode }),
-    [themeMode]
+    () => ({
+      mode: themeMode,
+      isDark:
+        themeMode === ThemeMode.Dark ||
+        (themeMode === ThemeMode.System && isMediaDark),
+    }),
+    [isMediaDark, themeMode]
   );
 
   const actions: ThemeContextActions = useMemo(
@@ -86,7 +94,7 @@ export default function AppShell({ children }: AppShellProps) {
           className={twJoin(
             inter.variable,
             "font-sans min-h-screen",
-            isTransitioningTheme && "[&_*}:transition-colors [&_*]:duration-300"
+            isTransitioningTheme && "[&_*]:transition-colors [&_*]:duration-300"
           )}
         >
           <PageLoadingIndicator />

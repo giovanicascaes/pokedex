@@ -6,6 +6,7 @@ export enum ThemeMode {
 
 export interface ThemeContextData {
   mode: ThemeMode;
+  isDark: boolean;
 }
 
 export interface ThemeContextActions {

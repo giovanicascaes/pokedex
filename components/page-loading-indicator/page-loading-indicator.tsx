@@ -48,13 +48,13 @@ export default function PageLoadingIndicator({
     key: isLoading,
     config: { duration: 200 },
     from: {
-      height: 0,
+      opacity: 0,
     },
     enter: {
-      height: 3,
+      opacity: 1,
     },
     leave: {
-      height: 0,
+      opacity: 0,
     },
   });
 
@@ -64,7 +64,7 @@ export default function PageLoadingIndicator({
         <animated.div
           {...other}
           className={twMerge(
-            "fixed z-50 top-0 left-0 w-full bg-red-200 dark:bg-red-500/40 transition-all",
+            "fixed z-50 top-0 left-0 w-full h-0.5 bg-red-200 dark:bg-red-500/40 transition-all",
             className
           )}
           style={{ ...styles }}

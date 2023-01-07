@@ -1,11 +1,9 @@
 import { animated, useTransition } from "@react-spring/web";
 import { useIntersectionObserver } from "hooks";
+import { PokemonStatsMeter } from "./pokemon-stats-meter";
 import { PokemonStatsProps } from "./pokemon-stats.types";
 
-export default function PokemonStats({
-  children,
-  ...other
-}: PokemonStatsProps) {
+function PokemonStats({ children, ...other }: PokemonStatsProps) {
   const { isIntersecting, ref: intersectionObserverRef } =
     useIntersectionObserver({
       freezeOnceVisible: true,
@@ -31,3 +29,7 @@ export default function PokemonStats({
     </div>
   );
 }
+
+export default Object.assign(PokemonStats, {
+  Meter: PokemonStatsMeter,
+});

@@ -1,8 +1,9 @@
 import { animated, easings, useSpring } from "@react-spring/web";
+import { useTheme } from "contexts";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { match, range } from "utils";
-import { PokemonStatMeterProps } from "./pokemon-stat-meter.types";
+import { PokemonStatsMeterProps } from "./pokemon-stats-meter.types";
 
 const DEFAULT_DURATION = 700;
 
@@ -17,6 +18,7 @@ interface TrailProps {
 }
 
 function Trail({ totalBars, duration, value }: TrailProps) {
+  const [{ isDark }] = useTheme();
   const valueAsNumberOfBars = useMemo(() => {
     const numberOfBars = (value * totalBars) / MAX_VALUE;
 
@@ -24,6 +26,7 @@ function Trail({ totalBars, duration, value }: TrailProps) {
       ? Math.ceil(numberOfBars)
       : Math.floor(numberOfBars);
   }, [totalBars, value]);
+
   const styles = useSpring({
     config: {
       easing: easings.easeOutBack,
@@ -35,14 +38,24 @@ function Trail({ totalBars, duration, value }: TrailProps) {
     },
     to: {
       opacity: 1,
-      bottom: `-${match(
-        range(1, totalBars).reduce<{ [K in number]: number }>(
-          (acc, i) => ({ ...acc, [i]: (i * 100) / totalBars }),
-          {}
-        ),
-        totalBars - valueAsNumberOfBars,
-        0
-      )}%`,
+      bottom: `-${
+        100 -
+        match(
+          range(1, totalBars * 2 - 1)
+            .filter((i) => i % 2 !== 0)
+            .reduce<{ [K in number]: number }>(
+              (acc, i) => ({
+                ...acc,
+                [i - (i - 1) / 2]: (100 * i) / (totalBars * 2 - 1),
+              }),
+              {
+                0: 0,
+              }
+            ),
+          valueAsNumberOfBars,
+          100
+        )!
+      }%`,
     },
     delay: INITIAL_DELAY,
   });
@@ -69,14 +82,20 @@ function Trail({ totalBars, duration, value }: TrailProps) {
       }}
     >
       <animated.div
-        className="absolute left-0 w-full h-full bg-sky-600 dark:bg-sky-400 before:content-[''] before:absolute before:bg-sky-600 dark:before:bg-sky-400 before:-bottom-10 before:w-full before:h-10"
-        style={{ ...styles }}
+        className="absolute left-0 w-full h-full before:content-[''] before:absolute before:bg-sk dark:before:bg-inherit before:-bottom-10 before:w-full before:h-10"
+        style={{
+          ...styles,
+          backgroundColor: styles.bottom.to(
+            (b) =>
+              `hsl(${100 + parseFloat(b)}, ${isDark ? "82%, 64%" : "55%, 60%"})`
+          ),
+        }}
       />
     </div>
   );
 }
 
-export default function PokemonStatMeter({
+export default function PokemonStatsMeter({
   totalBars = 10,
   value,
   label,
@@ -84,7 +103,7 @@ export default function PokemonStatMeter({
   className,
   barContainerClassName,
   ...other
-}: PokemonStatMeterProps) {
+}: PokemonStatsMeterProps) {
   return (
     <div
       {...other}
@@ -102,7 +121,7 @@ export default function PokemonStatMeter({
           duration={transitionDuration}
         />
       </div>
-      <span className="text-2xs font-semibold text-slate-500 text-center mt-1">
+      <span className="text-2xs font-semibold text-slate-500 text-center my-2">
         {label}
       </span>
     </div>

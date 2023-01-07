@@ -1,11 +1,10 @@
 import {
-  FadeOnChange,
   Badge,
+  FadeOnChange,
   PokemonArt,
   PokemonEvolutionChain,
   PokemonProfile,
   PokemonSection,
-  PokemonStatMeter,
   PokemonStats,
   PokemonTypeSections,
   Select,
@@ -145,13 +144,13 @@ export default function Pokemon({
                   width={450}
                   height={450}
                   name={displayedFormName}
-                  className="rounded-md bg-white/75 dark:bg-slate-400/70 pb-8 pt-4"
+                  className="rounded-md bg-white/75 dark:bg-slate-400/70 pb-8 pt-4 outline outline-1 -outline-offset-1 outline-black/[0.12] dark:outline-white/[0.28]"
                 />
               </div>
               <PokemonSection label="Stats" className="mt-8">
                 <PokemonStats>
                   {stats.map(({ name: statName, value }) => (
-                    <PokemonStatMeter
+                    <PokemonStats.Meter
                       key={statName}
                       label={statName}
                       totalBars={15}

@@ -47,7 +47,7 @@ function Arrow({
       {...other}
       size={52}
       className={twMerge(
-        "text-slate-400 dark:text-slate-500",
+        "text-slate-400/70 dark:text-slate-500",
         vertical ? "rotate-90" : "mb-5",
         className
       )}
@@ -139,7 +139,7 @@ export default function PokemonEvolutionChain({
       )}
     >
       {evolutionChain.evolvesTo.length === 0 && (
-        <span className="text-slate-500 text-sm mt-4 text-center">
+        <span className="text-slate-400 dark:text-slate-500 text-sm mt-4 text-center">
           This pokemon does not evolve
         </span>
       )}

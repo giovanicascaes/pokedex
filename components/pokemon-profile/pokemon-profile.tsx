@@ -89,12 +89,12 @@ export default function PokemonProfile({
                 <div key={name} className="flex items-center">
                   {name}
                   {ability.description && (
-                    <div
+                    <button
                       onClick={() => setDisplayingAbility(ability)}
-                      className="bg-gray-200 dark:bg-gray-600 text-slate-700 dark:text-slate-300/90 rounded-full cursor-pointer w-5 h-5 flex items-center justify-center text-base ml-1.5"
+                      className="bg-gray-200 dark:bg-gray-600 text-slate-700 dark:text-slate-300/90 rounded-full cursor-pointer w-5 h-5 flex items-center justify-center text-base ml-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
                     >
                       ?
-                    </div>
+                    </button>
                   )}
                 </div>
               );

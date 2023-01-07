@@ -11,7 +11,6 @@ export * from "./pokemon-evolution-chain-link-card";
 export * from "./pokemon-grid";
 export * from "./pokemon-profile";
 export * from "./pokemon-section";
-export * from "./pokemon-stat-meter";
 export * from "./pokemon-stats";
 export * from "./pokemon-type-badge";
 export * from "./pokemon-type-sections";

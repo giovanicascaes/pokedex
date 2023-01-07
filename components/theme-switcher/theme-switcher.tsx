@@ -39,7 +39,7 @@ export default function ThemeSwitcher(props: ThemeSwitcherProps) {
     <Select {...props} value={mode} onChange={setMode} className="w-min">
       <Select.Button
         variant="unstyled"
-        className="w-6 h-6 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
+        className="w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
       >
         {transitions((styles, theme) => (
           <animated.div style={{ ...styles }}>
