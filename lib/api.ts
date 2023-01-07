@@ -148,6 +148,7 @@ async function namedResourceToTypeRelation({
     resourceName: value,
     name: getLocalizedName(type)!,
     color: ApiTypesColors[value],
+    isDouble: false,
   };
 }
 
@@ -261,6 +262,22 @@ function toGender(
   }
 }
 
+async function getPokemonSpeciesSimpleById(id: number) {
+  try {
+    const species = await fetchPathAsJson<ApiPokemonSpecies>(
+      `/pokemon-species/${id}`
+    );
+
+    return toPokemonSpeciesSimple(species);
+  } catch (e) {
+    const fetchError = e as FetchError;
+
+    if (fetchError.status === 404) return null;
+
+    throw fetchError;
+  }
+}
+
 async function toPokemonSpeciesDetailed(
   species: ApiPokemonSpecies
 ): Promise<PokemonSpeciesDetailed> {
@@ -274,10 +291,10 @@ async function toPokemonSpeciesDetailed(
     evolution_chain,
     color: { name: color },
     shape,
-    ...rest
+    id,
   } = species;
   return {
-    ...pick(rest, "id"),
+    id,
     resourceName: name,
     name: getLocalizedName(species)!,
     isBaby: is_baby,
@@ -288,6 +305,8 @@ async function toPokemonSpeciesDetailed(
     evolutionChain: await toEvolutionChain(evolution_chain),
     color,
     shape: getLocalizedName(await fetchAsJson<ApiPokemonShape>(shape.url))!,
+    previousPokemon: await getPokemonSpeciesSimpleById(id - 1),
+    nextPokemon: await getPokemonSpeciesSimpleById(id + 1),
   };
 }
 
@@ -297,9 +316,9 @@ export async function getPokemon(
   let species: ApiPokemonSpecies;
 
   try {
-    species = (await fetchPathAsJson<ApiPokemonSpecies>(
+    species = await fetchPathAsJson<ApiPokemonSpecies>(
       `/pokemon-species/${key}`
-    )) as ApiPokemonSpecies;
+    );
   } catch (e) {
     const fetchError = e as FetchError;
 

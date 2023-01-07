@@ -1,6 +1,6 @@
 import { PokemonEvolutionChainLinkCard } from "components";
 import { EvolutionChainLink } from "lib";
-import { MdKeyboardArrowRight } from "react-icons/md";
+import { MdChevronRight } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import {
   PokemonEvolutionChainArrowProps,
@@ -43,7 +43,7 @@ function Arrow({
   ...other
 }: PokemonEvolutionChainArrowProps) {
   return (
-    <MdKeyboardArrowRight
+    <MdChevronRight
       {...other}
       size={52}
       className={twMerge(

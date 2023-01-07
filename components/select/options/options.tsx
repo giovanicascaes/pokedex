@@ -23,7 +23,7 @@ export default function Options({
         <animated.ul
           {...other}
           className={twMerge(
-            "absolute z-20 w-full shadow-md rounded-lg bg-white dark:bg-slate-700 py-1.5 flex flex-col top-[calc(100%+4px)]",
+            "absolute z-10 w-full shadow-md rounded-lg bg-white dark:bg-slate-700 py-1.5 flex flex-col top-[calc(100%+4px)]",
             className
           )}
           style={{

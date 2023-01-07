@@ -9,6 +9,7 @@ export * from "./pokemon-card";
 export * from "./pokemon-evolution-chain";
 export * from "./pokemon-evolution-chain-link-card";
 export * from "./pokemon-grid";
+export * from "./pokemon-navigation-button";
 export * from "./pokemon-profile";
 export * from "./pokemon-section";
 export * from "./pokemon-stats";

@@ -161,7 +161,7 @@ export interface Stat {
 }
 
 export interface TypeRelation extends Omit<Type, "slot" | "damageRelations"> {
-  isDouble?: boolean;
+  isDouble: boolean;
 }
 
 export interface TypeRelations {
@@ -232,4 +232,6 @@ export interface PokemonSpeciesDetailed {
   evolutionChain: EvolutionChainLink;
   color: string;
   shape: string;
+  previousPokemon: PokemonSpeciesSimple | null;
+  nextPokemon: PokemonSpeciesSimple | null;
 }

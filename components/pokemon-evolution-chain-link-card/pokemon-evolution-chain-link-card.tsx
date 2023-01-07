@@ -26,14 +26,14 @@ export default function PokemonEvolutionChainLinkCard({
         </div>
       </Link>
       <span className="flex items-baseline text-sm mt-3">
-        <span className="text-slate-400 dark:text-slate-300 font-light mr-0.5">
+        <span className="text-slate-400 dark:text-slate-300 font-light">
           #{id}
         </span>
-        <span className="text-slate-600 dark:text-slate-100 font-medium mr-1.5 truncate">
+        <span className="text-slate-600 dark:text-slate-100 font-medium ml-1 truncate">
           {name}
         </span>
         {isBaby && (
-          <Badge color="red" variant="rounded">
+          <Badge color="red" variant="rounded" className="ml-1.5">
             Baby
           </Badge>
         )}
