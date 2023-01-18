@@ -7,4 +7,5 @@ export interface PokemonCardProps
   identifier: number;
   resourceName: string;
   name: string;
+  animateArt?: boolean;
 }

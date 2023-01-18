@@ -19,6 +19,8 @@ function LoadingBar({ className, ...other }: PageLoadingBarsProps) {
   );
 }
 
+const TRANSITION_DURATION = 200;
+
 export default function PageLoadingIndicator({
   className,
   ...other
@@ -46,7 +48,7 @@ export default function PageLoadingIndicator({
 
   const transitions = useTransition(isLoading, {
     key: isLoading,
-    config: { duration: 200 },
+    config: { duration: TRANSITION_DURATION },
     from: {
       opacity: 0,
     },
@@ -64,7 +66,7 @@ export default function PageLoadingIndicator({
         <animated.div
           {...other}
           className={twMerge(
-            "fixed z-50 top-0 left-0 w-full h-0.5 bg-red-200 dark:bg-red-500/40 transition-all",
+            "fixed z-50 top-0 w-full h-0.5 bg-red-200 dark:bg-red-500/40 transition-all",
             className
           )}
           style={{ ...styles }}

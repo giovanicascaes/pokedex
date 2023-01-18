@@ -1,10 +1,13 @@
 import { animated, useSpring } from "@react-spring/web";
-import { SelectPopupState, useSelect } from "contexts";
 import { useEffect, useId, useRef, useState } from "react";
 import { MdDone } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { setTimeout } from "timers";
+import { useSelect } from "../context";
+import { SelectPopupState } from "../select.types";
 import { SelectOptionProps } from "./option.types";
+
+const CLICK_TRANSITION_DURATION = 80;
 
 export default function Option({
   children,
@@ -28,13 +31,13 @@ export default function Option({
       value,
       ref,
     });
-  }, [children, id, registerOption, value]);
+  }, [id, registerOption, value]);
 
   const selected =
     clickedOption !== null ? clickedOption === id : isSelected(value);
 
   const styles = useSpring({
-    config: { duration: 80 },
+    config: { duration: CLICK_TRANSITION_DURATION },
     from: {
       opacity: 1,
     },

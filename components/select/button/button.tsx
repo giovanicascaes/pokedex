@@ -1,7 +1,8 @@
-import { SelectPopupState, useSelect } from "contexts";
 import { useEffect, useRef } from "react";
 import { MdExpandMore } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
+import { useSelect } from "../context";
+import { SelectPopupState } from "../select.types";
 import { SelectButtonProps } from "./button.types";
 
 export default function Button({

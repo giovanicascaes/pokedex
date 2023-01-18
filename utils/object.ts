@@ -14,7 +14,7 @@ export function pick<
 }
 
 export function match<K extends PropertyKey = string, V = any>(
-  lookup: { [p in K]?: V },
+  lookup: { [P in K]?: V },
   key: K,
   fallback?: V
 ): V | undefined {

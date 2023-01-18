@@ -11,5 +11,5 @@ export interface PokemonArtProps
   name: string;
   width: number;
   height: number;
-  transitionDuration?: number;
+  animate?: boolean;
 }

@@ -6,10 +6,14 @@
   html,
   body,
   #__next {
-    @apply h-full;
+    @apply h-full overflow-hidden;
   }
 
   body {
-    @apply bg-white dark:bg-slate-900;
+    @apply bg-white dark:bg-slate-900 transition-colors;
+  }
+
+  .dark {
+    color-scheme: dark;
   }
 }

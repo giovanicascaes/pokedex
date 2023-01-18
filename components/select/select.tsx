@@ -1,12 +1,3 @@
-import {
-  SelectActions,
-  SelectActionTypes,
-  SelectContext,
-  SelectContextActions,
-  SelectContextData,
-  SelectPopupState,
-  SelectState,
-} from "contexts";
 import { useOnClickOutside } from "hooks";
 import {
   RefObject,
@@ -18,9 +9,18 @@ import {
 } from "react";
 import { twMerge } from "tailwind-merge";
 import { SelectButton } from "./button";
+import { SelectContext } from "./context";
 import { SelectOption } from "./option";
 import { SelectOptions } from "./options";
-import { SelectProps } from "./select.types";
+import {
+  SelectActions,
+  SelectActionTypes,
+  SelectContextActions,
+  SelectContextData,
+  SelectPopupState,
+  SelectProps,
+  SelectState,
+} from "./select.types";
 
 const reducers: {
   [P in SelectActionTypes]: (
@@ -70,10 +70,7 @@ const reducers: {
   },
 };
 
-export function matchReducer(
-  state: SelectState,
-  action: SelectActions
-): SelectState {
+function matchReducer(state: SelectState, action: SelectActions): SelectState {
   const reducer = reducers as Record<
     SelectActionTypes,
     (state: SelectState, action: SelectActions) => SelectState

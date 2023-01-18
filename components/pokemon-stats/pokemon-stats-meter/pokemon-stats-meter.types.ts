@@ -5,6 +5,5 @@ export interface PokemonStatsMeterProps
   totalBars?: number;
   value: number;
   label: string;
-  transitionDuration?: number;
   barContainerClassName?: string;
 }

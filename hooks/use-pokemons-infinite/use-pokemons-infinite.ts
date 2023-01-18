@@ -1,9 +1,14 @@
 import { fetchAsJson, PokemonSpeciesSimple } from "lib";
 import { useCallback, useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
-import { UseHomeArgs, UseHomeReturn } from "./use-home.types";
+import {
+  UsePokemonListArgs,
+  UsePokemonListReturn,
+} from "./use-pokemons-infinite.types";
 
-export default function useHome(pokemonsPerPage: UseHomeArgs): UseHomeReturn {
+export default function usePokemonsInfinite(
+  pokemonsPerPage: UsePokemonListArgs
+): UsePokemonListReturn {
   const { data, error, size, setSize } = useSWRInfinite<{
     result: PokemonSpeciesSimple[];
   }>(
@@ -24,19 +29,20 @@ export default function useHome(pokemonsPerPage: UseHomeArgs): UseHomeReturn {
   return useMemo(() => {
     const isLoadingMore = data ? size > 0 && !data[size - 1] : !error;
     const isEmpty = data?.[0]?.result.length === 0;
-    const hasReachedEnd =
+    const hasFetchedAll =
       isEmpty ||
       (!!data && data[data.length - 1]?.result.length < pokemonsPerPage);
     const pages = data?.map(({ result }) => result) ?? [];
-    const hiddenPage = hasReachedEnd ? [] : pages.pop() ?? [];
+    const hiddenPage = hasFetchedAll ? [] : pages.pop() ?? [];
     const oldPages = pages.flat();
 
     return {
+      currentPage: size,
       pages: isLoadingMore
         ? [oldPages.concat(...hiddenPage), []]
         : [oldPages, hiddenPage],
       isLoadingMore,
-      hasReachedEnd,
+      hasFetchedAll,
       error,
       loadNext,
     };

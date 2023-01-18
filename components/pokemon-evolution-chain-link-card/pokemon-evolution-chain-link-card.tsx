@@ -1,6 +1,7 @@
 import { Badge, PokemonArt } from "components";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
+import { useRouter } from "next/router";
+import { twJoin, twMerge } from "tailwind-merge";
 import { PokemonEvolutionChainLinkCardProps } from "./pokemon-evolution-chain-link-card.types";
 
 export default function PokemonEvolutionChainLinkCard({
@@ -9,11 +10,21 @@ export default function PokemonEvolutionChainLinkCard({
   className,
   ...other
 }: PokemonEvolutionChainLinkCardProps) {
+  const { asPath } = useRouter();
+  const link = `/pokemon/${resourceName}`;
+  const isSamePage = link === asPath;
+
   return (
     <div className="flex flex-col items-center">
       <Link
-        href={`/pokemon/${resourceName}`}
-        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 focus-visible:rounded-full"
+        href={link}
+        onClick={(event) => {
+          if (isSamePage) event.preventDefault();
+        }}
+        className={twJoin(
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 focus-visible:rounded-full",
+          isSamePage && "pointer-events-none"
+        )}
       >
         <div
           {...other}

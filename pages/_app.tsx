@@ -1,11 +1,26 @@
 import { AppShell } from "components";
+import { PokemonViewProvider, ThemeModeProvider } from "contexts";
+import { NextPage } from "next";
 import type { AppProps } from "next/app";
+import { ReactNode } from "react";
 import "../styles/globals.css";
 
-export default function App({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactNode) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <AppShell>
-      <Component {...pageProps} />
-    </AppShell>
+    <ThemeModeProvider>
+      <PokemonViewProvider>
+        <AppShell>{getLayout(<Component {...pageProps} />)}</AppShell>
+      </PokemonViewProvider>
+    </ThemeModeProvider>
   );
 }

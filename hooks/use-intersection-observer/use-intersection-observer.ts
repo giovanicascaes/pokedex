@@ -1,17 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { usePrevious } from "hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   UseIntersectionObserverArgs,
   UseIntersectionObserverReturn,
 } from "./use-intersection-observer.types";
 
-function useIntersectionObserver({
+export default function useIntersectionObserver({
   threshold = 0,
   root = null,
   rootMargin = "0%",
   freezeOnceVisible = false,
+  disconnectOnceVisible = false,
+  disconnectOnceNotVisibleThenNotVisible = false,
 }: UseIntersectionObserverArgs = {}): UseIntersectionObserverReturn {
+  const observerRef = useRef<IntersectionObserver>();
   const [ref, setRef] = useState<Element | null>(null);
   const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
+  const prevIsIntersecting = usePrevious(isIntersecting);
 
   useEffect(() => {
     if (!ref) return;
@@ -24,17 +29,33 @@ function useIntersectionObserver({
       }
     };
     const observerOptions = { threshold, root, rootMargin };
-    const observer = new IntersectionObserver(
+
+    observerRef.current = new IntersectionObserver(
       observerCallback,
       observerOptions
     );
+    observerRef.current.observe(ref);
 
-    observer.observe(ref);
-
-    return () => observer.disconnect();
+    return () => observerRef.current!.disconnect();
     // Disable rule to not trigger rerender when `threshold` is an array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [root, rootMargin, ref, threshold.toString(), freezeOnceVisible]);
+
+  useEffect(() => {
+    if (
+      (disconnectOnceVisible && isIntersecting) ||
+      (disconnectOnceNotVisibleThenNotVisible &&
+        prevIsIntersecting &&
+        !isIntersecting)
+    ) {
+      observerRef.current?.disconnect();
+    }
+  }, [
+    isIntersecting,
+    disconnectOnceVisible,
+    disconnectOnceNotVisibleThenNotVisible,
+    prevIsIntersecting,
+  ]);
 
   return useMemo(
     () => ({
@@ -44,5 +65,3 @@ function useIntersectionObserver({
     [isIntersecting]
   );
 }
-
-export default useIntersectionObserver;

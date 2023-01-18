@@ -4,7 +4,7 @@ import { UIEvent, useCallback, useMemo, useState } from "react";
 export default function useScrollTop() {
   const [scrollTop, setScrollTop] = useState(0);
   const onScroll = useCallback((event: UIEvent) => {
-    setScrollTop(event.currentTarget.scrollTop);
+    if (event.currentTarget) setScrollTop(event.currentTarget.scrollTop);
   }, []);
 
   return useMemo(

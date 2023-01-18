@@ -4,6 +4,8 @@ import { MdClose } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { AbilityOverlayProps } from "./ability-overlay-types";
 
+const TRANSITION_DURATION = 150;
+
 export default function AbilityDescriptionOverlay({
   ability,
   onClose,
@@ -13,7 +15,7 @@ export default function AbilityDescriptionOverlay({
   const [scrollTop, { onScroll }] = useScrollTop();
 
   const transition = useTransition(ability, {
-    config: { duration: 150 },
+    config: { duration: TRANSITION_DURATION },
     from: { opacity: 0, transform: "translateY(-20px)" },
     enter: { opacity: 1, transform: "translateY(0px)" },
     leave: { opacity: 0, transform: "translateY(-20px)" },
@@ -24,7 +26,7 @@ export default function AbilityDescriptionOverlay({
       item && (
         <animated.div
           {...other}
-          className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md"
+          className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md [color-scheme:dark]"
           style={{ ...styles }}
         >
           <div className="text-slate-300 dark:text-slate-400 text-sm flex flex-col h-full">

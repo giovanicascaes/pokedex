@@ -1,8 +1,8 @@
 import PokemonLogo from "assets/img/pokemon-logo.png";
 import { ThemeSwitcher } from "components";
+import { usePokemonView } from "contexts";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Children, forwardRef, Fragment } from "react";
 import { twMerge } from "tailwind-merge";
 import {
@@ -71,7 +71,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   { className, ...other },
   ref
 ) {
-  const { pathname, asPath } = useRouter();
+  const [{ viewingPokemon }] = usePokemonView();
 
   return (
     <header
@@ -86,16 +86,16 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
         <div>
           <Image src={PokemonLogo} alt="Pokémon logo" height={40} />
         </div>
-        {pathname !== "/" && (
+        {viewingPokemon && (
           <Breadcrumb className="ml-4">
             <BreadcrumbItem>
-              <BreadcrumbItemLink href="/">pokemon</BreadcrumbItemLink>
+              <BreadcrumbItemLink href="/">Pokémon</BreadcrumbItemLink>
             </BreadcrumbItem>
             <BreadcrumbItem
               disabled
               className="font-semibold text-red-500 dark:text-red-400"
             >
-              {asPath.split("/").slice(-1)[0]}
+              {viewingPokemon.name}
             </BreadcrumbItem>
           </Breadcrumb>
         )}

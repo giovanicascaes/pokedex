@@ -1,11 +1,12 @@
 import { PokemonSpeciesSimple } from "lib";
 
-export type UseHomeArgs = number;
+export type UsePokemonListArgs = number;
 
-export interface UseHomeReturn {
+export interface UsePokemonListReturn {
+  currentPage: number;
   pages: [PokemonSpeciesSimple[], PokemonSpeciesSimple[]];
   isLoadingMore: boolean;
-  hasReachedEnd: boolean;
+  hasFetchedAll: boolean;
   error: any;
   loadNext: () => void;
 }

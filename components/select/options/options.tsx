@@ -1,7 +1,10 @@
 import { animated, useTransition } from "@react-spring/web";
-import { SelectPopupState, useSelect } from "contexts";
 import { twMerge } from "tailwind-merge";
+import { useSelect } from "../context";
+import { SelectPopupState } from "../select.types";
 import { SelectOptionsProps } from "./options.types";
+
+const TRANSITION_DURATION = 80;
 
 export default function Options({
   children,
@@ -13,7 +16,7 @@ export default function Options({
   const isOpen = popupState !== SelectPopupState.Closed;
 
   const transition = useTransition(isOpen, {
-    config: { duration: 80 },
+    config: { duration: TRANSITION_DURATION },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },

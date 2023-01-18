@@ -1,24 +1,22 @@
 import { animated, easings, useSpring } from "@react-spring/web";
-import { useTheme } from "contexts";
+import { useThemeMode } from "contexts";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { match, range } from "utils";
 import { PokemonStatsMeterProps } from "./pokemon-stats-meter.types";
 
-const DEFAULT_DURATION = 700;
+const TRANSITION_DURATION = 700;
 
-const INITIAL_DELAY = 500;
+const TRANSITION_DELAY = 500;
 
 const MAX_VALUE = 255;
 
-interface TrailProps {
+interface MeterBarProps {
   totalBars: number;
   value: number;
-  duration: number;
 }
 
-function Trail({ totalBars, duration, value }: TrailProps) {
-  const [{ isDark }] = useTheme();
+function MeterBar({ totalBars, value }: MeterBarProps) {
   const valueAsNumberOfBars = useMemo(() => {
     const numberOfBars = (value * totalBars) / MAX_VALUE;
 
@@ -27,10 +25,12 @@ function Trail({ totalBars, duration, value }: TrailProps) {
       : Math.floor(numberOfBars);
   }, [totalBars, value]);
 
+  const [{ isDark }] = useThemeMode();
+
   const styles = useSpring({
     config: {
       easing: easings.easeOutBack,
-      duration,
+      duration: TRANSITION_DURATION,
     },
     from: {
       opacity: 0,
@@ -57,7 +57,7 @@ function Trail({ totalBars, duration, value }: TrailProps) {
         )!
       }%`,
     },
-    delay: INITIAL_DELAY,
+    delay: TRANSITION_DELAY,
   });
 
   const linearGradient = range(1, totalBars * 2 - 1)
@@ -82,7 +82,7 @@ function Trail({ totalBars, duration, value }: TrailProps) {
       }}
     >
       <animated.div
-        className="absolute left-0 w-full h-full before:content-[''] before:absolute before:bg-sk dark:before:bg-inherit before:-bottom-10 before:w-full before:h-10"
+        className="absolute w-full h-full before:content-[''] before:absolute before:bg-inherit dark:before:bg-inherit before:-bottom-10 before:w-full before:h-10"
         style={{
           ...styles,
           backgroundColor: styles.bottom.to(
@@ -99,7 +99,6 @@ export default function PokemonStatsMeter({
   totalBars = 10,
   value,
   label,
-  transitionDuration = DEFAULT_DURATION,
   className,
   barContainerClassName,
   ...other
@@ -115,11 +114,7 @@ export default function PokemonStatsMeter({
           barContainerClassName
         )}
       >
-        <Trail
-          totalBars={totalBars}
-          value={value}
-          duration={transitionDuration}
-        />
+        <MeterBar totalBars={totalBars} value={value} />
       </div>
       <span className="text-2xs font-semibold text-slate-500 text-center my-2">
         {label}

@@ -1,29 +1,33 @@
-import { PokemonGrid } from "components";
-import { useHome, useIntersectionObserver } from "hooks";
+import { PokemonList } from "components";
+import { POKEMONS_PER_PAGE, usePokemonView } from "contexts";
+import { useIntersectionObserver } from "hooks";
 import { getPokemons } from "lib";
 import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 
-const LIMIT = 12;
-
 type HomeProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
-  const {
-    pages: [visiblePages, hiddenPage],
-    hasReachedEnd,
-    error,
-    loadNext,
-  } = useHome(LIMIT);
+  const [
+    {
+      visiblePokemons,
+      hiddenPokemons,
+      hasFetchedAll,
+      isPokemonListScrollEnabled,
+      isPokemonListRendered,
+    },
+    { loadMore, onPokemonListRendered },
+  ] = usePokemonView();
+
   const { isIntersecting, ref: intersectionObserverRef } =
     useIntersectionObserver({
       rootMargin: "20%",
     });
 
   useEffect(() => {
-    if (isIntersecting && !hasReachedEnd) loadNext();
-  }, [isIntersecting, loadNext, hasReachedEnd]);
+    if (isIntersecting && !hasFetchedAll) loadMore();
+  }, [isIntersecting, loadMore, hasFetchedAll]);
 
   return (
     <>
@@ -33,16 +37,21 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-14 py-4 h-full">
-        <PokemonGrid
-          pokemons={[[...serverLoadedPokemons, ...visiblePages], hiddenPage]}
+        <PokemonList
+          pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
+          hiddenPokemons={hiddenPokemons}
+          animateCards={isPokemonListScrollEnabled}
+          onListRendered={onPokemonListRendered}
           className="max-w-[1200px] mx-auto"
         />
-        <div
-          className="w-full text-center font-light text-slate-400 mb-32"
-          ref={intersectionObserverRef}
-        >
-          {hasReachedEnd ? "These are all the Pokémons" : "Loading..."}
-        </div>
+        {isPokemonListRendered && (
+          <div
+            className="w-full text-center font-light text-slate-400 mb-10"
+            ref={intersectionObserverRef}
+          >
+            {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}
+          </div>
+        )}
       </div>
     </>
   );
@@ -51,7 +60,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
 export async function getStaticProps() {
   return {
     props: {
-      serverLoadedPokemons: await getPokemons(LIMIT),
+      serverLoadedPokemons: await getPokemons(POKEMONS_PER_PAGE),
     },
   };
 }
