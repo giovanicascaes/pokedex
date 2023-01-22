@@ -6,6 +6,7 @@ const TRANSITION_DURATION = 150;
 export default function TransitionLayout({
   children,
   onTransitionRest,
+  ...other
 }: TransitionLayoutProps) {
   const transition = useTransition(children, {
     key: children,
@@ -34,7 +35,11 @@ export default function TransitionLayout({
   return (
     <>
       {transition((styles, render) => (
-        <animated.div className="overflow-hidden h-full" style={{ ...styles }}>
+        <animated.div
+          {...other}
+          className="overflow-hidden h-full"
+          style={{ ...styles }}
+        >
           {render}
         </animated.div>
       ))}

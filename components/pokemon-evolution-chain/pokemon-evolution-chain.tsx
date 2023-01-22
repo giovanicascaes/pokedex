@@ -47,7 +47,7 @@ function Arrow({
       {...other}
       size={52}
       className={twMerge(
-        "text-slate-400/70 dark:text-slate-500",
+        "text-slate-400/70 dark:text-slate-400",
         vertical ? "rotate-90" : "mb-5",
         className
       )}

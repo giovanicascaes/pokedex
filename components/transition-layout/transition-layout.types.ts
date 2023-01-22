@@ -6,6 +6,6 @@ export interface TransitionLayoutProps
     "ref"
   > {
   // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLUListElement>;
+  ref?: Ref<HTMLDivElement>;
   onTransitionRest: () => void;
 }

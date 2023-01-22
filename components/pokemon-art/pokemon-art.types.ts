@@ -8,7 +8,7 @@ export interface PokemonArtProps
   // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
   ref?: Ref<HTMLDivElement>;
   artSrc: string | null;
-  name: string;
+  name?: string;
   width: number;
   height: number;
   animate?: boolean;

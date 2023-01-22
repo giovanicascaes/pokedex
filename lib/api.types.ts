@@ -25,7 +25,7 @@ export interface ApiResourced {
   url: ApiResource;
 }
 
-export interface ApiNamedResource extends ApiNamed, ApiResourced {}
+export type ApiNamedResource = ApiNamed & ApiResourced;
 
 export interface ApiPagination {
   count: number;
@@ -47,7 +47,7 @@ export interface ApiAbility extends ApiIdentified, ApiLocalized {
   effect_entries: ApiVerboseEffect[];
 }
 
-export interface ApiStat extends ApiIdentified, ApiLocalized {}
+export type ApiStat = ApiIdentified & ApiLocalized;
 
 export interface ApiTypeRelations {
   no_damage_to: ApiNamedResource[];
@@ -125,7 +125,7 @@ export interface ApiEvolutionChain extends ApiIdentified {
   chain: ApiEvolutionChainLink;
 }
 
-export interface ApiPokemonShape extends ApiNamed, ApiLocalized {}
+export type ApiPokemonShape = ApiNamed & ApiLocalized;
 
 export interface ApiPokemonSpecies
   extends ApiNamed,

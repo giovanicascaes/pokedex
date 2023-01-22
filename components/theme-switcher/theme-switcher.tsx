@@ -1,6 +1,7 @@
 import { animated, easings, useTransition } from "@react-spring/web";
 import { Select } from "components";
 import { ThemeMode, useThemeMode } from "contexts";
+import { usePrevious } from "hooks";
 import { useEffect, useState } from "react";
 import {
   HiOutlineComputerDesktop,
@@ -74,9 +75,13 @@ function OptionsPopup({ open }: { open: boolean }) {
   );
 }
 
-export default function ThemeSwitcher(props: ThemeSwitcherProps) {
+export default function ThemeSwitcher({
+  buttonClassName,
+  ...other
+}: ThemeSwitcherProps) {
   const [animate, setAnimate] = useState(false);
   const [{ themeMode }, { setThemeMode }] = useThemeMode();
+  const prevThemeMode = usePrevious(themeMode);
 
   const transitions = useTransition(themeMode, {
     keys: null,
@@ -85,26 +90,24 @@ export default function ThemeSwitcher(props: ThemeSwitcherProps) {
     leave: { opacity: 0, transform: "translate3d(100%,0,0)" },
     config: { duration: 150, easing: easings.linear },
     exitBeforeEnter: true,
-    immediate: !animate,
   });
 
   useEffect(() => {
-    setAnimate(true);
-  }, []);
+    if (prevThemeMode && prevThemeMode !== themeMode) {
+      setAnimate(true);
+    }
+  }, [prevThemeMode, themeMode]);
 
   return (
     <Select
-      {...props}
+      {...other}
       value={themeMode}
       onChange={setThemeMode}
       className="w-min"
     >
-      <Select.Button
-        variant="unstyled"
-        className="w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
-      >
+      <Select.Button variant="unstyled" className={buttonClassName}>
         {transitions((styles, theme) => (
-          <animated.div style={{ ...styles }}>
+          <animated.div style={{ ...(animate && styles) }}>
             {getThemeModeIcon(theme)}
           </animated.div>
         ))}

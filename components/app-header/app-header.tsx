@@ -1,68 +1,32 @@
+import { animated, easings, useTransition } from "@react-spring/web";
 import PokemonLogo from "assets/img/pokemon-logo.png";
-import { ThemeSwitcher } from "components";
+import { Breadcrumb, ThemeSwitcher } from "components";
 import { usePokemonView } from "contexts";
+import { POKEDEX_LINK_ELEMENT_ID } from "lib";
 import Image from "next/image";
 import Link from "next/link";
-import { Children, forwardRef, Fragment } from "react";
+import { useRouter } from "next/router";
+import { forwardRef } from "react";
+import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import { twMerge } from "tailwind-merge";
-import {
-  AppHeaderBreadcrumbItemLinkProps,
-  AppHeaderBreadcrumbItemProps,
-  AppHeaderBreadcrumbProps,
-  AppHeaderProps,
-} from "./app-header.types";
+import { AppHeaderProps } from "./app-header.types";
 
-function BreadcrumbItemLink({
-  href,
-  className,
-  ...props
-}: AppHeaderBreadcrumbItemLinkProps) {
-  return (
-    <Link
-      {...props}
-      href={href}
-      className={twMerge(
-        "cursor-pointer focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 focus-visible:border-opacity-50 dark:focus-visible:border-red-400",
-        className
-      )}
-    />
-  );
-}
+const BREADCRUMB_TRANSITION_DURATION = 150;
 
-function BreadcrumbItem({
-  disabled,
-  className,
-  ...other
-}: AppHeaderBreadcrumbItemProps) {
-  return (
-    <span
-      {...other}
-      className={twMerge(
-        "font-medium text-sm text-slate-500 dark:text-slate-300 rounded-full px-2.5 py-1 transition-colors",
-        !disabled && "hover:text-black dark:hover:text-white",
-        className
-      )}
-    />
-  );
-}
+const actionButtonClassName =
+  "w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white";
 
-function Breadcrumb({
-  children,
-  className,
-  ...other
-}: AppHeaderBreadcrumbProps) {
+function ActionButtons() {
   return (
-    <div {...other} className={twMerge("space-x-1", className)}>
-      {Children.map(children, (child, i) => (
-        <Fragment key={i}>
-          {child}
-          {i !== Children.count(children) - 1 && (
-            <span className="text-slate-300 dark:text-slate-500 font-semibold">
-              /
-            </span>
-          )}
-        </Fragment>
-      ))}
+    <div className="flex space-x-4 items-center">
+      <Link
+        id={POKEDEX_LINK_ELEMENT_ID}
+        href="/pokedex"
+        className={actionButtonClassName}
+      >
+        <HiOutlineDevicePhoneMobile size={20} />
+      </Link>
+      <ThemeSwitcher buttonClassName={actionButtonClassName} />
     </div>
   );
 }
@@ -71,7 +35,28 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   { className, ...other },
   ref
 ) {
+  const { pathname } = useRouter();
   const [{ viewingPokemon }] = usePokemonView();
+
+  const shouldShowBreadCrumb =
+    pathname !== "/" && (pathname !== "/pokemon/[key]" || !!viewingPokemon);
+
+  const transition = useTransition(shouldShowBreadCrumb, {
+    config: {
+      easing: easings.linear,
+      duration: BREADCRUMB_TRANSITION_DURATION,
+    },
+    from: {
+      opacity: 0,
+    },
+    enter: {
+      opacity: 1,
+    },
+    leave: {
+      opacity: 0,
+    },
+    exitBeforeEnter: true,
+  });
 
   return (
     <header
@@ -86,21 +71,26 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
         <div>
           <Image src={PokemonLogo} alt="Pokémon logo" height={40} />
         </div>
-        {viewingPokemon && (
-          <Breadcrumb className="ml-4">
-            <BreadcrumbItem>
-              <BreadcrumbItemLink href="/">Pokémon</BreadcrumbItemLink>
-            </BreadcrumbItem>
-            <BreadcrumbItem
-              disabled
-              className="font-semibold text-red-500 dark:text-red-400"
-            >
-              {viewingPokemon.name}
-            </BreadcrumbItem>
-          </Breadcrumb>
+        {transition(
+          (styles, show) =>
+            show && (
+              <animated.div style={{ ...styles }}>
+                <Breadcrumb className="ml-4">
+                  <Breadcrumb.Item>
+                    <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item
+                    disabled
+                    className="font-semibold text-red-500 dark:text-red-400"
+                  >
+                    {viewingPokemon?.name ?? "Pokédex"}
+                  </Breadcrumb.Item>
+                </Breadcrumb>
+              </animated.div>
+            )
         )}
       </div>
-      <ThemeSwitcher />
+      <ActionButtons />
     </header>
   );
 });

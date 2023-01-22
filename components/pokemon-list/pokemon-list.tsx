@@ -3,67 +3,35 @@ import {
   Controller,
   ControllerUpdate,
   easings,
-  useSpring,
+  useSpring
 } from "@react-spring/web";
-import { PokemonCard } from "components";
-import { useIntersectionObserver, usePrevious } from "hooks";
+import { PokemonCard, ViewportAwarePokemonCard } from "components";
+import PokemonCatchAnimation from "components/pokemon-catch-animation/pokemon-catch-animation";
 import { PokemonSpeciesSimple } from "lib";
 import {
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { twMerge } from "tailwind-merge";
 import {
-  AnimatedCardsTrailProps,
   PokemonListProps,
-  ViewportAwarePokemonCardProps,
+  VisiblePokemonListProps
 } from "./pokemon-list.types";
 
-const TRAIL_TRANSITION_DELAY = 50;
+const VISIBLE_CARDS_TRAIL_DELAY = 50;
 
 const CARD_TRANSITION_DURATION = 100;
 
-const INITIAL_FADE_TRANSITION_DURATION = 150;
+const LIST_RANSITION_DURATION = 150;
 
-function ViewportAwarePokemonCard({
-  onIntersectionChange,
-  id,
-  ...other
-}: ViewportAwarePokemonCardProps) {
-  const { isIntersecting, ref: intersectionObserverRef } =
-    useIntersectionObserver({
-      threshold: [0.1, 0.9],
-      disconnectOnceNotVisibleThenNotVisible: true,
-    });
-  const prevIsIntersecting = usePrevious(isIntersecting);
-
-  useEffect(() => {
-    if (
-      prevIsIntersecting !== undefined &&
-      prevIsIntersecting !== isIntersecting
-    ) {
-      onIntersectionChange(isIntersecting, id);
-    }
-  }, [id, isIntersecting, onIntersectionChange, prevIsIntersecting]);
-
-  return (
-    <PokemonCard
-      key={id}
-      identifier={id}
-      {...other}
-      ref={intersectionObserverRef}
-    />
-  );
-}
-
-function AnimatedCardsTrail({
+function VisiblePokemonsList({
   pokemons,
   animateCards,
   onListRendered,
-}: AnimatedCardsTrailProps) {
+}: VisiblePokemonListProps) {
   const animationData = useRef<{
     controllers: {
       [k: number]: Controller;
@@ -78,6 +46,10 @@ function AnimatedCardsTrail({
   >([]);
   const [isImmediateAnimationsDone, setIsImmediateAnimationsDone] =
     useState(true);
+  const [pokemonBeingCaught, setPokemonBeingCaught] = useState<{
+    id: number;
+    artPosition: Omit<DOMRect, "toJSON">;
+  } | null>(null);
 
   useEffect(() => {
     animationData.current.controllers = {
@@ -169,7 +141,7 @@ function AnimatedCardsTrail({
       const props = {
         opacity: 1,
         transform: "translateY(0)",
-        delay: TRAIL_TRANSITION_DELAY,
+        delay: VISIBLE_CARDS_TRAIL_DELAY,
         onStart: () => {
           playNextAnimation();
         },
@@ -212,11 +184,18 @@ function AnimatedCardsTrail({
     [animateCard, isImmediateAnimationsDone, skipCardAnimation]
   );
 
-  // Hack to lessen performance visual issues
+  const handleOnPokemonAddedToPokedex = useCallback(
+    (pokemon: PokemonSpeciesSimple) => {
+      setPokemonBeingCaught(null);
+    },
+    []
+  );
+
+  // Hack to hide visual issues of list animation performance
   const transition = useSpring({
     config: {
       easing: easings.linear,
-      duration: INITIAL_FADE_TRANSITION_DURATION,
+      duration: LIST_RANSITION_DURATION,
     },
     from: {
       opacity: 0,
@@ -234,17 +213,35 @@ function AnimatedCardsTrail({
         return (
           <animated.li
             key={pokemon.id}
+            className="flex items-center justify-center"
             style={{
               ...controller.springs,
             }}
           >
-            <animated.div style={{ ...transition }}>
+            <animated.div
+              style={{
+                ...transition,
+              }}
+            >
               <ViewportAwarePokemonCard
                 {...pokemon}
                 onIntersectionChange={handleIntersectionChange}
                 animateArt={isImmediateAnimationsDone}
+                onCatchPokemon={(artPosition) => {
+                  setPokemonBeingCaught({
+                    id: pokemon.id,
+                    artPosition,
+                  });
+                }}
               />
             </animated.div>
+            {pokemon.id === pokemonBeingCaught?.id && (
+              <PokemonCatchAnimation
+                pokemonArtPosition={pokemonBeingCaught.artPosition}
+                artSrc={pokemon.artSrc}
+                onAddedToPokedex={() => handleOnPokemonAddedToPokedex(pokemon)}
+              />
+            )}
           </animated.li>
         );
       })}
@@ -268,7 +265,7 @@ export default function PokemonList({
         className
       )}
     >
-      <AnimatedCardsTrail {...{ pokemons, animateCards, onListRendered }} />
+      <VisiblePokemonsList {...{ pokemons, animateCards, onListRendered }} />
       {hiddenPokemons.length > 0 &&
         hiddenPokemons.map(({ id, ...other }) => (
           <li key={id} className="hidden">

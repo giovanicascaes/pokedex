@@ -7,4 +7,5 @@ export interface ThemeSwitcherProps
   > {
   // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
   ref?: Ref<HTMLDivElement>;
+  buttonClassName?: HTMLAttributes<HTMLDivElement>["className"];
 }

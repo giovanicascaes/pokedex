@@ -2,6 +2,7 @@ import { Inter } from "@next/font/google";
 import { AppHeader, PageLoadingIndicator, TransitionLayout } from "components";
 import { useThemeMode } from "contexts";
 import { useAppScrollTop } from "hooks";
+import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AppShellProps } from "./app-shell.types";
@@ -21,16 +22,13 @@ export default function AppShell({ children }: AppShellProps) {
   if (isSsrReady) {
     return (
       <main
-        className="h-full overflow-auto relative"
+        className="h-full overflow-auto"
         onScroll={onScroll}
         ref={scrollRef}
       >
         <div
-          className={twMerge(
-            inter.variable,
-            "font-sans relative",
-            transitionClassNames
-          )}
+          id={SHELL_LAYOUT_CONTAINER_ELEMENT_ID}
+          className={twMerge(inter.variable, "font-sans", transitionClassNames)}
         >
           <PageLoadingIndicator />
           <AppHeader className="sticky top-0 z-40" />

@@ -29,7 +29,7 @@ export default function PokemonEvolutionChainLinkCard({
         <div
           {...other}
           className={twMerge(
-            "rounded-full bg-slate-300/70 dark:bg-slate-500/50 p-4 border-4 border-white dark:border-slate-200/70 shadow-md dark:shadow-black/50",
+            "rounded-full bg-slate-300/70 dark:bg-slate-500/80 p-4 border-4 border-white dark:border-slate-200/80 shadow-md dark:shadow-black/50",
             className
           )}
         >

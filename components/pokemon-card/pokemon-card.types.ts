@@ -8,4 +8,5 @@ export interface PokemonCardProps
   resourceName: string;
   name: string;
   animateArt?: boolean;
+  onCatchPokemon?: (artPosition: Omit<DOMRect, "toJSON">) => void;
 }
