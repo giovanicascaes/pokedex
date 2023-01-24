@@ -7,14 +7,13 @@ import {
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
-import { range } from "utils";
 import { PokemonArt } from "../pokemon-art";
 import { POKEBALL_SIZE } from "./constants";
 import { PokemonCatchAnimationProps } from "./pokemon-change-animation.types";
 
-const CATCH_ANIMATION_DURATION = 300;
+const CATCH_ANIMATION_DURATION = 100;
 
-const MOVE_ANIMATION_DURATION = 1300;
+const MOVE_ANIMATION_DURATION = 1200;
 
 export default function PokemonCatchAnimation({
   artPosition: { left, top, width, height },
@@ -37,14 +36,10 @@ export default function PokemonCatchAnimation({
     from: {
       backgroundColor: "rgba(255,255,255,0)",
       filter: "brightness(1) invert(0)",
-      scale: 1,
-      x: 0,
     },
     to: {
       backgroundColor: "rgba(255,255,255,1)",
       filter: "brightness(0) invert(1)",
-      scale: 1.3,
-      x: 1,
     },
     onRest: () => {
       setIsCaught(true);
@@ -88,12 +83,12 @@ export default function PokemonCatchAnimation({
       isCaught
         ? {
             backgroundColor: moveStyles.x
-              .to([0, 0.15, 1], [1, 0, 0])
+              .to([0, 0.084, 1], [1, 0, 0])
               .to((value) => `rgba(255,255,255,${value})`),
             filter: to(
               [
-                moveStyles.x.to([0, 0.15, 1], [0, 1, 1]),
-                moveStyles.x.to([0, 0.15, 1], [1, 0, 0]),
+                moveStyles.x.to([0, 0.084, 1], [0, 1, 1]),
+                moveStyles.x.to([0, 0.084, 1], [1, 0, 0]),
               ],
               (brightness, invert) =>
                 `brightness(${brightness}) invert(${invert})`
@@ -126,18 +121,8 @@ export default function PokemonCatchAnimation({
           }
         : {
             ...catchStyles,
-            x: catchStyles.x.to(
-              range(0, 10).map((i) => i * 0.1),
-              range(0, 10)
-                .map((i) => ++i)
-                .map((i) => left + (i % 2 !== 0 ? (i + 1) * -1 : i))
-            ),
-            y: catchStyles.x.to(
-              range(0, 10).map((i) => i * 0.1),
-              range(0, 10)
-                .map((i) => (i % 2 !== 0 ? i + 1 : i))
-                .map((i) => top + ((i / 2) % 2 !== 0 ? i * -1 : i))
-            ),
+            x: left,
+            y: top,
           },
     [
       pokeballEndLeft,

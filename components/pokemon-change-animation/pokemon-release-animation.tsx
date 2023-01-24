@@ -1,21 +1,21 @@
-import { animated, easings, to, useSpring } from "@react-spring/web";
+import { animated, to, useSpring } from "@react-spring/web";
 import Pokeball from "assets/img/pokeball.png";
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
-import { PokemonReleaseAnimationProps } from "../pokemon-release-animation/pokemon-release-animation.types";
 import { POKEBALL_SIZE } from "./constants";
+import { PokemonReleaseAnimationProps } from "./pokemon-change-animation.types";
 
 const POKEBALL_ANIMATION_DURATION = 400;
 
-const RELEASE_ANIMATION_DURATION = 1500;
+const RELEASE_ANIMATION_DURATION = 480;
 
 export default function PokemonReleaseAnimation({
   artPosition: { left, top, width, height },
   artSrc,
-  onFinish: onRemovedFromPokedex,
+  onFinish,
 }: PokemonReleaseAnimationProps) {
   const [isReleased, setIsReleased] = useState(false);
 
@@ -28,7 +28,6 @@ export default function PokemonReleaseAnimation({
     },
     config: {
       duration: POKEBALL_ANIMATION_DURATION,
-      easing: easings.linear,
     },
     onRest: () => {
       setIsReleased(true);
@@ -39,14 +38,14 @@ export default function PokemonReleaseAnimation({
       x: 0,
     },
     to: {
-      x: 1,
+      x: isReleased ? 1 : 0,
     },
     config: {
       duration: RELEASE_ANIMATION_DURATION,
-      easing: easings.linear,
     },
+    delay: 100,
     onRest: () => {
-      onRemovedFromPokedex?.();
+      onFinish?.();
     },
   });
 
@@ -65,19 +64,20 @@ export default function PokemonReleaseAnimation({
         ? {
             left,
             top,
-            scale: 1.3,
             backgroundColor: releaseStyles.x
-              .to([0, 0.5, 1], [1, 0, 0])
+              .to([0, 0.21, 1], [1, 0, 0])
               .to((value) => `rgba(255,255,255,${value})`),
             filter: to(
               [
-                releaseStyles.x.to([0, 0.5, 1], [0, 1, 1]),
-                releaseStyles.x.to([0, 0.5, 1], [1, 0, 0]),
+                releaseStyles.x.to([0, 0.21, 1], [0, 1, 1]),
+                releaseStyles.x.to([0, 0.21, 1], [1, 0, 0]),
               ],
               (brightness, invert) =>
                 `brightness(${brightness}) invert(${invert})`
             ),
-            opacity: releaseStyles.x.to([0, 0.7, 1], [1, 1, 0]),
+            transform: releaseStyles.x
+              .to([0, 0.75, 1], [1, 1, 0])
+              .to((value) => `scale(${value})`),
           }
         : {
             left: pokeballStartLeft,
@@ -85,14 +85,14 @@ export default function PokemonReleaseAnimation({
             scale: pokeballStyles.x.to([0, 0.2, 1], [0, 1, 1]),
             filter: to(
               [
-                pokeballStyles.x.to([0, 0.5, 1], [1, 1, 0]),
-                pokeballStyles.x.to([0, 0.5, 1], [0, 0, 1]),
+                pokeballStyles.x.to([0, 0.75, 1], [1, 1, 0]),
+                pokeballStyles.x.to([0, 0.75, 1], [0, 0, 1]),
               ],
               (brightness, invert) =>
                 `brightness(${brightness}) invert(${invert})`
             ),
             backgroundColor: pokeballStyles.x
-              .to([0, 0.5, 1], [0, 0, 1])
+              .to([0, 0.75, 1], [0, 0, 1])
               .to((value) => `rgba(255,255,255,${value})`),
           },
     [
