@@ -12,7 +12,7 @@ export default function Badge({
     <div
       {...other}
       className={twMerge(
-        "flex h-min text-xs font-semibold uppercase px-2 py-1 rounded",
+        "flex items-center justify-center h-min text-xs font-semibold uppercase px-2 py-1 rounded",
         variant === "rounded" && "rounded-full px-1.5 py-0.5",
         match(
           {

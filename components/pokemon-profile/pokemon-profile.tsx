@@ -1,4 +1,4 @@
-import { AbilityOverlay } from "components/ability-overlay";
+import { AbilityOverlay } from "components";
 import { Ability } from "lib";
 import { ReactNode, useMemo, useState } from "react";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";

@@ -3,22 +3,26 @@ import {
   Controller,
   ControllerUpdate,
   easings,
-  useSpring
+  useSpring,
 } from "@react-spring/web";
-import { PokemonCard, ViewportAwarePokemonCard } from "components";
-import PokemonCatchAnimation from "components/pokemon-catch-animation/pokemon-catch-animation";
+import {
+  PokemonCard,
+  PokemonChangeAnimation,
+  ViewportAwarePokemonCard,
+} from "components";
+import { usePokemonView } from "contexts";
 import { PokemonSpeciesSimple } from "lib";
 import {
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { twMerge } from "tailwind-merge";
 import {
   PokemonListProps,
-  VisiblePokemonListProps
+  VisiblePokemonListProps,
 } from "./pokemon-list.types";
 
 const VISIBLE_CARDS_TRAIL_DELAY = 50;
@@ -26,6 +30,11 @@ const VISIBLE_CARDS_TRAIL_DELAY = 50;
 const CARD_TRANSITION_DURATION = 100;
 
 const LIST_RANSITION_DURATION = 150;
+
+interface PokemonBeingChanged {
+  id: number;
+  artPosition: Omit<DOMRect, "toJSON">;
+}
 
 function VisiblePokemonsList({
   pokemons,
@@ -44,12 +53,14 @@ function VisiblePokemonsList({
   const [renderablePokemons, setRenderablePokemons] = useState<
     PokemonSpeciesSimple[]
   >([]);
-  const [isImmediateAnimationsDone, setIsImmediateAnimationsDone] =
+  const [isBackToListAnimationsDone, setIsBackToListAnimationsDone] =
     useState(true);
-  const [pokemonBeingCaught, setPokemonBeingCaught] = useState<{
-    id: number;
-    artPosition: Omit<DOMRect, "toJSON">;
-  } | null>(null);
+  const [pokemonBeingChanged, setPokemonBeingChanged] =
+    useState<PokemonBeingChanged | null>(null);
+  const [
+    { pokedex },
+    { addPokemonToPokedex: addPokemonToPoked, removePokemonFromPokedex },
+  ] = usePokemonView();
 
   useEffect(() => {
     animationData.current.controllers = {
@@ -86,12 +97,12 @@ function VisiblePokemonsList({
 
   useEffect(() => {
     if (!animateCards) {
-      setIsImmediateAnimationsDone(false);
+      setIsBackToListAnimationsDone(false);
     }
   }, [animateCards]);
 
   useEffect(() => {
-    if (!isImmediateAnimationsDone && animationData.current.queue.length > 0) {
+    if (!isBackToListAnimationsDone && animationData.current.queue.length > 0) {
       let hasReachedViewport = false;
 
       Object.entries(animationData.current.controllers).forEach(
@@ -119,10 +130,10 @@ function VisiblePokemonsList({
 
       if (hasReachedViewport) {
         animationData.current.queue = [];
-        setIsImmediateAnimationsDone(true);
+        setIsBackToListAnimationsDone(true);
       }
     }
-  }, [isImmediateAnimationsDone, renderablePokemons]);
+  }, [isBackToListAnimationsDone, renderablePokemons]);
 
   const playNextAnimation = useCallback(() => {
     animationData.current.queue.shift();
@@ -174,21 +185,27 @@ function VisiblePokemonsList({
 
   const handleIntersectionChange = useCallback(
     (isIntersecting: boolean, id: number) => {
-      if (isImmediateAnimationsDone) {
+      if (isBackToListAnimationsDone) {
         if (isIntersecting) animateCard(id);
         else skipCardAnimation(id);
       } else {
         animationData.current.queue.push({ id, props: {} });
       }
     },
-    [animateCard, isImmediateAnimationsDone, skipCardAnimation]
+    [animateCard, isBackToListAnimationsDone, skipCardAnimation]
   );
 
-  const handleOnPokemonAddedToPokedex = useCallback(
+  const handleOnPokemonChanged = useCallback(
     (pokemon: PokemonSpeciesSimple) => {
-      setPokemonBeingCaught(null);
+      if (pokedex.some(({ id }) => id === pokemon.id)) {
+        removePokemonFromPokedex(pokemon.id);
+      } else {
+        addPokemonToPoked(pokemon);
+      }
+
+      setPokemonBeingChanged(null);
     },
-    []
+    [addPokemonToPoked, pokedex, removePokemonFromPokedex]
   );
 
   // Hack to hide visual issues of list animation performance
@@ -201,7 +218,7 @@ function VisiblePokemonsList({
       opacity: 0,
     },
     to: {
-      opacity: isImmediateAnimationsDone ? 1 : 0,
+      opacity: isBackToListAnimationsDone ? 1 : 0,
     },
   });
 
@@ -209,6 +226,8 @@ function VisiblePokemonsList({
     <>
       {renderablePokemons.map((pokemon) => {
         const controller = animationData.current.controllers[pokemon.id];
+        const isBeingChanged = pokemon.id === pokemonBeingChanged?.id;
+        const isCaught = pokedex.some(({ id }) => id === pokemon.id);
 
         return (
           <animated.li
@@ -226,20 +245,25 @@ function VisiblePokemonsList({
               <ViewportAwarePokemonCard
                 {...pokemon}
                 onIntersectionChange={handleIntersectionChange}
-                animateArt={isImmediateAnimationsDone}
-                onCatchPokemon={(artPosition) => {
-                  setPokemonBeingCaught({
+                animateArt={isBackToListAnimationsDone}
+                onPokemonChanged={(artRef) => {
+                  setPokemonBeingChanged({
                     id: pokemon.id,
-                    artPosition,
+                    artPosition: artRef.current
+                      ?.getBoundingClientRect()
+                      .toJSON(),
                   });
                 }}
+                canChange={!isBeingChanged}
+                isCaught={isCaught}
               />
             </animated.div>
-            {pokemon.id === pokemonBeingCaught?.id && (
-              <PokemonCatchAnimation
-                pokemonArtPosition={pokemonBeingCaught.artPosition}
+            {isBeingChanged && (
+              <PokemonChangeAnimation
+                artPosition={pokemonBeingChanged.artPosition}
                 artSrc={pokemon.artSrc}
-                onAddedToPokedex={() => handleOnPokemonAddedToPokedex(pokemon)}
+                onFinish={() => handleOnPokemonChanged(pokemon)}
+                isBeingCaught={!isCaught}
               />
             )}
           </animated.li>

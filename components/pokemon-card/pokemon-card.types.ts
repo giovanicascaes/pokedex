@@ -1,5 +1,5 @@
 import { PokemonArtProps } from "components";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes, RefObject } from "react";
 
 export interface PokemonCardProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
@@ -8,5 +8,7 @@ export interface PokemonCardProps
   resourceName: string;
   name: string;
   animateArt?: boolean;
-  onCatchPokemon?: (artPosition: Omit<DOMRect, "toJSON">) => void;
+  onPokemonChanged?: (artRef: RefObject<HTMLElement>) => void;
+  canChange?: boolean;
+  isCaught?: boolean;
 }

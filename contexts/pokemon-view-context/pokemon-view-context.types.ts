@@ -4,12 +4,49 @@ import { ReactNode } from "react";
 export enum PokemonViewActionTypes {
   SetViewingPokemon,
   ClearViewingPokemon,
+  SetPokemonListRendered,
+  SetPokemonListScrollEnabled,
+  AddPokemonToPokedex,
+  RemovePokemonFromPokedex,
 }
+
+export interface PokmeonViewState {
+  viewingPokemon: PokemonSpeciesDetailed | null;
+  isPokemonListRendered: boolean;
+  isPokemonListScrollEnabled: boolean;
+  pokedex: PokemonSpeciesSimple[];
+}
+
+export type PokmeonViewActions =
+  | {
+      type: PokemonViewActionTypes.SetViewingPokemon;
+      pokemon: PokemonSpeciesDetailed;
+    }
+  | {
+      type: PokemonViewActionTypes.ClearViewingPokemon;
+    }
+  | {
+      type: PokemonViewActionTypes.SetPokemonListRendered;
+      rendered: boolean;
+    }
+  | {
+      type: PokemonViewActionTypes.SetPokemonListScrollEnabled;
+      enabled: boolean;
+    }
+  | {
+      type: PokemonViewActionTypes.AddPokemonToPokedex;
+      pokemon: PokemonSpeciesSimple;
+    }
+  | {
+      type: PokemonViewActionTypes.RemovePokemonFromPokedex;
+      id: number;
+    };
 
 export interface PokemonViewContextData {
   currentPage: number;
   visiblePokemons: PokemonSpeciesSimple[];
   hiddenPokemons: PokemonSpeciesSimple[];
+  pokedex: PokemonSpeciesSimple[];
   viewingPokemon: PokemonSpeciesDetailed | null;
   hasFetchedAll: boolean;
   isPokemonListRendered: boolean;
@@ -22,6 +59,8 @@ export interface PokemonViewContextActions {
   clearViewingPokemon: () => void;
   onPokemonListRendered: () => void;
   onPokemonListScrollRestored: () => void;
+  addPokemonToPokedex: (pokemon: PokemonSpeciesSimple) => void;
+  removePokemonFromPokedex: (id: number) => void;
 }
 
 export type PokemonViewContextValue = [

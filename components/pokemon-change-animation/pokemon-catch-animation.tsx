@@ -9,22 +9,19 @@ import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { range } from "utils";
 import { PokemonArt } from "../pokemon-art";
-import { PokemonCatchAnimationProps } from "./pokemon-catch-animation.types";
+import { POKEBALL_SIZE } from "./constants";
+import { PokemonCatchAnimationProps } from "./pokemon-change-animation.types";
 
-const CATCHING_POKEMON_SIZE = 220;
-
-const POKEBALL_SIZE = 110;
-
-const CATCH_ANIMATION_DURATION = 400;
+const CATCH_ANIMATION_DURATION = 300;
 
 const MOVE_ANIMATION_DURATION = 1300;
 
 export default function PokemonCatchAnimation({
-  pokemonArtPosition: { left, top, width, height },
+  artPosition: { left, top, width, height },
   artSrc,
-  onAddedToPokedex,
+  onFinish,
 }: PokemonCatchAnimationProps) {
-  const [isCaught, setIsCatchd] = useState(false);
+  const [isCaught, setIsCaught] = useState(false);
 
   const {
     left: pokedexLeft,
@@ -38,13 +35,19 @@ export default function PokemonCatchAnimation({
       duration: CATCH_ANIMATION_DURATION,
     },
     from: {
+      backgroundColor: "rgba(255,255,255,0)",
+      filter: "brightness(1) invert(0)",
+      scale: 1,
       x: 0,
     },
     to: {
+      backgroundColor: "rgba(255,255,255,1)",
+      filter: "brightness(0) invert(1)",
+      scale: 1.3,
       x: 1,
     },
     onRest: () => {
-      setIsCatchd(true);
+      setIsCaught(true);
     },
   });
   const moveStyles = useSpring({
@@ -59,23 +62,23 @@ export default function PokemonCatchAnimation({
     },
     delay: 100,
     onRest: () => {
-      onAddedToPokedex?.();
+      onFinish?.();
     },
   });
 
-  const animationLeftStart = useMemo(
+  const pokeballStartLeft = useMemo(
     () => left + (width - POKEBALL_SIZE) / 2,
     [left, width]
   );
-  const animationLeftEnd = useMemo(
+  const pokeballEndLeft = useMemo(
     () => pokedexLeft - POKEBALL_SIZE / 2 + pokedexWidth / 2,
     [pokedexLeft, pokedexWidth]
   );
-  const animationTopStart = useMemo(
+  const pokeballStartTop = useMemo(
     () => top + (height - POKEBALL_SIZE) / 2,
     [height, top]
   );
-  const animationTopEnd = useMemo(
+  const pokeballEndTop = useMemo(
     () => pokedexTop - POKEBALL_SIZE / 2 + pokedexHeight / 2,
     [pokedexHeight, pokedexTop]
   );
@@ -84,38 +87,33 @@ export default function PokemonCatchAnimation({
     () =>
       isCaught
         ? {
-            backgroundColor: moveStyles.x.to(
-              [0, 0.15, 1],
+            backgroundColor: moveStyles.x
+              .to([0, 0.15, 1], [1, 0, 0])
+              .to((value) => `rgba(255,255,255,${value})`),
+            filter: to(
               [
-                "rgba(255,255,255,1)",
-                "rgba(255,255,255,0)",
-                "rgba(255,255,255,0)",
-              ]
-            ),
-            filter: moveStyles.x.to(
-              [0, 0.15, 1],
-              [
-                "brightness(0) invert(1)",
-                "brightness(1) invert(0)",
-                "brightness(1) invert(0)",
-              ]
+                moveStyles.x.to([0, 0.15, 1], [0, 1, 1]),
+                moveStyles.x.to([0, 0.15, 1], [1, 0, 0]),
+              ],
+              (brightness, invert) =>
+                `brightness(${brightness}) invert(${invert})`
             ),
             left: moveStyles.x.to(
               [0, 0.3, 0.8, 1],
               [
-                animationLeftStart,
-                animationLeftStart,
-                animationLeftEnd,
-                animationLeftEnd,
+                pokeballStartLeft,
+                pokeballStartLeft,
+                pokeballEndLeft,
+                pokeballEndLeft,
               ]
             ),
             top: moveStyles.x.to(
               [0, 0.3, 0.8, 1],
               [
-                animationTopStart,
-                animationTopStart,
-                animationTopEnd,
-                animationTopEnd,
+                pokeballStartTop,
+                pokeballStartTop,
+                pokeballEndTop,
+                pokeballEndTop,
               ]
             ),
             transform: to(
@@ -127,15 +125,7 @@ export default function PokemonCatchAnimation({
             ),
           }
         : {
-            backgroundColor: catchStyles.x.to(
-              [0, 1],
-              ["rgba(255,255,255,0)", "rgba(255,255,255,1)"]
-            ),
-            filter: catchStyles.x.to(
-              [0, 1],
-              ["brightness(1) invert(0)", "brightness(0) invert(1)"]
-            ),
-            scale: catchStyles.x.to([0, 1], [1, 1.2]),
+            ...catchStyles,
             x: catchStyles.x.to(
               range(0, 10).map((i) => i * 0.1),
               range(0, 10)
@@ -150,11 +140,11 @@ export default function PokemonCatchAnimation({
             ),
           },
     [
-      animationLeftEnd,
-      animationLeftStart,
-      animationTopEnd,
-      animationTopStart,
-      catchStyles.x,
+      pokeballEndLeft,
+      pokeballStartLeft,
+      pokeballEndTop,
+      pokeballStartTop,
+      catchStyles,
       isCaught,
       left,
       moveStyles.x,
@@ -169,7 +159,7 @@ export default function PokemonCatchAnimation({
         style={{ backgroundColor }}
       />
       <animated.div
-        className="absolute top-0 left-0 origin-[center] z-50"
+        className="absolute top-0 left-0 origin-center z-50"
         style={{ ...styles }}
       >
         {isCaught ? (
@@ -177,8 +167,8 @@ export default function PokemonCatchAnimation({
         ) : (
           <PokemonArt
             artSrc={artSrc}
-            width={CATCHING_POKEMON_SIZE}
-            height={CATCHING_POKEMON_SIZE}
+            width={width}
+            height={height}
             animate={false}
           />
         )}

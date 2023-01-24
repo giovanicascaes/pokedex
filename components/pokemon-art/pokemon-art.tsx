@@ -5,7 +5,16 @@ import { twMerge } from "tailwind-merge";
 import { PokemonArtProps } from "./pokemon-art.types";
 
 export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
-  { artSrc, name, width, height, animate = true, className, ...other },
+  {
+    artSrc,
+    name,
+    width,
+    height,
+    animate = true,
+    className,
+    artClassName,
+    ...other
+  },
   ref
 ) {
   const [isError, setIsError] = useState(false);
@@ -51,6 +60,7 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
             onLoadingComplete={() => setIsLoaded(true)}
             onError={() => setIsError(true)}
             priority
+            className={artClassName}
           />
         </animated.div>
       )}
