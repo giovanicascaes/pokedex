@@ -8,11 +8,10 @@ export default function ViewportAwarePokemonCard({
   id,
   ...other
 }: ViewportAwarePokemonCardProps) {
-  const { isIntersecting, ref: intersectionObserverRef } =
-    useIntersectionObserver({
-      threshold: [0.1, 0.9],
-      disconnectOnceNotVisibleThenNotVisible: true,
-    });
+  const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
+    threshold: [0.1, 0.9],
+    disconnectOnceNotVisibleThenNotVisible: true,
+  });
   const prevIsIntersecting = usePrevious(isIntersecting);
 
   useEffect(() => {

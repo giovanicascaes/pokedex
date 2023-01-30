@@ -5,4 +5,5 @@ export { default as useMedia } from "./use-media";
 export { default as useOnClickOutside } from "./use-on-click-outside";
 export * from "./use-pokemons-infinite";
 export { default as usePrevious } from "./use-previous";
+export { default as useResizeObserver } from "./use-resize-observer";
 export { default as useScrollTop } from "./use-scroll-top";

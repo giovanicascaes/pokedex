@@ -57,11 +57,5 @@ export default function useIntersectionObserver({
     prevIsIntersecting,
   ]);
 
-  return useMemo(
-    () => ({
-      ref: setRef,
-      isIntersecting,
-    }),
-    [isIntersecting]
-  );
+  return useMemo(() => [setRef, isIntersecting], [isIntersecting]);
 }

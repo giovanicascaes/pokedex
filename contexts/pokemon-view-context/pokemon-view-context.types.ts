@@ -5,7 +5,7 @@ export enum PokemonViewActionTypes {
   SetViewingPokemon,
   ClearViewingPokemon,
   SetPokemonListRendered,
-  SetPokemonListScrollEnabled,
+  SetPokemonListScrollDisabled,
   AddPokemonToPokedex,
   RemovePokemonFromPokedex,
 }
@@ -13,7 +13,7 @@ export enum PokemonViewActionTypes {
 export interface PokmeonViewState {
   viewingPokemon: PokemonSpeciesDetailed | null;
   isPokemonListRendered: boolean;
-  isPokemonListScrollEnabled: boolean;
+  isPokemonListScrollDisabled: boolean;
   pokedex: PokemonSpeciesSimple[];
 }
 
@@ -30,8 +30,8 @@ export type PokmeonViewActions =
       rendered: boolean;
     }
   | {
-      type: PokemonViewActionTypes.SetPokemonListScrollEnabled;
-      enabled: boolean;
+      type: PokemonViewActionTypes.SetPokemonListScrollDisabled;
+      disabled: boolean;
     }
   | {
       type: PokemonViewActionTypes.AddPokemonToPokedex;
@@ -50,7 +50,7 @@ export interface PokemonViewContextData {
   viewingPokemon: PokemonSpeciesDetailed | null;
   hasFetchedAll: boolean;
   isPokemonListRendered: boolean;
-  isPokemonListScrollEnabled: boolean;
+  isPokemonListScrollDisabled: boolean;
 }
 
 export interface PokemonViewContextActions {

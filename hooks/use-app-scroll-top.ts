@@ -3,24 +3,24 @@ import { useRouter } from "next/router";
 import { UIEvent, useEffect, useMemo, useState } from "react";
 import useScrollTop from "./use-scroll-top";
 
-export default function useAppScrollTop(enabled: boolean = false) {
+export default function useAppScrollTop(disabled: boolean = false) {
   const [scrollContainerRef, setScrollContainerRef] = useState<Element | null>(
     null
   );
   const { asPath } = useRouter();
   const [
-    { isPokemonListRendered, isPokemonListScrollEnabled },
+    { isPokemonListRendered, isPokemonListScrollDisabled },
     { onPokemonListScrollRestored },
   ] = usePokemonView();
   const [scrollTop, { onScroll }] = useScrollTop();
 
   useEffect(() => {
-    if (!scrollContainerRef || !enabled) {
+    if (!scrollContainerRef || disabled) {
       return;
     }
 
     if (asPath === "/") {
-      if (isPokemonListRendered && !isPokemonListScrollEnabled) {
+      if (isPokemonListRendered && isPokemonListScrollDisabled) {
         scrollContainerRef.scrollTo({
           top: scrollTop,
         });
@@ -33,9 +33,9 @@ export default function useAppScrollTop(enabled: boolean = false) {
     }
   }, [
     asPath,
-    enabled,
+    disabled,
     isPokemonListRendered,
-    isPokemonListScrollEnabled,
+    isPokemonListScrollDisabled,
     onPokemonListScrollRestored,
     scrollContainerRef,
     scrollTop,
@@ -44,12 +44,12 @@ export default function useAppScrollTop(enabled: boolean = false) {
   const onScrollHandler = useMemo(() => {
     if (asPath === "/") {
       return (e: UIEvent) => {
-        if (isPokemonListScrollEnabled) {
+        if (!isPokemonListScrollDisabled) {
           onScroll(e);
         }
       };
     }
-  }, [asPath, isPokemonListScrollEnabled, onScroll]);
+  }, [asPath, isPokemonListScrollDisabled, onScroll]);
 
   return useMemo(
     () => ({

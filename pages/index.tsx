@@ -1,4 +1,4 @@
-import { PokemonList } from "components";
+import { PokemonsView } from "components";
 import { POKEMONS_PER_PAGE, usePokemonView } from "contexts";
 import { useIntersectionObserver } from "hooks";
 import { getPokemons } from "lib";
@@ -14,16 +14,15 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
       visiblePokemons,
       hiddenPokemons,
       hasFetchedAll,
-      isPokemonListScrollEnabled,
+      isPokemonListScrollDisabled,
       isPokemonListRendered,
     },
     { loadMore, onPokemonListRendered },
   ] = usePokemonView();
 
-  const { isIntersecting, ref: intersectionObserverRef } =
-    useIntersectionObserver({
-      rootMargin: "20%",
-    });
+  const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
+    rootMargin: "20%",
+  });
 
   useEffect(() => {
     if (isIntersecting && !hasFetchedAll) loadMore();
@@ -37,11 +36,12 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-14 py-4 h-full">
-        <PokemonList
+        <PokemonsView
           pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
           hiddenPokemons={hiddenPokemons}
-          animateCards={isPokemonListScrollEnabled}
+          animateCards={!isPokemonListScrollDisabled}
           onListRendered={onPokemonListRendered}
+          onInitialAnimationsDone={() => {}}
           className="max-w-[1200px] mx-auto"
         />
         {isPokemonListRendered && (

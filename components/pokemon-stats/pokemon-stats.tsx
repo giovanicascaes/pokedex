@@ -6,11 +6,10 @@ import { PokemonStatsProps } from "./pokemon-stats.types";
 const TRANSITION_DURATION = 350;
 
 function PokemonStats({ children, ...other }: PokemonStatsProps) {
-  const { isIntersecting, ref: intersectionObserverRef } =
-    useIntersectionObserver({
-      threshold: 0.5,
-      freezeOnceVisible: true,
-    });
+  const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
+    threshold: 0.5,
+    freezeOnceVisible: true,
+  });
 
   const transition = useTransition(isIntersecting, {
     config: { duration: TRANSITION_DURATION },

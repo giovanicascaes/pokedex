@@ -6,7 +6,4 @@ export interface UseIntersectionObserverArgs extends IntersectionObserverInit {
   disconnectOnceNotVisibleThenNotVisible?: boolean;
 }
 
-export interface UseIntersectionObserverReturn {
-  isIntersecting: boolean;
-  ref: RefCallback<Element>;
-}
+export type UseIntersectionObserverReturn = [RefCallback<Element>, boolean];

@@ -2,7 +2,7 @@ import { animated, to, useSpring } from "@react-spring/web";
 import Pokeball from "assets/img/pokeball.png";
 import {
   POKEDEX_LINK_ELEMENT_ID,
-  SHELL_LAYOUT_CONTAINER_ELEMENT_ID,
+  SHELL_LAYOUT_CONTAINER_ELEMENT_ID
 } from "lib";
 import Image from "next/image";
 import { useMemo, useState } from "react";
@@ -93,6 +93,13 @@ export default function PokemonCatchAnimation({
               (brightness, invert) =>
                 `brightness(${brightness}) invert(${invert})`
             ),
+            scale: moveStyles.x.to(
+              [0, 0.3, 0.5, 0.8, 1],
+              [1.2, 1.2, 0.2, 0, 0]
+            ),
+            transform: moveStyles.x
+              .to([0, 0.3, 0.5, 0.8, 1], [0, 0, 400, 0, 0])
+              .to((value) => `translateY(${value}px)`),
             left: moveStyles.x.to(
               [0, 0.3, 0.8, 1],
               [
@@ -110,13 +117,6 @@ export default function PokemonCatchAnimation({
                 pokeballEndTop,
                 pokeballEndTop,
               ]
-            ),
-            transform: to(
-              [
-                moveStyles.x.to([0, 0.3, 0.5, 0.8, 1], [1.2, 1.2, 0.2, 0, 0]),
-                moveStyles.x.to([0, 0.3, 0.5, 0.8, 1], [0, 0, 400, 0, 0]),
-              ],
-              (scale, y) => `scale(${scale}) translateY(${y}px)`
             ),
           }
         : {

@@ -37,8 +37,8 @@ const reducers: {
   [PokemonViewActionTypes.SetPokemonListRendered](state, action) {
     return { ...state, isPokemonListRendered: action.rendered };
   },
-  [PokemonViewActionTypes.SetPokemonListScrollEnabled](state, action) {
-    return { ...state, isPokemonListScrollEnabled: action.enabled };
+  [PokemonViewActionTypes.SetPokemonListScrollDisabled](state, action) {
+    return { ...state, isPokemonListScrollDisabled: action.disabled };
   },
   [PokemonViewActionTypes.AddPokemonToPokedex](state, action) {
     return { ...state, pokedex: [...state.pokedex, action.pokemon] };
@@ -64,7 +64,7 @@ function matchReducer(
 
 const INITIAL_STATE: PokmeonViewState = {
   isPokemonListRendered: false,
-  isPokemonListScrollEnabled: true,
+  isPokemonListScrollDisabled: false,
   viewingPokemon: null,
   pokedex: [],
 };
@@ -88,8 +88,8 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
         rendered: false,
       });
       dispatch({
-        type: PokemonViewActionTypes.SetPokemonListScrollEnabled,
-        enabled: false,
+        type: PokemonViewActionTypes.SetPokemonListScrollDisabled,
+        disabled: true,
       });
     }
   }, [pathname, prevPathName]);
@@ -124,8 +124,8 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
       },
       onPokemonListScrollRestored() {
         dispatch({
-          type: PokemonViewActionTypes.SetPokemonListScrollEnabled,
-          enabled: true,
+          type: PokemonViewActionTypes.SetPokemonListScrollDisabled,
+          disabled: false,
         });
       },
       addPokemonToPokedex(pokemon: PokemonSpeciesSimple) {

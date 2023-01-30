@@ -11,7 +11,7 @@ export * from "./pokemon-change-animation";
 export * from "./pokemon-details";
 export * from "./pokemon-evolution-chain";
 export * from "./pokemon-evolution-chain-link-card";
-export * from "./pokemon-list";
+export * from "./pokemons-view";
 export * from "./pokemon-navigation-button";
 export * from "./pokemon-profile";
 export * from "./pokemon-section";

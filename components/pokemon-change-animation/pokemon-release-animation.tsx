@@ -64,9 +64,6 @@ export default function PokemonReleaseAnimation({
         ? {
             left,
             top,
-            backgroundColor: releaseStyles.x
-              .to([0, 0.21, 1], [1, 0, 0])
-              .to((value) => `rgba(255,255,255,${value})`),
             filter: to(
               [
                 releaseStyles.x.to([0, 0.21, 1], [0, 1, 1]),
@@ -75,9 +72,10 @@ export default function PokemonReleaseAnimation({
               (brightness, invert) =>
                 `brightness(${brightness}) invert(${invert})`
             ),
-            transform: releaseStyles.x
-              .to([0, 0.75, 1], [1, 1, 0])
-              .to((value) => `scale(${value})`),
+            backgroundColor: releaseStyles.x
+              .to([0, 0.21, 1], [1, 0, 0])
+              .to((value) => `rgba(255,255,255,${value})`),
+            scale: releaseStyles.x.to([0, 0.75, 1], [1, 1, 0]),
           }
         : {
             left: pokeballStartLeft,
