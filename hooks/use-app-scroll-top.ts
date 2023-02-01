@@ -20,7 +20,7 @@ export default function useAppScrollTop(disabled: boolean = false) {
     }
 
     if (asPath === "/") {
-      if (isPokemonListRendered && isPokemonListScrollDisabled) {
+      if (isPokemonListScrollDisabled) {
         scrollContainerRef.scrollTo({
           top: scrollTop,
         });

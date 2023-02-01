@@ -1,4 +1,4 @@
-import { PokemonsView } from "components";
+import { PokemonView } from "components";
 import { usePokemonView } from "contexts";
 import { InferGetStaticPropsType } from "next";
 

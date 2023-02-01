@@ -1,7 +1,7 @@
 import { PokemonSpeciesSimple } from "lib";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
-export interface PokemonsViewProps
+export interface PokemonViewProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pokemons: PokemonSpeciesSimple[];
   hiddenPokemons?: PokemonSpeciesSimple[];
@@ -11,6 +11,6 @@ export interface PokemonsViewProps
 }
 
 export type VisiblePokemonsProps = Pick<
-  PokemonsViewProps,
+  PokemonViewProps,
   "pokemons" | "animateCards" | "onListRendered" | "onInitialAnimationsDone"
 >;

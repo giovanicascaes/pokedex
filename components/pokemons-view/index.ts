@@ -1,2 +1,2 @@
-export { default as PokemonsView } from "./pokemons-view";
-export * from "./pokemons-view.types";
+export { default as PokemonView } from "./pokemon-view";
+export * from "./pokemon-view.types";

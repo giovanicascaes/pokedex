@@ -1,4 +1,4 @@
-import { PokemonsView } from "components";
+import { PokemonView } from "components";
 import { POKEMONS_PER_PAGE, usePokemonView } from "contexts";
 import { useIntersectionObserver } from "hooks";
 import { getPokemons } from "lib";
@@ -36,22 +36,20 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-14 py-4 h-full">
-        <PokemonsView
+        <PokemonView
           pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
           hiddenPokemons={hiddenPokemons}
           animateCards={!isPokemonListScrollDisabled}
           onListRendered={onPokemonListRendered}
           onInitialAnimationsDone={() => {}}
-          className="max-w-[1200px] mx-auto"
+          className="mx-auto"
         />
-        {isPokemonListRendered && (
-          <div
-            className="w-full text-center font-light text-slate-400 mb-10"
-            ref={intersectionObserverRef}
-          >
-            {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}
-          </div>
-        )}
+        <div
+          className="w-full text-center font-light text-slate-400 mb-10"
+          ref={intersectionObserverRef}
+        >
+          {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}
+        </div>
       </div>
     </>
   );

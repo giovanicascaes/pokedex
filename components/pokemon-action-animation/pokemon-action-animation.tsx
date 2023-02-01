@@ -1,11 +1,11 @@
 import PokemonCatchAnimation from "./pokemon-catch-animation";
-import { PokemonChangeAnimationProps } from "./pokemon-change-animation.types";
+import { PokemonActionAnimationProps } from "./pokemon-action-animation.types";
 import PokemonReleaseAnimation from "./pokemon-release-animation";
 
-export default function PokemonChangeAnimation({
+export default function PokemonActionAnimation({
   isBeingCaught,
   ...other
-}: PokemonChangeAnimationProps) {
+}: PokemonActionAnimationProps) {
   return isBeingCaught ? (
     <PokemonCatchAnimation {...other} />
   ) : (

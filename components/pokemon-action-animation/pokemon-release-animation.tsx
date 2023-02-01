@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
 import { POKEBALL_SIZE } from "./constants";
-import { PokemonReleaseAnimationProps } from "./pokemon-change-animation.types";
+import { PokemonReleaseAnimationProps } from "./pokemon-action-animation.types";
 
 const POKEBALL_ANIMATION_DURATION = 400;
 

@@ -1,7 +1,7 @@
 import { PokemonArtProps } from "components";
 import { DetailedHTMLProps, HTMLAttributes, RefObject } from "react";
 
-export interface PokemonCardProps
+export interface PokemonListItemProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     Pick<PokemonArtProps, "artSrc"> {
   identifier: number;

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { forwardRef, useRef, useState } from "react";
 import { MdCatchingPokemon } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
-import { PokemonCardProps } from "./pokemon-card.types";
+import { PokemonListItemProps } from "./pokemon-list-item.types";
 
-export default forwardRef<HTMLDivElement, PokemonCardProps>(
-  function PokemonCard(
+export default forwardRef<HTMLDivElement, PokemonListItemProps>(
+  function PokemonListItem(
     {
       identifier: id,
       resourceName,

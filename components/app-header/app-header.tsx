@@ -13,7 +13,7 @@ import { AppHeaderProps } from "./app-header.types";
 
 const BREADCRUMB_TRANSITION_DURATION = 150;
 
-const POKEDEX_BADGE_TRANSITION = 200;
+export const POKEDEX_BADGE_TRANSITION = 130;
 
 const actionButtonClassName =
   "w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white";
@@ -24,11 +24,21 @@ function ActionButtons() {
   const transition = useTransition(pokedex.length, {
     config: {
       duration: POKEDEX_BADGE_TRANSITION,
-      easing: easings.easeInOutBack,
     },
-    from: { scale: 0 },
-    enter: { scale: 1 },
-    leave: { scale: 0 },
+    from: {
+      scale: 0,
+    },
+    enter: [
+      {
+        scale: 1.3,
+      },
+      {
+        scale: 1,
+      },
+    ],
+    leave: {
+      scale: 0,
+    },
     exitBeforeEnter: true,
   });
 
@@ -100,7 +110,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
     >
       <div className="flex items-center">
         <div>
-          <Image src={PokemonLogo} alt="Pokémon logo" height={40} />
+          <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
         </div>
         {transition(
           (styles, show) =>

@@ -8,13 +8,13 @@ import {
   PokemonSection,
   PokemonStats,
   PokemonTypeSections,
-  Select,
+  Select
 } from "components";
 import { Children, isValidElement, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import {
   PokemonDetailsBadges,
-  PokemonDetailsProps,
+  PokemonDetailsProps
 } from "./pokemon-details.types";
 
 function SpeciesBadgeContainer({
@@ -158,7 +158,11 @@ export default function PokemonDetails({
               <div className="space-y-8 w-full">
                 <PokemonSection label="Profile">
                   <PokemonProfile
-                    {...{ height, weight, shape, abilities, gender }}
+                    height={height}
+                    weight={weight}
+                    shape={shape}
+                    abilities={abilities}
+                    gender={gender}
                   />
                 </PokemonSection>
                 <PokemonTypeSections types={types} />

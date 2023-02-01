@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
 import { POKEBALL_SIZE } from "./constants";
-import { PokemonCatchAnimationProps } from "./pokemon-change-animation.types";
+import { PokemonCatchAnimationProps } from "./pokemon-action-animation.types";
 
 const CATCH_ANIMATION_DURATION = 100;
 

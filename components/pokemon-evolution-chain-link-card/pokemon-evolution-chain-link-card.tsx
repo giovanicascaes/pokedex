@@ -33,7 +33,7 @@ export default function PokemonEvolutionChainLinkCard({
             className
           )}
         >
-          <PokemonArt {...{ artSrc, name }} width={110} height={110} />
+          <PokemonArt artSrc={artSrc} name={name} width={110} height={110} />
         </div>
       </Link>
       <span className="flex items-baseline text-sm mt-3">
