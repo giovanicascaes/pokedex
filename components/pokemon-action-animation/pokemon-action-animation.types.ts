@@ -5,12 +5,17 @@ export interface PokemonActionAnimationProps
   isBeingCaught?: boolean;
   artPosition: Omit<DOMRect, "toJSON">;
   onFinish?: () => void;
+  catchSize?: number;
+  releaseSize?: number;
 }
 
-type PokemonActionAgnosticAnimationProps = Omit<
-  PokemonActionAnimationProps,
-  "isBeingCaught"
->;
+interface PokemonActionAgnosticAnimationProps
+  extends Omit<
+    PokemonActionAnimationProps,
+    "isBeingCaught" | "catchSize" | "releaseSize"
+  > {
+  size: number;
+}
 
 export type PokemonCatchAnimationProps = PokemonActionAgnosticAnimationProps;
 

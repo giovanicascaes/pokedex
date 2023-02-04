@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
-import { POKEBALL_SIZE } from "./constants";
 import { PokemonCatchAnimationProps } from "./pokemon-action-animation.types";
 
 const CATCH_ANIMATION_DURATION = 100;
@@ -19,6 +18,7 @@ export default function PokemonCatchAnimation({
   artPosition: { left, top, width, height },
   artSrc,
   onFinish,
+  size,
 }: PokemonCatchAnimationProps) {
   const [isCaught, setIsCaught] = useState(false);
 
@@ -62,20 +62,20 @@ export default function PokemonCatchAnimation({
   });
 
   const pokeballStartLeft = useMemo(
-    () => left + (width - POKEBALL_SIZE) / 2,
-    [left, width]
+    () => left + (width - size) / 2,
+    [left, size, width]
   );
   const pokeballEndLeft = useMemo(
-    () => pokedexLeft - POKEBALL_SIZE / 2 + pokedexWidth / 2,
-    [pokedexLeft, pokedexWidth]
+    () => pokedexLeft - size / 2 + pokedexWidth / 2,
+    [pokedexLeft, pokedexWidth, size]
   );
   const pokeballStartTop = useMemo(
-    () => top + (height - POKEBALL_SIZE) / 2,
-    [height, top]
+    () => top + (height - size) / 2,
+    [height, size, top]
   );
   const pokeballEndTop = useMemo(
-    () => pokedexTop - POKEBALL_SIZE / 2 + pokedexHeight / 2,
-    [pokedexHeight, pokedexTop]
+    () => pokedexTop - size / 2 + pokedexHeight / 2,
+    [pokedexHeight, pokedexTop, size]
   );
 
   const { backgroundColor, ...styles } = useMemo(
@@ -95,7 +95,7 @@ export default function PokemonCatchAnimation({
             ),
             scale: moveStyles.x.to(
               [0, 0.3, 0.5, 0.8, 1],
-              [1.2, 1.2, 0.2, 0, 0]
+              [1, 1, 0.2, 0, 0]
             ),
             transform: moveStyles.x
               .to([0, 0.3, 0.5, 0.8, 1], [0, 0, 400, 0, 0])
@@ -148,7 +148,7 @@ export default function PokemonCatchAnimation({
         style={{ ...styles }}
       >
         {isCaught ? (
-          <Image src={Pokeball} alt="Pokéball" height={POKEBALL_SIZE} />
+          <Image src={Pokeball} alt="Pokéball" width={size} height={size} />
         ) : (
           <PokemonArt
             artSrc={artSrc}

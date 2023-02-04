@@ -84,15 +84,15 @@ export default function ThemeSwitcher({
   const prevThemeMode = usePrevious(themeMode);
 
   const transitions = useTransition(themeMode, {
-    keys: null,
-    from: { opacity: 0, transform: "translate3d(-50%,0,0)" },
-    enter: { opacity: 1, transform: "translate3d(0%,0,0)" },
-    leave: { opacity: 0, transform: "translate3d(100%,0,0)" },
+    from: { opacity: 0, x: "-50%" },
+    enter: { opacity: 1, x: "0%" },
+    leave: { opacity: 0, x: "100%" },
     config: { duration: 150, easing: easings.linear },
     exitBeforeEnter: true,
   });
 
   useEffect(() => {
+      // Should only animate when theme mode has changed
     if (prevThemeMode && prevThemeMode !== themeMode) {
       setAnimate(true);
     }

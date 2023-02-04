@@ -1,7 +1,6 @@
 import { animated, easings, useTransition } from "@react-spring/web";
-import { PokemonActionAnimation, PokemonCard } from "components";
+import { PokemonActionAnimation, PokemonListItem } from "components";
 import { usePokemonView } from "contexts";
-import { useResizeObserver } from "hooks";
 import { PokemonSpeciesSimple } from "lib";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -9,14 +8,18 @@ import {
   CatchingOrReleasingPokemonList,
   PokemonListData,
   PokemonListItemData,
-  PokemonListProps,
+  PokemonListProps
 } from "./pokemon-list.types";
 
 const CONTAINER_BOTTOM_PADDING = 80;
 
-const GRID_TRANSITION_DURATION = 600;
+const LIST_GAP = 6;
 
-const LIST_TRAIL = 150;
+const LIST_TRANSITION_DURATION = 300;
+
+const LIST_TRAIL = 60;
+
+const CAUGHT_OR_RELEASE_ANIMATION_SIZE = 40;
 
 interface ListAnimationControl {
   rendered: Set<number>;
@@ -33,7 +36,6 @@ export default function PokemonList({
     useState<CatchingOrReleasingPokemonList[]>([]);
   const [{ pokedex }, { addPokemonToPokedex, removePokemonFromPokedex }] =
     usePokemonView();
-  const [resizeObserverRef, containerRect] = useResizeObserver();
   const itemAnimationControl = useRef<ListAnimationControl>({
     rendered: new Set(),
   });
@@ -53,10 +55,10 @@ export default function PokemonList({
     [addPokemonToPokedex, pokedex, removePokemonFromPokedex]
   );
 
-  const [{ height: containerHeight }, gridItems] =
+  const [{ height: containerHeight }, listItems] =
     useMemo<PokemonListData>(() => {
       // Renders the first pokemon only to get Pokémon card's dimensions
-      if (!itemDimensions || !containerRect) {
+      if (!itemDimensions) {
         return [
           {
             height: 0,
@@ -71,7 +73,7 @@ export default function PokemonList({
 
       const { height: itemHeight } = itemDimensions;
       const listItems = pokemons.map((pokemon, i) => {
-        const y = i * itemHeight;
+        const y = i * itemHeight + i * LIST_GAP;
 
         return {
           ...pokemon,
@@ -81,24 +83,27 @@ export default function PokemonList({
       return [
         {
           // Adding extra padding for the loading element
-          height: listItems.length * itemHeight + CONTAINER_BOTTOM_PADDING,
+          height:
+            listItems.length * itemHeight +
+            (listItems.length - 1) * LIST_GAP +
+            CONTAINER_BOTTOM_PADDING,
         },
         listItems,
       ];
-    }, [itemDimensions, pokemons, containerRect]);
+    }, [itemDimensions, pokemons]);
 
-  const listTransitions = useTransition(gridItems, {
+  const listTransitions = useTransition(listItems, {
     key: ({ id }: PokemonListItemData) => id,
-    from: ({ y }) => ({
+    from: ({ y, measureOnly }) => ({
       y,
       opacity: 0,
-      transform: "translateY(-50px)",
+      scale: measureOnly ? 1 : 0,
     }),
     enter: ({ y }) => ({
       y,
       x: "0%",
       opacity: 1,
-      transform: "translateY(0)",
+      scale: 1,
     }),
     update: ({ y }) => ({ y }),
     leave: { x: "-100%", opacity: 0 },
@@ -106,7 +111,7 @@ export default function PokemonList({
       mass: 5,
       tension: 500,
       friction: 100,
-      duration: GRID_TRANSITION_DURATION,
+      duration: LIST_TRANSITION_DURATION,
       easing: easings.easeOutCirc,
     },
     onRest: (_result, _ctrl, { id }) => {
@@ -155,7 +160,7 @@ export default function PokemonList({
         return (
           <animated.li
             key={id}
-            className="absolute"
+            className="absolute w-full"
             style={{
               ...listStyles,
               ...(measureOnly && {
@@ -168,7 +173,7 @@ export default function PokemonList({
               );
             }}
           >
-            <PokemonCard
+            <PokemonListItem
               {...other}
               artSrc={artSrc}
               identifier={id}
@@ -192,6 +197,8 @@ export default function PokemonList({
                 artSrc={artSrc}
                 onFinish={() => handleOnPokemonActionFinished(pokemon)}
                 isBeingCaught={!isCaught}
+                catchSize={CAUGHT_OR_RELEASE_ANIMATION_SIZE}
+                releaseSize={CAUGHT_OR_RELEASE_ANIMATION_SIZE}
               />
             )}
           </animated.li>

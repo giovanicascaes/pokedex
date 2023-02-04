@@ -35,7 +35,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-14 py-4 h-full">
+      <div className="px-14 pt-4 h-full pb-[calc(100vh/2)]">
         <PokemonView
           pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
           hiddenPokemons={hiddenPokemons}
@@ -45,7 +45,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
           className="mx-auto"
         />
         <div
-          className="w-full text-center font-light text-slate-400 mb-10"
+          className="w-full text-center font-light text-slate-400"
           ref={intersectionObserverRef}
         >
           {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}

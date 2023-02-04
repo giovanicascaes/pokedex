@@ -8,7 +8,7 @@ import {
   CatchingOrReleasingPokemon,
   PokemonGridData,
   PokemonGridItemData,
-  PokemonGridProps,
+  PokemonGridProps
 } from "./pokemon-grid.types";
 
 const CONTAINER_BOTTOM_PADDING = 80;
@@ -17,9 +17,9 @@ const GRID_GAP_X = 30;
 
 const GRID_GAP_Y = 40;
 
-const GRID_TRAIL = 150;
+const GRID_TRAIL = 100;
 
-const GRID_TRANSITION_DURATION = 600;
+const GRID_TRANSITION_DURATION = 300;
 
 const CONTAINER_TRANSITION_DURATION = 300;
 
@@ -60,7 +60,7 @@ export default function PokemonGrid({
   const [{ width: containerWidth, height: containerHeight }, gridItems] =
     useMemo<PokemonGridData>(() => {
       // Renders the first pokemon only to get Pokémon card's dimensions
-      if (!cardDimensions || !containerRect) {
+      if (!cardDimensions) {
         return [
           {
             width: 0,
@@ -96,12 +96,12 @@ export default function PokemonGrid({
           // Adding extra padding for the loading element
           height:
             numberOfRows * cardHeight +
-            CONTAINER_BOTTOM_PADDING +
-            (numberOfRows - 1) * GRID_GAP_Y,
+            (numberOfRows - 1) * GRID_GAP_Y +
+            CONTAINER_BOTTOM_PADDING,
         },
         gridItems,
       ];
-    }, [cardDimensions, columns, pokemons, containerRect]);
+    }, [cardDimensions, columns, pokemons]);
 
   const gridTransitions = useTransition(gridItems, {
     key: ({ id }: PokemonGridItemData) => id,
@@ -125,7 +125,7 @@ export default function PokemonGrid({
       tension: 500,
       friction: 100,
       duration: GRID_TRANSITION_DURATION,
-      easing: easings.easeOutCirc,
+      easing: easings.easeOutSine,
     },
     onRest: (_result, _ctrl, { id }) => {
       if (id !== null) {

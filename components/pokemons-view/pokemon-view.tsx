@@ -16,15 +16,14 @@ function VisiblePokemonsList({
 }: VisiblePokemonsProps) {
   const columns = useMedia(
     [
-      "(min-width: 768px)",
-      "(min-width: 1024px)",
-      "(min-width: 1280px)",
+      "(min-width: 768px) and (max-width: 1023px)",
+      "(min-width: 1024px) and (max-width: 1279px)",
+      "(min-width: 1280px) and (max-width: 1535px)",
       "(min-width: 1536px)",
     ],
     [2, 3, 4, 5],
     1
   );
-  console.log("🚀 ~ file: pokemon-view.tsx:27 ~ columns", columns)
 
   return (
     <FadeOnChange watchChangesOn={columns === 1}>
@@ -32,7 +31,7 @@ function VisiblePokemonsList({
         isList ? (
           <PokemonList pokemons={pokemons} />
         ) : (
-          <PokemonGrid pokemons={pokemons} columns={columns} />
+          <PokemonGrid pokemons={pokemons} columns={Math.max(columns, 2)} />
         )
       }
     </FadeOnChange>

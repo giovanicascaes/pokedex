@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
-import { POKEBALL_SIZE } from "./constants";
 import { PokemonReleaseAnimationProps } from "./pokemon-action-animation.types";
 
 const POKEBALL_ANIMATION_DURATION = 400;
@@ -16,6 +15,7 @@ export default function PokemonReleaseAnimation({
   artPosition: { left, top, width, height },
   artSrc,
   onFinish,
+  size,
 }: PokemonReleaseAnimationProps) {
   const [isReleased, setIsReleased] = useState(false);
 
@@ -50,12 +50,12 @@ export default function PokemonReleaseAnimation({
   });
 
   const pokeballStartLeft = useMemo(
-    () => left + (width - POKEBALL_SIZE) / 2,
-    [left, width]
+    () => left + (width - size) / 2,
+    [left, size, width]
   );
   const pokeballStartTop = useMemo(
-    () => top + (height - POKEBALL_SIZE) / 2,
-    [height, top]
+    () => top + (height - size) / 2,
+    [height, size, top]
   );
 
   const { backgroundColor, ...styles } = useMemo(
@@ -126,7 +126,7 @@ export default function PokemonReleaseAnimation({
             animate={false}
           />
         ) : (
-          <Image src={Pokeball} alt="Pokéball" height={POKEBALL_SIZE} />
+          <Image src={Pokeball} alt="Pokéball" width={size} height={size} />
         )}
       </animated.div>
     </>,
