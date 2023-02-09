@@ -1,5 +1,5 @@
 import { PokemonSpeciesSimple } from "lib";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes, RefObject } from "react";
 
 export interface PokemonGridProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -10,6 +10,7 @@ export interface PokemonGridProps
 export interface CatchingOrReleasingPokemon {
   id: number;
   artPosition: DOMRect;
+  pokemonRef: RefObject<HTMLElement>;
 }
 
 export interface PokemonGridItemData extends PokemonSpeciesSimple {

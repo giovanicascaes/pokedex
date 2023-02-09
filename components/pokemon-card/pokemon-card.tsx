@@ -24,6 +24,7 @@ export default forwardRef<HTMLDivElement, PokemonCardProps>(
     ref
   ) {
     const artRef = useRef<HTMLDivElement | null>(null);
+    const cardRef = useRef<HTMLAnchorElement | null>(null);
     const [tooltipVisible, setTooltipVisible] = useState(false);
 
     const showToolTip = () => {
@@ -64,6 +65,7 @@ export default forwardRef<HTMLDivElement, PokemonCardProps>(
           <Link
             className="flex px-4 py-10 shadow-md dark:shadow-black/50 rounded-lg bg-white dark:bg-slate-700 cursor-pointer hover:[transform:rotateX(8deg)_rotateY(-2deg)_rotateZ(-2deg)] active:translate-y-2 hover:shadow-2xl hover:dark:shadow-black/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
             href={`/pokemon/${resourceName}`}
+            ref={cardRef}
           >
             <PokemonArt
               artSrc={artSrc}
@@ -76,7 +78,7 @@ export default forwardRef<HTMLDivElement, PokemonCardProps>(
           </Link>
           {actionAllowed && (
             <button
-              onClick={() => onPokemonAction?.(artRef)}
+              onClick={() => onPokemonAction?.(cardRef, artRef)}
               className="flex items-center space-x-1 absolute -top-3.5 -right-3.5 z-10 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/card:opacity-100 group-hover/card:visible transition-all text-xs font-semibold bg-slate-600 hover:bg-red-500 hover:active:bg-red-600 text-white dark:bg-white dark:hover:bg-red-400 dark:active:bg-red-500 dark:text-slate-800 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 group/catch-button"
             >
               <MdCatchingPokemon size={22} />

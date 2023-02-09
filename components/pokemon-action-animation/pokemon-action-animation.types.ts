@@ -1,9 +1,11 @@
 import { PokemonCardProps } from "components";
+import { RefObject } from "react";
 
 export interface PokemonActionAnimationProps
   extends Pick<PokemonCardProps, "artSrc"> {
   isBeingCaught?: boolean;
-  artPosition: Omit<DOMRect, "toJSON">;
+  artPosition: DOMRect;
+  pokemonRef: RefObject<HTMLElement>;
   onFinish?: () => void;
   catchSize?: number;
   releaseSize?: number;

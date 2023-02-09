@@ -8,7 +8,17 @@ export interface PokemonCardProps
   resourceName: string;
   name: string;
   animateArt?: boolean;
-  onPokemonAction?: (artRef: RefObject<HTMLElement>) => void;
+  onPokemonAction?: (
+    pokemonRef: RefObject<HTMLElement>,
+    artRef: RefObject<HTMLElement>
+  ) => void;
   actionAllowed?: boolean;
   isCaught?: boolean;
+}
+
+export interface PokemonCardCatchOrReleaseAnimationProps
+  extends Pick<PokemonCardProps, "artSrc"> {
+  artPosition: DOMRect;
+  pokemonRef: RefObject<HTMLElement>;
+  onFinish?: () => void;
 }

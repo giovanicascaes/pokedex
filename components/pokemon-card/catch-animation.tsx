@@ -8,7 +8,9 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { PokemonArt } from "../pokemon-art";
-import { PokemonCatchAnimationProps } from "./pokemon-action-animation.types";
+import { PokemonCardCatchOrReleaseAnimationProps } from "./pokemon-card.types";
+
+const IMAGE_SIZE = 110;
 
 const CATCH_ANIMATION_DURATION = 100;
 
@@ -19,8 +21,7 @@ export default function PokemonCatchAnimation({
   pokemonRef,
   artSrc,
   onFinish,
-  size,
-}: PokemonCatchAnimationProps) {
+}: PokemonCardCatchOrReleaseAnimationProps) {
   const [isCaught, setIsCaught] = useState(false);
 
   const {
@@ -63,20 +64,20 @@ export default function PokemonCatchAnimation({
   });
 
   const pokeballStartLeft = useMemo(
-    () => left + (width - size) / 2,
-    [left, size, width]
+    () => left + (width - IMAGE_SIZE) / 2,
+    [left, width]
   );
   const pokeballEndLeft = useMemo(
-    () => pokedexLeft - size / 2 + pokedexWidth / 2,
-    [pokedexLeft, pokedexWidth, size]
+    () => pokedexLeft - IMAGE_SIZE / 2 + pokedexWidth / 2,
+    [pokedexLeft, pokedexWidth]
   );
   const pokeballStartTop = useMemo(
-    () => top + (height - size) / 2,
-    [height, size, top]
+    () => top + (height - IMAGE_SIZE) / 2,
+    [height, top]
   );
   const pokeballEndTop = useMemo(
-    () => pokedexTop - size / 2 + pokedexHeight / 2,
-    [pokedexHeight, pokedexTop, size]
+    () => pokedexTop - IMAGE_SIZE / 2 + pokedexHeight / 2,
+    [pokedexHeight, pokedexTop]
   );
 
   const { backgroundColor, ...styles } = useMemo(
@@ -150,7 +151,12 @@ export default function PokemonCatchAnimation({
           style={{ ...styles }}
         >
           {isCaught ? (
-            <Image src={Pokeball} alt="Pokéball" width={size} height={size} />
+            <Image
+              src={Pokeball}
+              alt="Pokéball"
+              width={IMAGE_SIZE}
+              height={IMAGE_SIZE}
+            />
           ) : (
             <PokemonArt
               artSrc={artSrc}

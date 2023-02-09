@@ -8,7 +8,7 @@ import {
   CatchingOrReleasingPokemon,
   PokemonGridData,
   PokemonGridItemData,
-  PokemonGridProps
+  PokemonGridProps,
 } from "./pokemon-grid.types";
 
 const CONTAINER_BOTTOM_PADDING = 80;
@@ -201,7 +201,7 @@ export default function PokemonGrid({
                 {...other}
                 artSrc={artSrc}
                 identifier={id}
-                onPokemonAction={(artRef) => {
+                onPokemonAction={(cardRef, artRef) => {
                   setCatchingOrReleasingPokemons((current) => [
                     ...current,
                     {
@@ -209,6 +209,7 @@ export default function PokemonGrid({
                       artPosition: artRef.current
                         ?.getBoundingClientRect()
                         .toJSON(),
+                      pokemonRef: cardRef,
                     },
                   ]);
                 }}
@@ -218,6 +219,7 @@ export default function PokemonGrid({
               {isBeingCaughtOrReleased && (
                 <PokemonActionAnimation
                   artPosition={actionData.artPosition}
+                  pokemonRef={actionData.pokemonRef}
                   artSrc={artSrc}
                   onFinish={() => handleOnPokemonActionFinished(pokemon)}
                   isBeingCaught={!isCaught}
