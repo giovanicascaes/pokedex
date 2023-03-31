@@ -1,5 +1,5 @@
-import { MutableRefObject, useCallback } from "react";
-import useDocumentEvent from "./use-document-event";
+import { MutableRefObject, useCallback } from "react"
+import useDocumentEvent from "./use-document-event"
 
 export default function useOnClickOutside(
   el: MutableRefObject<HTMLElement | null> | HTMLElement | null,
@@ -10,18 +10,18 @@ export default function useOnClickOutside(
 ) {
   const listener = useCallback(
     <E extends MouseEvent | PointerEvent | FocusEvent>(event: E) => {
-      const node = el instanceof HTMLElement ? el : el?.current;
-      const target = event.target as HTMLElement;
+      const node = el instanceof HTMLElement ? el : el?.current
+      const target = event.target as HTMLElement
 
       if (!node || node.contains(target)) {
-        return;
+        return
       }
 
-      cb(event, target);
+      cb(event, target)
     },
     [cb, el]
-  );
+  )
 
-  useDocumentEvent("blur", listener);
-  useDocumentEvent("click", listener);
+  useDocumentEvent("blur", listener)
+  useDocumentEvent("click", listener)
 }

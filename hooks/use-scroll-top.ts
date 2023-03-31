@@ -1,14 +1,15 @@
-import throttle from "lodash.throttle";
-import { UIEvent, useCallback, useMemo, useState } from "react";
+import throttle from "lodash.throttle"
+import { UIEvent, useCallback, useState } from "react"
 
-export default function useScrollTop() {
-  const [scrollTop, setScrollTop] = useState(0);
-  const onScroll = useCallback((event: UIEvent) => {
-    if (event.currentTarget) setScrollTop(event.currentTarget.scrollTop);
-  }, []);
+export default function useScrollTop(disableScrollTrack: boolean = false) {
+  const [scrollTop, setScrollTop] = useState(0)
+  const onScroll = useCallback(
+    (event: UIEvent) => {
+      if (event.currentTarget && !disableScrollTrack)
+        setScrollTop(event.currentTarget.scrollTop)
+    },
+    [disableScrollTrack]
+  )
 
-  return useMemo(
-    () => [scrollTop, { onScroll: throttle(onScroll, 100) }] as const,
-    [onScroll, scrollTop]
-  );
+  return [scrollTop, { onScroll: throttle(onScroll, 100) }] as const
 }

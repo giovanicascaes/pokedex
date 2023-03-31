@@ -1,15 +1,12 @@
-import { DetailedHTMLProps, HTMLAttributes, Ref } from "react";
+import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
-export interface PageLoadingIndicatorProps
-  extends Omit<
-    DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-    "ref"
-  > {
-  // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLDivElement>;
-}
+export type PageLoadingIndicatorProps = WithNonLegacyRef<
+  DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  HTMLDivElement
+>
 
 export type PageLoadingBarsProps = DetailedHTMLProps<
   HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
->;
+>

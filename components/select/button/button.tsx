@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
-import { MdExpandMore } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
-import { useSelect } from "../context";
-import { SelectPopupState } from "../select.types";
-import { SelectButtonProps } from "./button.types";
+import { useEffect, useRef } from "react"
+import { MdExpandMore } from "react-icons/md"
+import { twMerge } from "tailwind-merge"
+import { useSelect } from "../context"
+import { SelectPopupState } from "../select.types"
+import { SelectButtonProps } from "./button.types"
 
 export default function Button({
   variant = "default",
@@ -12,12 +12,12 @@ export default function Button({
   ...other
 }: SelectButtonProps) {
   const [{ popupState, disabled }, { openPopup, closePopup, registerButton }] =
-    useSelect();
-  const ref = useRef<HTMLButtonElement | null>(null);
+    useSelect()
+  const ref = useRef<HTMLButtonElement | null>(null)
 
   useEffect(() => {
-    registerButton(ref);
-  }, [registerButton]);
+    registerButton(ref)
+  }, [registerButton])
 
   return (
     <button
@@ -25,9 +25,9 @@ export default function Button({
       disabled={disabled}
       onClick={() => {
         if (popupState === SelectPopupState.Open) {
-          closePopup();
+          closePopup()
         } else if (popupState === SelectPopupState.Closed) {
-          openPopup();
+          openPopup()
         }
       }}
       className={twMerge(
@@ -53,5 +53,5 @@ export default function Button({
         </div>
       )}
     </button>
-  );
+  )
 }

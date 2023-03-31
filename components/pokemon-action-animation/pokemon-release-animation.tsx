@@ -1,15 +1,15 @@
-import { animated, to, useSpring } from "@react-spring/web";
-import Pokeball from "assets/img/pokeball.png";
-import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib";
-import Image from "next/image";
-import { useMemo, useState } from "react";
-import ReactDOM from "react-dom";
-import { PokemonArt } from "../pokemon-art";
-import { PokemonReleaseAnimationProps } from "./pokemon-action-animation.types";
+import { animated, to, useSpring } from "@react-spring/web"
+import Pokeball from "assets/img/pokeball.png"
+import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
+import Image from "next/image"
+import { useMemo, useState } from "react"
+import ReactDOM from "react-dom"
+import { PokemonArt } from "../pokemon-art"
+import { PokemonReleaseAnimationProps } from "./pokemon-action-animation.types"
 
-const POKEBALL_ANIMATION_DURATION = 400;
+const POKEBALL_ANIMATION_DURATION = 400
 
-const RELEASE_ANIMATION_DURATION = 480;
+const RELEASE_ANIMATION_DURATION = 480
 
 export default function PokemonReleaseAnimation({
   artPosition: { left, top, width, height },
@@ -17,7 +17,7 @@ export default function PokemonReleaseAnimation({
   onFinish,
   size,
 }: PokemonReleaseAnimationProps) {
-  const [isReleased, setIsReleased] = useState(false);
+  const [isReleased, setIsReleased] = useState(false)
 
   const pokeballStyles = useSpring({
     from: {
@@ -30,9 +30,9 @@ export default function PokemonReleaseAnimation({
       duration: POKEBALL_ANIMATION_DURATION,
     },
     onRest: () => {
-      setIsReleased(true);
+      setIsReleased(true)
     },
-  });
+  })
   const releaseStyles = useSpring({
     from: {
       x: 0,
@@ -45,18 +45,18 @@ export default function PokemonReleaseAnimation({
     },
     delay: 100,
     onRest: () => {
-      onFinish?.();
+      onFinish?.()
     },
-  });
+  })
 
   const pokeballStartLeft = useMemo(
     () => left + (width - size) / 2,
     [left, size, width]
-  );
+  )
   const pokeballStartTop = useMemo(
     () => top + (height - size) / 2,
     [height, size, top]
-  );
+  )
 
   const { backgroundColor, ...styles } = useMemo(
     () =>
@@ -102,7 +102,7 @@ export default function PokemonReleaseAnimation({
       releaseStyles.x,
       top,
     ]
-  );
+  )
 
   return ReactDOM.createPortal(
     <>
@@ -131,5 +131,5 @@ export default function PokemonReleaseAnimation({
       </animated.div>
     </>,
     document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!
-  );
+  )
 }

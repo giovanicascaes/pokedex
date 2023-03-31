@@ -1,2 +1,2 @@
-export { default as useIntersectionObserver } from "./use-intersection-observer";
-export * from "./use-intersection-observer.types";
+export { default as useIntersectionObserver } from "./use-intersection-observer"
+export * from "./use-intersection-observer.types"

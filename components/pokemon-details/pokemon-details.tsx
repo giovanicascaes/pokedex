@@ -8,14 +8,14 @@ import {
   PokemonSection,
   PokemonStats,
   PokemonTypeSections,
-  Select
-} from "components";
-import { Children, isValidElement, useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+  Select,
+} from "components"
+import { Children, isValidElement, useEffect, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import {
   PokemonDetailsBadges,
-  PokemonDetailsProps
-} from "./pokemon-details.types";
+  PokemonDetailsProps,
+} from "./pokemon-details.types"
 
 function SpeciesBadgeContainer({
   children,
@@ -26,7 +26,7 @@ function SpeciesBadgeContainer({
     <div {...other} className={twMerge("flex space-x-2", className)}>
       {children}
     </div>
-  ) : null;
+  ) : null
 }
 
 export default function PokemonDetails({
@@ -46,12 +46,12 @@ export default function PokemonDetails({
     varieties,
   },
 }: PokemonDetailsProps) {
-  const [selectedForm, setSelectedForm] = useState(varieties[0]);
-  const displayedFormName = selectedForm.name ?? name;
+  const [selectedForm, setSelectedForm] = useState(varieties[0])
+  const displayedFormName = selectedForm.name ?? name
 
   useEffect(() => {
-    setSelectedForm(varieties[0]);
-  }, [varieties]);
+    setSelectedForm(varieties[0])
+  }, [varieties])
 
   return (
     <>
@@ -177,5 +177,5 @@ export default function PokemonDetails({
         </div>
       </div>
     </>
-  );
+  )
 }

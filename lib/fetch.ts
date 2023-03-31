@@ -5,9 +5,9 @@ export async function fetchAsJson<T>(url: string) {
     },
   }).then<T>((res) => {
     if (!res.ok) {
-      throw { status: res.status, message: `Error fetching from ${url}` };
+      throw { status: res.status, message: `Error fetching from ${url}` }
     }
 
-    return res.json();
-  });
+    return res.json()
+  })
 }

@@ -1,5 +1,5 @@
-import { PokemonCardProps } from "components";
+import { PokemonCardProps } from "components"
 
 export interface ViewportAwarePokemonCardProps extends PokemonCardProps {
-  onIntersectionChange?: (isIntersecting: boolean) => void;
+  onIntersectionChange?: (isIntersecting: boolean) => void
 }

@@ -1,30 +1,29 @@
-import { animated, easings, useSpring, useTransition } from "@react-spring/web";
-import { PokemonActionAnimation, PokemonCard } from "components";
-import { usePokemonView } from "contexts";
-import { useResizeObserver } from "hooks";
-import { PokemonSpeciesSimple } from "lib";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { animated, easings, useSpring, useTransition } from "@react-spring/web"
+import { PokemonCard } from "components"
+import { usePokemonView } from "contexts"
+import { useResizeObserver } from "hooks"
+import { PokemonSpeciesSimple } from "lib"
+import { useCallback, useMemo, useRef, useState } from "react"
 import {
-  CatchingOrReleasingPokemon,
   PokemonGridData,
   PokemonGridItemData,
   PokemonGridProps,
-} from "./pokemon-grid.types";
+} from "./pokemon-grid.types"
 
-const CONTAINER_BOTTOM_PADDING = 80;
+const CONTAINER_BOTTOM_PADDING = 30
 
-const GRID_GAP_X = 30;
+const GRID_GAP_X = 20
 
-const GRID_GAP_Y = 40;
+const GRID_GAP_Y = 40
 
-const GRID_TRAIL = 100;
+const GRID_TRAIL = 100
 
-const GRID_TRANSITION_DURATION = 300;
+const GRID_TRANSITION_DURATION = 300
 
-const CONTAINER_TRANSITION_DURATION = 300;
+const CONTAINER_TRANSITION_DURATION = 300
 
 interface CardAnimationControl {
-  rendered: Set<number>;
+  rendered: Set<number>
 }
 
 export default function PokemonGrid({
@@ -32,30 +31,24 @@ export default function PokemonGrid({
   columns,
   ...other
 }: PokemonGridProps) {
-  const [cardDimensions, setCardDimensions] = useState<DOMRect | null>(null);
-  const [catchingOrReleasingPokemons, setCatchingOrReleasingPokemons] =
-    useState<CatchingOrReleasingPokemon[]>([]);
+  const [cardDimensions, setCardDimensions] = useState<DOMRect | null>(null)
   const [{ pokedex }, { addPokemonToPokedex, removePokemonFromPokedex }] =
-    usePokemonView();
-  const [resizeObserverRef, containerRect] = useResizeObserver();
+    usePokemonView()
+  const [resizeObserverRef, containerRect] = useResizeObserver()
   const cardAnimationControl = useRef<CardAnimationControl>({
     rendered: new Set(),
-  });
+  })
 
-  const handleOnPokemonActionFinished = useCallback(
+  const handleOnPokemonCatchReleaseFinished = useCallback(
     (pokemon: PokemonSpeciesSimple) => {
       if (pokedex.some(({ id }) => id === pokemon.id)) {
-        removePokemonFromPokedex(pokemon.id);
+        removePokemonFromPokedex(pokemon.id)
       } else {
-        addPokemonToPokedex(pokemon);
+        addPokemonToPokedex(pokemon)
       }
-
-      setCatchingOrReleasingPokemons((current) =>
-        current.filter(({ id }) => id !== pokemon.id)
-      );
     },
     [addPokemonToPokedex, pokedex, removePokemonFromPokedex]
-  );
+  )
 
   const [{ width: containerWidth, height: containerHeight }, gridItems] =
     useMemo<PokemonGridData>(() => {
@@ -72,23 +65,23 @@ export default function PokemonGrid({
             y: 0,
             measureOnly: true,
           })),
-        ];
+        ]
       }
 
-      const { width: cardWidth, height: cardHeight } = cardDimensions;
+      const { width: cardWidth, height: cardHeight } = cardDimensions
       const gridItems = pokemons.map((pokemon, i) => {
-        const currColIdx = i % columns;
-        const currRowIdx = Math.trunc(i / columns);
-        const x = currColIdx * cardWidth + currColIdx * GRID_GAP_X;
-        const y = currRowIdx * cardHeight + currRowIdx * GRID_GAP_Y;
+        const currColIdx = i % columns
+        const currRowIdx = Math.trunc(i / columns)
+        const x = currColIdx * cardWidth + currColIdx * GRID_GAP_X
+        const y = currRowIdx * cardHeight + currRowIdx * GRID_GAP_Y
 
         return {
           ...pokemon,
           x,
           y,
-        };
-      });
-      const numberOfRows = Math.ceil(gridItems.length / columns);
+        }
+      })
+      const numberOfRows = Math.ceil(gridItems.length / columns)
 
       return [
         {
@@ -100,8 +93,8 @@ export default function PokemonGrid({
             CONTAINER_BOTTOM_PADDING,
         },
         gridItems,
-      ];
-    }, [cardDimensions, columns, pokemons]);
+      ]
+    }, [cardDimensions, columns, pokemons])
 
   const gridTransitions = useTransition(gridItems, {
     key: ({ id }: PokemonGridItemData) => id,
@@ -129,14 +122,14 @@ export default function PokemonGrid({
     },
     onRest: (_result, _ctrl, { id }) => {
       if (id !== null) {
-        cardAnimationControl.current.rendered.add(id);
+        cardAnimationControl.current.rendered.add(id)
       }
     },
     delay: (key) => {
-      const typeSafeKey = key as unknown as number;
+      const typeSafeKey = key as unknown as number
 
       if (cardAnimationControl.current.rendered.has(typeSafeKey)) {
-        return 0;
+        return 0
       }
 
       return (
@@ -147,9 +140,9 @@ export default function PokemonGrid({
             )
           )
           .findIndex(({ id }) => id === typeSafeKey) * GRID_TRAIL
-      );
+      )
     },
-  });
+  })
 
   const containerStyles = useSpring({
     ...(containerRect && {
@@ -159,7 +152,7 @@ export default function PokemonGrid({
         easing: easings.linear,
       },
     }),
-  });
+  })
 
   return (
     <div {...other} ref={resizeObserverRef}>
@@ -172,14 +165,10 @@ export default function PokemonGrid({
         }}
       >
         {gridTransitions((gridStyles, pokemon) => {
-          const { id, artSrc, measureOnly, ...other } = pokemon;
-          const actionData = catchingOrReleasingPokemons.find(
-            (actionPokemon) => actionPokemon.id === id
-          );
-          const isBeingCaughtOrReleased = !!actionData;
-          const isCaught = pokedex.some(
+          const { id, artSrc, measureOnly, ...other } = pokemon
+          const isOnPokedex = pokedex.some(
             (pokedexPokemon) => pokedexPokemon.id === id
-          );
+          )
 
           return (
             <animated.li
@@ -194,41 +183,22 @@ export default function PokemonGrid({
               ref={(el) => {
                 setCardDimensions(
                   (curr) => curr ?? el?.getBoundingClientRect().toJSON()
-                );
+                )
               }}
             >
               <PokemonCard
                 {...other}
                 artSrc={artSrc}
                 identifier={id}
-                onPokemonAction={(cardRef, artRef) => {
-                  setCatchingOrReleasingPokemons((current) => [
-                    ...current,
-                    {
-                      id,
-                      artPosition: artRef.current
-                        ?.getBoundingClientRect()
-                        .toJSON(),
-                      pokemonRef: cardRef,
-                    },
-                  ]);
-                }}
-                actionAllowed={!isBeingCaughtOrReleased}
-                isCaught={isCaught}
+                isOnPokedex={isOnPokedex}
+                onCatchReleaseFinish={() =>
+                  handleOnPokemonCatchReleaseFinished(pokemon)
+                }
               />
-              {isBeingCaughtOrReleased && (
-                <PokemonActionAnimation
-                  artPosition={actionData.artPosition}
-                  pokemonRef={actionData.pokemonRef}
-                  artSrc={artSrc}
-                  onFinish={() => handleOnPokemonActionFinished(pokemon)}
-                  isBeingCaught={!isCaught}
-                />
-              )}
             </animated.li>
-          );
+          )
         })}
       </animated.ul>
     </div>
-  );
+  )
 }

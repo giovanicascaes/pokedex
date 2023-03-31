@@ -1,5 +1,5 @@
-import { getPokemons } from "lib";
-import { NextApiRequest, NextApiResponse } from "next";
+import { getPokemons } from "lib"
+import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,11 +9,11 @@ export default async function handler(
     limit,
     offset,
   }: {
-    limit?: number;
-    offset?: number;
-  } = req.query;
+    limit?: number
+    offset?: number
+  } = req.query
 
-  const pokemons = await getPokemons(limit, offset);
+  const pokemons = await getPokemons(limit, offset)
 
-  return res.status(200).json({ result: pokemons });
+  return res.status(200).json({ result: pokemons })
 }

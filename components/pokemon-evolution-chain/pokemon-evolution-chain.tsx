@@ -1,14 +1,14 @@
-import { PokemonEvolutionChainLinkCard } from "components";
-import { EvolutionChainLink } from "lib";
-import { MdChevronRight } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
+import { PokemonEvolutionChainLinkCard } from "components"
+import { EvolutionChainLink } from "lib"
+import { MdChevronRight } from "react-icons/md"
+import { twMerge } from "tailwind-merge"
 import {
   PokemonEvolutionChainArrowProps,
   PokemonEvolutionChainLinkProps,
   PokemonEvolutionChainNodeContainerProps,
   PokemonEvolutionChainPathProps,
   PokemonEvolutionChainProps,
-} from "./pokemon-evolution-chain.types";
+} from "./pokemon-evolution-chain.types"
 
 function evolutionChainToLevelCountMap(
   { evolvesTo }: EvolutionChainLink,
@@ -18,23 +18,23 @@ function evolutionChainToLevelCountMap(
     .map((evolution) =>
       evolutionChainToLevelCountMap(evolution, chainLevel + 1)
     )
-    .flat();
+    .flat()
 
-  return [chainLevel, ...nextChainLevels];
+  return [chainLevel, ...nextChainLevels]
 }
 
 function getEvolutionChainLinksDisposeDirection(
   evolution: EvolutionChainLink
 ): "vertical" | "horizontal" {
   const map = evolutionChainToLevelCountMap(evolution).reduce<{
-    [K in number]: number;
-  }>((prev, acc) => ({ ...prev, [acc]: (prev[acc] ?? 0) + 1 }), {});
-  const numberOfChainLevels = Object.keys(map).length;
-  const maxEvolutionsInOneLevel = Math.max(...Object.values(map));
+    [K in number]: number
+  }>((prev, acc) => ({ ...prev, [acc]: (prev[acc] ?? 0) + 1 }), {})
+  const numberOfChainLevels = Object.keys(map).length
+  const maxEvolutionsInOneLevel = Math.max(...Object.values(map))
 
   return numberOfChainLevels >= maxEvolutionsInOneLevel
     ? "horizontal"
-    : "vertical";
+    : "vertical"
 }
 
 function Arrow({
@@ -52,7 +52,7 @@ function Arrow({
         className
       )}
     />
-  );
+  )
 }
 
 function NodeContainer({
@@ -72,7 +72,7 @@ function NodeContainer({
     >
       {children}
     </div>
-  );
+  )
 }
 
 function EvolutionChainPath({
@@ -95,7 +95,7 @@ function EvolutionChainPath({
         </NodeContainer>
       )}
     </NodeContainer>
-  );
+  )
 }
 
 function EvolutionChainLink({
@@ -119,7 +119,7 @@ function EvolutionChainLink({
         </>
       )}
     </NodeContainer>
-  );
+  )
 }
 
 export default function PokemonEvolutionChain({
@@ -128,7 +128,7 @@ export default function PokemonEvolutionChain({
   className,
   ...other
 }: PokemonEvolutionChainProps) {
-  const direction = getEvolutionChainLinksDisposeDirection(evolutionChain);
+  const direction = getEvolutionChainLinksDisposeDirection(evolutionChain)
 
   return (
     <div
@@ -149,5 +149,5 @@ export default function PokemonEvolutionChain({
         className="p-10"
       />
     </div>
-  );
+  )
 }

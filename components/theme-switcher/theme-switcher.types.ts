@@ -1,11 +1,10 @@
-import { DetailedHTMLProps, HTMLAttributes, Ref } from "react";
+import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface ThemeSwitcherProps
-  extends Omit<
+  extends WithNonLegacyRef<
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-    "ref"
+    HTMLDivElement
   > {
-  // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLDivElement>;
-  buttonClassName?: HTMLAttributes<HTMLDivElement>["className"];
+  buttonClassName?: HTMLAttributes<HTMLDivElement>["className"]
 }

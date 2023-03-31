@@ -1,48 +1,11 @@
-import { Inter } from "@next/font/google";
-import { AppHeader, PageLoadingIndicator, TransitionLayout } from "components";
-import { useThemeMode } from "contexts";
-import { useAppScrollTop } from "hooks";
-import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib";
-import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { AppShellProps } from "./app-shell.types";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+import { LayoutControlProvider } from "contexts"
+import { AppShellProps } from "./app-shell.types"
+import ShellLayout from "./shell-layout"
 
 export default function AppShell({ children }: AppShellProps) {
-  const [isSsrReady, setIsSsrReady] = useState(false);
-  const [transitionDone, setTransitionDone] = useState(true);
-  const { onScroll, ref: scrollRef } = useAppScrollTop(transitionDone);
-  const [{ transitionClassNames }] = useThemeMode();
-
-  useEffect(() => {
-    setIsSsrReady(true);
-  }, []);
-
-  if (isSsrReady) {
-    return (
-      <main
-        className="h-full overflow-auto"
-        onScroll={onScroll}
-        ref={scrollRef}
-      >
-        <div
-          id={SHELL_LAYOUT_CONTAINER_ELEMENT_ID}
-          className={twMerge(inter.variable, "font-sans", transitionClassNames)}
-        >
-          <PageLoadingIndicator />
-          <AppHeader className="sticky top-0 z-40" />
-          <div className="bg-slate-50 dark:bg-slate-800 min-h-screen">
-            <TransitionLayout
-              onTransitionRest={() => setTransitionDone((current) => !current)}
-            >
-              {children}
-            </TransitionLayout>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  return null;
+  return (
+    <LayoutControlProvider>
+      <ShellLayout>{children}</ShellLayout>
+    </LayoutControlProvider>
+  )
 }

@@ -1,9 +1,9 @@
-import { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
+import { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react"
 
 export interface SelectOptionChildrenFnArgs {
-  disabled: boolean;
-  selected: boolean;
-  clicked: boolean;
+  disabled: boolean
+  selected: boolean
+  clicked: boolean
 }
 
 export interface SelectOptionProps
@@ -11,7 +11,7 @@ export interface SelectOptionProps
     DetailedHTMLProps<HTMLAttributes<HTMLLIElement>, HTMLLIElement>,
     "children"
   > {
-  children: ReactNode | ((args: SelectOptionChildrenFnArgs) => ReactNode);
-  value: any;
-  disabled?: boolean;
+  children: ReactNode | ((args: SelectOptionChildrenFnArgs) => ReactNode)
+  value: any
+  disabled?: boolean
 }

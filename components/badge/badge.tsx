@@ -1,6 +1,6 @@
-import { twMerge } from "tailwind-merge";
-import { match } from "utils";
-import { BadgeProps } from "./badge.types";
+import { twMerge } from "tailwind-merge"
+import { match } from "utils"
+import { BadgeProps } from "./badge.types"
 
 export default function Badge({
   color = "red",
@@ -12,7 +12,7 @@ export default function Badge({
     <div
       {...other}
       className={twMerge(
-        "flex items-center justify-center h-min text-xs font-semibold uppercase px-2 py-1 rounded",
+        "flex items-center justify-center h-min text-xs font-semibold uppercase px-2 py-1",
         variant === "rounded" && "rounded-full px-1.5 py-0.5",
         match(
           {
@@ -37,5 +37,5 @@ export default function Badge({
         className
       )}
     />
-  );
+  )
 }

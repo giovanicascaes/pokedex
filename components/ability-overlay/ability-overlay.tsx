@@ -1,10 +1,10 @@
-import { animated, useTransition } from "@react-spring/web";
-import { useScrollTop } from "hooks";
-import { MdClose } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
-import { AbilityOverlayProps } from "./ability-overlay-types";
+import { animated, useTransition } from "@react-spring/web"
+import { useScrollTop } from "hooks"
+import { MdClose } from "react-icons/md"
+import { twMerge } from "tailwind-merge"
+import { AbilityOverlayProps } from "./ability-overlay-types"
 
-const TRANSITION_DURATION = 150;
+const TRANSITION_DURATION = 150
 
 export default function AbilityDescriptionOverlay({
   ability,
@@ -12,14 +12,14 @@ export default function AbilityDescriptionOverlay({
   className,
   ...other
 }: AbilityOverlayProps) {
-  const [scrollTop, { onScroll }] = useScrollTop();
+  const [scrollTop, { onScroll }] = useScrollTop()
 
   const transition = useTransition(ability, {
     config: { duration: TRANSITION_DURATION },
     from: { opacity: 0, transform: "translateY(-20px)" },
     enter: { opacity: 1, transform: "translateY(0px)" },
     leave: { opacity: 0, transform: "translateY(-20px)" },
-  });
+  })
 
   return transition(
     (styles, item) =>
@@ -50,5 +50,5 @@ export default function AbilityDescriptionOverlay({
           </div>
         </animated.div>
       )
-  );
+  )
 }

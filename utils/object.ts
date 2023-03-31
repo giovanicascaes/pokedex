@@ -10,7 +10,7 @@ export function pick<
         [k]: v,
       }),
       {}
-    ) as { [K in A[number]]: T[K] };
+    ) as { [K in A[number]]: T[K] }
 }
 
 export function match<K extends PropertyKey = string, V = any>(
@@ -18,5 +18,5 @@ export function match<K extends PropertyKey = string, V = any>(
   key: K,
   fallback?: V
 ): V | undefined {
-  return lookup[key] ?? fallback;
+  return lookup[key] ?? fallback
 }

@@ -1,5 +1,5 @@
-import { twMerge } from "tailwind-merge";
-import { PokemonDetailsSectionProps } from "./pokemon-section.types";
+import { twMerge } from "tailwind-merge"
+import { PokemonDetailsSectionProps } from "./pokemon-section.types"
 
 export default function PokemonDetailsSection({
   label,
@@ -12,8 +12,10 @@ export default function PokemonDetailsSection({
       {...other}
       className={twMerge("flex flex-col space-y-4", className)}
     >
-      <span className="text-lg text-slate-800 dark:text-slate-50 font-semibold">{label}</span>
+      <span className="text-lg text-slate-800 dark:text-slate-50 font-semibold">
+        {label}
+      </span>
       {children}
     </section>
-  );
+  )
 }

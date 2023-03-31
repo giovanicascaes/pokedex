@@ -1,49 +1,52 @@
-import { useMedia } from "hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { createContext } from "utils";
+import { useMedia } from "hooks"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { createContext } from "utils"
 import {
   ThemeMode,
   ThemeModeContextActions,
   ThemeModeContextData,
   ThemeModeContextValue,
   ThemeModeProviderProps,
-} from "./theme-mode.types";
+} from "./theme-mode.types"
 
-export const THEME_MODE = "@@pokedex_theme-mode";
+export const THEME_MODE = "@@pokedex_theme-mode"
 
 const [Provider, useContext] = createContext<ThemeModeContextValue>({
   hookName: "useThemeMode",
   providerName: "ThemeModeProvider",
-});
+})
 
-export const useThemeMode = useContext;
+export const useThemeMode = useContext
 
 export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
-  const [themeMode, setThemeMode] = useState(ThemeMode.Light);
-  const [transitionClassNames, setTransitionClassNames] = useState("");
+  const [themeMode, setThemeMode] = useState(ThemeMode.Light)
+  const [transitionClassNames, setTransitionClassNames] = useState("")
 
-  const isMediaDark = useMedia("(prefers-color-scheme: dark)");
+  const isMediaDark = useMedia("(prefers-color-scheme: dark)")
 
   const updateThemeMode = useCallback((mode: ThemeMode) => {
-    setThemeMode(mode);
-    setTransitionClassNames("[&_*]:transition-all [&_*]:duration-[200ms]");
-  }, []);
+    setThemeMode(mode)
+    // Adds transition to all elements in the application so that they can smoothly
+    // transition to dark mode
+    setTransitionClassNames("[&_*]:transition-all [&_*]:duration-[200ms]")
+  }, [])
 
   useEffect(() => {
     if (transitionClassNames) {
+      // Removes transition classes after 300 ms
       const timeoutId = setTimeout(() => {
-        setTransitionClassNames("");
-      }, 300);
+        setTransitionClassNames("")
+      }, 300)
 
       return () => {
-        clearTimeout(timeoutId);
-      };
+        clearTimeout(timeoutId)
+      }
     }
-  }, [transitionClassNames]);
+  }, [transitionClassNames])
 
   useEffect(() => {
-    updateThemeMode(localStorage[THEME_MODE] ?? ThemeMode.Light);
-  }, [updateThemeMode]);
+    updateThemeMode(localStorage[THEME_MODE] ?? ThemeMode.Light)
+  }, [updateThemeMode])
 
   const data: ThemeModeContextData = useMemo(
     () => ({
@@ -54,13 +57,13 @@ export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
         (themeMode === ThemeMode.System && isMediaDark),
     }),
     [isMediaDark, transitionClassNames, themeMode]
-  );
+  )
 
   const actions: ThemeModeContextActions = useMemo(
     () => ({
       setThemeMode(mode) {
-        localStorage.setItem(THEME_MODE, mode);
-        updateThemeMode(mode);
+        localStorage.setItem(THEME_MODE, mode)
+        updateThemeMode(mode)
 
         setTimeout(() => {
           requestAnimationFrame(() => {
@@ -69,16 +72,16 @@ export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
               (mode === ThemeMode.System &&
                 window.matchMedia("(prefers-color-scheme: dark)").matches)
             ) {
-              document.documentElement.classList.add("dark");
+              document.documentElement.classList.add("dark")
             } else {
-              document.documentElement.classList.remove("dark");
+              document.documentElement.classList.remove("dark")
             }
-          });
-        }, 200);
+          })
+        }, 200)
       },
     }),
     [updateThemeMode]
-  );
+  )
 
-  return <Provider value={[data, actions]}>{children}</Provider>;
+  return <Provider value={[data, actions]}>{children}</Provider>
 }

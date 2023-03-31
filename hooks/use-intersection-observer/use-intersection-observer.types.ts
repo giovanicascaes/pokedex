@@ -1,9 +1,12 @@
-import { RefCallback } from "react";
+import { RefCallback } from "react"
 
 export interface UseIntersectionObserverArgs extends IntersectionObserverInit {
-  freezeOnceVisible?: boolean;
-  disconnectOnceVisible?: boolean;
-  disconnectOnceNotVisibleThenNotVisible?: boolean;
+  freezeOnceVisible?: boolean
+  disconnectOnceVisible?: boolean
+  disconnectOnceNotVisibleThenNotVisible?: boolean
 }
 
-export type UseIntersectionObserverReturn = [RefCallback<Element>, boolean];
+export type UseIntersectionObserverReturn = readonly [
+  RefCallback<Element>,
+  boolean
+]

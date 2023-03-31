@@ -1,28 +1,28 @@
-import { animated, useTransition } from "@react-spring/web";
-import { twMerge } from "tailwind-merge";
-import { useSelect } from "../context";
-import { SelectPopupState } from "../select.types";
-import { SelectOptionsProps } from "./options.types";
+import { animated, useTransition } from "@react-spring/web"
+import { twMerge } from "tailwind-merge"
+import { useSelect } from "../context"
+import { SelectPopupState } from "../select.types"
+import { SelectOptionsProps } from "./options.types"
 
-const TRANSITION_DURATION = 80;
+const TRANSITION_DURATION = 80
 
 export default function Options({
   children,
   className,
   ...other
 }: SelectOptionsProps) {
-  const [{ popupState }] = useSelect();
+  const [{ popupState }] = useSelect()
 
-  const isOpen = popupState !== SelectPopupState.Closed;
+  const isOpen = popupState !== SelectPopupState.Closed
 
   const transition = useTransition(isOpen, {
     config: { duration: TRANSITION_DURATION },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
-  });
+  })
 
-  if (typeof children === "function") return <>{children({ open: isOpen })}</>;
+  if (typeof children === "function") return <>{children({ open: isOpen })}</>
 
   return transition(
     (styles, open) =>
@@ -40,5 +40,5 @@ export default function Options({
           {children}
         </animated.ul>
       )
-  );
+  )
 }

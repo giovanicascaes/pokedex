@@ -1,18 +1,18 @@
-import { animated, easings, useTransition } from "@react-spring/web";
-import { Select } from "components";
-import { ThemeMode, useThemeMode } from "contexts";
-import { usePrevious } from "hooks";
-import { useEffect, useState } from "react";
+import { animated, easings, useTransition } from "@react-spring/web"
+import { Select } from "components"
+import { ThemeMode, useThemeMode } from "contexts"
+import { usePrevious } from "hooks"
+import { useEffect, useState } from "react"
 import {
   HiOutlineComputerDesktop,
   HiOutlineMoon,
   HiOutlineSun,
-} from "react-icons/hi2";
-import { twMerge } from "tailwind-merge";
-import { match } from "utils";
-import { ThemeSwitcherProps } from "./theme-switcher.types";
+} from "react-icons/hi2"
+import { twMerge } from "tailwind-merge"
+import { match } from "utils"
+import { ThemeSwitcherProps } from "./theme-switcher.types"
 
-const POPUP_TRANSITION_DURATION = 220;
+const POPUP_TRANSITION_DURATION = 220
 
 const getThemeModeIcon = (mode: ThemeMode) => {
   const Icon = match(
@@ -22,10 +22,10 @@ const getThemeModeIcon = (mode: ThemeMode) => {
       [ThemeMode.System]: HiOutlineComputerDesktop,
     },
     mode
-  )!;
+  )!
 
-  return <Icon size={20} />;
-};
+  return <Icon size={20} />
+}
 
 function OptionsPopup({ open }: { open: boolean }) {
   const transition = useTransition(open, {
@@ -38,7 +38,7 @@ function OptionsPopup({ open }: { open: boolean }) {
     from: { opacity: 0, scale: "95%" },
     enter: { opacity: 1, scale: "100%" },
     leave: { opacity: 0, scale: "95%" },
-  });
+  })
 
   return transition(
     (styles, show) =>
@@ -72,16 +72,16 @@ function OptionsPopup({ open }: { open: boolean }) {
           ))}
         </animated.ul>
       )
-  );
+  )
 }
 
 export default function ThemeSwitcher({
   buttonClassName,
   ...other
 }: ThemeSwitcherProps) {
-  const [animate, setAnimate] = useState(false);
-  const [{ themeMode }, { setThemeMode }] = useThemeMode();
-  const prevThemeMode = usePrevious(themeMode);
+  const [animate, setAnimate] = useState(false)
+  const [{ themeMode }, { setThemeMode }] = useThemeMode()
+  const prevThemeMode = usePrevious(themeMode)
 
   const transitions = useTransition(themeMode, {
     from: { opacity: 0, x: "-50%" },
@@ -89,14 +89,14 @@ export default function ThemeSwitcher({
     leave: { opacity: 0, x: "100%" },
     config: { duration: 150, easing: easings.linear },
     exitBeforeEnter: true,
-  });
+  })
 
   useEffect(() => {
-      // Should only animate when theme mode has changed
+    // Should only animate when theme mode has changed
     if (prevThemeMode && prevThemeMode !== themeMode) {
-      setAnimate(true);
+      setAnimate(true)
     }
-  }, [prevThemeMode, themeMode]);
+  }, [prevThemeMode, themeMode])
 
   return (
     <Select
@@ -116,5 +116,5 @@ export default function ThemeSwitcher({
         {({ open }) => <OptionsPopup open={open} />}
       </Select.Options>
     </Select>
-  );
+  )
 }

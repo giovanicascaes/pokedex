@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { Children, Fragment } from "react";
-import { twMerge } from "tailwind-merge";
+import Link from "next/link"
+import { Children, Fragment } from "react"
+import { twMerge } from "tailwind-merge"
 import {
   BreadcrumbItemProps,
   BreadcrumbLinkProps,
   BreadcrumbProps,
-} from "./breadcrumb.types";
+} from "./breadcrumb.types"
 
 function BreadcrumbLink({ href, className, ...props }: BreadcrumbLinkProps) {
   return (
@@ -17,7 +17,7 @@ function BreadcrumbLink({ href, className, ...props }: BreadcrumbLinkProps) {
         className
       )}
     />
-  );
+  )
 }
 
 function BreadcrumbItem({
@@ -34,12 +34,12 @@ function BreadcrumbItem({
         className
       )}
     />
-  );
+  )
 }
 
 function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
-  const childrenAsArray = Children.toArray(children).filter(Boolean);
-  const childrenCount = childrenAsArray.length;
+  const childrenAsArray = Children.toArray(children).filter(Boolean)
+  const childrenCount = childrenAsArray.length
 
   return (
     <div {...other} className={twMerge("space-x-1", className)}>
@@ -54,10 +54,10 @@ function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
         </Fragment>
       ))}
     </div>
-  );
+  )
 }
 
 export default Object.assign(Breadcrumb, {
   Item: BreadcrumbItem,
   Link: BreadcrumbLink,
-});
+})

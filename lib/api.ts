@@ -1,5 +1,5 @@
-import { fetchAsJson } from "lib/fetch";
-import { join, pick } from "utils";
+import { fetchAsJson } from "lib/fetch"
+import { join, pick } from "utils"
 import {
   Ability,
   ApiAbility,
@@ -29,17 +29,17 @@ import {
   Type,
   TypeRelation,
   TypeValue,
-} from "./api.types";
-import { FetchError } from "./fetch.types";
+} from "./api.types"
+import { FetchError } from "./fetch.types"
 
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 20
 
-const DEFAULT_LANGUAGE = "en";
+const DEFAULT_LANGUAGE = "en"
 
-const BASE_URL = "https://pokeapi.co/api/v2";
+const BASE_URL = "https://pokeapi.co/api/v2"
 
 export const ApiTypesColors: {
-  [K in TypeValue]: Type["color"];
+  [K in TypeValue]: Type["color"]
 } = {
   normal: "#A4ACAF",
   fighting: "#D46822",
@@ -61,33 +61,33 @@ export const ApiTypesColors: {
   fairy: "#F9B9E9",
   unknown: null,
   shadow: null,
-};
+}
 
 async function fetchPathAsJson<T>(path: string) {
-  return fetchAsJson<T>(`${BASE_URL}${path}`);
+  return fetchAsJson<T>(`${BASE_URL}${path}`)
 }
 
 function getLocalizedName({ names }: ApiLocalized) {
-  return names.find(({ language }) => language.name === DEFAULT_LANGUAGE)?.name;
+  return names.find(({ language }) => language.name === DEFAULT_LANGUAGE)?.name
 }
 
 function getOfficialArtwork(sprites: ApiPokemonSprites) {
-  return sprites.other["official-artwork"].front_default;
+  return sprites.other["official-artwork"].front_default
 }
 
 async function toPokemonSpeciesSimple(
   species: ApiPokemonSpecies
 ): Promise<PokemonSpeciesSimple> {
-  const { varieties, name, ...rest } = species;
-  const { pokemon } = varieties.find(({ is_default }) => is_default)!;
-  const { sprites } = await fetchAsJson<ApiPokemon>(pokemon.url);
+  const { varieties, name, ...rest } = species
+  const { pokemon } = varieties.find(({ is_default }) => is_default)!
+  const { sprites } = await fetchAsJson<ApiPokemon>(pokemon.url)
 
   return {
     ...pick(rest, "id"),
     resourceName: name,
     artSrc: getOfficialArtwork(sprites),
     name: getLocalizedName(species)!,
-  };
+  }
 }
 
 export async function getPokemons(
@@ -96,12 +96,12 @@ export async function getPokemons(
 ): Promise<PokemonSpeciesSimple[]> {
   const { results } = await fetchPathAsJson<ApiNamedResourceList>(
     join(`/pokemon-species?limit=${limit}`, offset && `&offset=${offset}`)
-  );
+  )
   return Promise.all(
     results.map(({ url }) =>
       fetchAsJson<ApiPokemonSpecies>(url).then(toPokemonSpeciesSimple)
     )
-  );
+  )
 }
 
 async function toAbility({
@@ -109,8 +109,8 @@ async function toAbility({
   is_hidden,
   ...other
 }: ApiPokemonAbility): Promise<Ability> {
-  const ability = await fetchAsJson<ApiAbility>(url);
-  const { effect_entries } = ability;
+  const ability = await fetchAsJson<ApiAbility>(url)
+  const { effect_entries } = ability
 
   return {
     ...pick(other, "slot"),
@@ -119,37 +119,37 @@ async function toAbility({
       effect_entries?.find(({ language }) => language.name === DEFAULT_LANGUAGE)
         ?.effect ?? null,
     isHidden: is_hidden,
-  };
+  }
 }
 
 async function toPokemonForm({ url }: ApiNamedResource) {
-  return fetchAsJson<ApiPokemonForm>(url);
+  return fetchAsJson<ApiPokemonForm>(url)
 }
 
 async function toStat({
   base_stat,
   stat: { url },
 }: ApiPokemonStat): Promise<Stat> {
-  const stat = await fetchAsJson<ApiStat>(url);
+  const stat = await fetchAsJson<ApiStat>(url)
 
   return {
     name: getLocalizedName(stat)!,
     value: base_stat,
-  };
+  }
 }
 
 async function namedResourceToTypeRelation({
   url,
 }: ApiNamedResource): Promise<TypeRelation> {
-  const type = await fetchAsJson<ApiType>(url);
-  const value = type.name as TypeValue;
+  const type = await fetchAsJson<ApiType>(url)
+  const value = type.name as TypeValue
 
   return {
     resourceName: value,
     name: getLocalizedName(type)!,
     color: ApiTypesColors[value],
     isDouble: false,
-  };
+  }
 }
 
 async function toDamageRelation(
@@ -164,13 +164,13 @@ async function toDamageRelation(
       }))
     ),
     ...halfDamage.map(namedResourceToTypeRelation),
-  ]);
+  ])
 }
 
 async function namedResourceToType({
   url,
 }: ApiNamedResource): Promise<Omit<Type, "slot">> {
-  const type = await fetchAsJson<ApiType>(url);
+  const type = await fetchAsJson<ApiType>(url)
   const {
     name,
     damage_relations: {
@@ -179,8 +179,8 @@ async function namedResourceToType({
       half_damage_from,
       half_damage_to,
     },
-  } = type;
-  const resourceName = name as TypeValue;
+  } = type
+  const resourceName = name as TypeValue
 
   return {
     resourceName,
@@ -193,14 +193,14 @@ async function namedResourceToType({
       ),
     },
     color: ApiTypesColors[resourceName],
-  };
+  }
 }
 
 async function toType({ type, ...other }: ApiPokemonType): Promise<Type> {
   return {
     ...pick(other, "slot"),
     ...(await namedResourceToType(type)),
-  };
+  }
 }
 
 async function toPokemonVariety({
@@ -208,10 +208,10 @@ async function toPokemonVariety({
   pokemon,
 }: ApiPokemonSpeciesVariety): Promise<PokemonVariety> {
   const { abilities, stats, types, sprites, forms, ...rest } =
-    await fetchAsJson<ApiPokemon>(pokemon.url);
+    await fetchAsJson<ApiPokemon>(pokemon.url)
   const defaultForm = (await Promise.all(forms.map(toPokemonForm))).find(
     ({ is_default }) => is_default
-  )!;
+  )!
 
   return {
     ...pick(rest, "id", "height", "weight"),
@@ -222,7 +222,7 @@ async function toPokemonVariety({
     abilities: await Promise.all(abilities.map(toAbility)),
     stats: await Promise.all(stats.map(toStat)),
     types: await Promise.all(types.map(toType)),
-  };
+  }
 }
 
 async function toEvolutionChainLink({
@@ -230,21 +230,21 @@ async function toEvolutionChainLink({
   is_baby,
   species: { url },
 }: ApiEvolutionChainLink): Promise<EvolutionChainLink> {
-  const species = await fetchAsJson<ApiPokemonSpecies>(url);
+  const species = await fetchAsJson<ApiPokemonSpecies>(url)
 
   return {
     isBaby: is_baby,
     species: await toPokemonSpeciesSimple(species),
     evolvesTo: await Promise.all(evolves_to.map(toEvolutionChainLink)),
-  };
+  }
 }
 
 async function toEvolutionChain({
   url,
 }: ApiResourced): Promise<EvolutionChainLink> {
-  const { chain } = await fetchAsJson<ApiEvolutionChain>(url);
+  const { chain } = await fetchAsJson<ApiEvolutionChain>(url)
 
-  return toEvolutionChainLink(chain);
+  return toEvolutionChainLink(chain)
 }
 
 function toGender(
@@ -252,13 +252,13 @@ function toGender(
 ): PokemonGender {
   switch (gender_rate) {
     case -1:
-      return "unknown";
+      return "unknown"
     case 0:
-      return "male";
+      return "male"
     case 8:
-      return "female";
+      return "female"
     default:
-      return "both";
+      return "both"
   }
 }
 
@@ -266,15 +266,15 @@ async function getPokemonSpeciesSimpleById(id: number) {
   try {
     const species = await fetchPathAsJson<ApiPokemonSpecies>(
       `/pokemon-species/${id}`
-    );
+    )
 
-    return toPokemonSpeciesSimple(species);
+    return toPokemonSpeciesSimple(species)
   } catch (e) {
-    const fetchError = e as FetchError;
+    const fetchError = e as FetchError
 
-    if (fetchError.status === 404) return null;
+    if (fetchError.status === 404) return null
 
-    throw fetchError;
+    throw fetchError
   }
 }
 
@@ -292,7 +292,7 @@ async function toPokemonSpeciesDetailed(
     color: { name: color },
     shape,
     id,
-  } = species;
+  } = species
   return {
     id,
     resourceName: name,
@@ -307,25 +307,25 @@ async function toPokemonSpeciesDetailed(
     shape: getLocalizedName(await fetchAsJson<ApiPokemonShape>(shape.url))!,
     previousPokemon: await getPokemonSpeciesSimpleById(id - 1),
     nextPokemon: await getPokemonSpeciesSimpleById(id + 1),
-  };
+  }
 }
 
 export async function getPokemon(
   key: string
 ): Promise<PokemonSpeciesDetailed | undefined> {
-  let species: ApiPokemonSpecies;
+  let species: ApiPokemonSpecies
 
   try {
     species = await fetchPathAsJson<ApiPokemonSpecies>(
       `/pokemon-species/${key}`
-    );
+    )
   } catch (e) {
-    const fetchError = e as FetchError;
+    const fetchError = e as FetchError
 
-    if (fetchError.status === 404) return undefined;
+    if (fetchError.status === 404) return undefined
 
-    throw fetchError;
+    throw fetchError
   }
 
-  return toPokemonSpeciesDetailed(species);
+  return toPokemonSpeciesDetailed(species)
 }

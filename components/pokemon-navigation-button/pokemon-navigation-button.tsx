@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { MdArrowBackIos } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
-import { join } from "utils";
+import Link from "next/link"
+import { MdArrowBackIos } from "react-icons/md"
+import { twMerge } from "tailwind-merge"
+import { join } from "utils"
 import {
   PokemonNavigationButtonArrowProps,
   PokemonNavigationButtonProps,
-} from "./pokemon-navigation-button.types";
+} from "./pokemon-navigation-button.types"
 
 function PokemonNavigationArrow({
   forwards = false,
@@ -19,7 +19,7 @@ function PokemonNavigationArrow({
     >
       <MdArrowBackIos size={22} className={join(forwards && "rotate-180")} />
     </span>
-  );
+  )
 }
 
 export default function PokemonNavigationButton({
@@ -54,5 +54,5 @@ export default function PokemonNavigationButton({
       </span>
       {forwards && <PokemonNavigationArrow forwards />}
     </Link>
-  );
+  )
 }

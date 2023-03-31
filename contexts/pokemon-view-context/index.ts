@@ -1,2 +1,2 @@
-export * from "./pokemon-view-context";
-export * from "./pokemon-view-context.types";
+export * from "./pokemon-view-context"
+export * from "./pokemon-view-context.types"

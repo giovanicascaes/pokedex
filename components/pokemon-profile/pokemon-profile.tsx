@@ -1,17 +1,17 @@
-import { AbilityOverlay } from "components";
-import { Ability } from "lib";
-import { ReactNode, useMemo, useState } from "react";
-import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
-import { twMerge } from "tailwind-merge";
-import { match } from "utils";
-import { PokemonProfileProps } from "./pokemon-profile.types";
+import { AbilityOverlay } from "components"
+import { Ability } from "lib"
+import { ReactNode, useMemo, useState } from "react"
+import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5"
+import { twMerge } from "tailwind-merge"
+import { match } from "utils"
+import { PokemonProfileProps } from "./pokemon-profile.types"
 
 function DataContainer({
   title,
   children,
 }: {
-  title: string;
-  children: ReactNode;
+  title: string
+  children: ReactNode
 }) {
   return (
     <div className="space-y-3">
@@ -22,7 +22,7 @@ function DataContainer({
         {children}
       </div>
     </div>
-  );
+  )
 }
 
 function DataUnit({ children }: { children: ReactNode }) {
@@ -30,7 +30,7 @@ function DataUnit({ children }: { children: ReactNode }) {
     <span className="text-sm font-light text-slate-500 dark:text-slate-300">
       {children}
     </span>
-  );
+  )
 }
 
 export default function PokemonProfile({
@@ -42,11 +42,11 @@ export default function PokemonProfile({
   className,
   ...other
 }: PokemonProfileProps) {
-  const [displayingAbility, setDisplayingAbility] = useState<Ability>();
+  const [displayingAbility, setDisplayingAbility] = useState<Ability>()
 
   const genderIcons = useMemo(() => {
-    const maleIcon = <IoMaleOutline size={28} />;
-    const femaleIcon = <IoFemaleOutline size={28} />;
+    const maleIcon = <IoMaleOutline size={28} />
+    const femaleIcon = <IoFemaleOutline size={28} />
 
     return match(
       {
@@ -61,8 +61,8 @@ export default function PokemonProfile({
         unknown: "Unknown",
       },
       gender
-    );
-  }, [gender]);
+    )
+  }, [gender])
 
   return (
     <div
@@ -83,7 +83,7 @@ export default function PokemonProfile({
               slot1 < slot2 ? -1 : 1
             )
             .map((ability) => {
-              const { name } = ability;
+              const { name } = ability
 
               return (
                 <div key={name} className="flex items-center">
@@ -97,7 +97,7 @@ export default function PokemonProfile({
                     </button>
                   )}
                 </div>
-              );
+              )
             })}
         </div>
       </DataContainer>
@@ -107,5 +107,5 @@ export default function PokemonProfile({
         onClose={() => setDisplayingAbility(undefined)}
       />
     </div>
-  );
+  )
 }

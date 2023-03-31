@@ -1,17 +1,16 @@
-import { PokemonSpeciesSimple } from "lib";
-import { DetailedHTMLProps, HTMLAttributes, Ref } from "react";
+import { PokemonSpeciesSimple } from "lib"
+import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface PokemonNavigationButtonProps
-  extends Omit<
+  extends WithNonLegacyRef<
     DetailedHTMLProps<HTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>,
-    "ref"
+    HTMLAnchorElement
   > {
-  // `Next`'s `Link` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLAnchorElement>;
-  toPokemon: PokemonSpeciesSimple;
-  forwards?: boolean;
+  toPokemon: PokemonSpeciesSimple
+  forwards?: boolean
 }
 
 export interface PokemonNavigationButtonArrowProps {
-  forwards?: boolean;
+  forwards?: boolean
 }

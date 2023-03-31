@@ -1,21 +1,21 @@
-import { animated, useTransition } from "@react-spring/web";
-import { useIntersectionObserver } from "hooks";
-import { PokemonStatsMeter } from "./pokemon-stats-meter";
-import { PokemonStatsProps } from "./pokemon-stats.types";
+import { animated, useTransition } from "@react-spring/web"
+import { useIntersectionObserver } from "hooks"
+import { PokemonStatsMeter } from "./pokemon-stats-meter"
+import { PokemonStatsProps } from "./pokemon-stats.types"
 
-const TRANSITION_DURATION = 350;
+const TRANSITION_DURATION = 350
 
 function PokemonStats({ children, ...other }: PokemonStatsProps) {
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     threshold: 0.5,
     freezeOnceVisible: true,
-  });
+  })
 
   const transition = useTransition(isIntersecting, {
     config: { duration: TRANSITION_DURATION },
     from: { opacity: 0 },
     enter: { opacity: 1 },
-  });
+  })
 
   return (
     <div {...other} ref={intersectionObserverRef}>
@@ -28,9 +28,9 @@ function PokemonStats({ children, ...other }: PokemonStatsProps) {
           )
       )}
     </div>
-  );
+  )
 }
 
 export default Object.assign(PokemonStats, {
   Meter: PokemonStatsMeter,
-});
+})

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from "react"
 
 export enum ThemeMode {
   Light = "light",
@@ -7,20 +7,20 @@ export enum ThemeMode {
 }
 
 export interface ThemeModeContextData {
-  themeMode: ThemeMode;
-  transitionClassNames: string;
-  isDark: boolean;
+  themeMode: ThemeMode
+  transitionClassNames: string
+  isDark: boolean
 }
 
 export interface ThemeModeContextActions {
-  setThemeMode: (mode: ThemeMode) => void;
+  setThemeMode: (mode: ThemeMode) => void
 }
 
 export type ThemeModeContextValue = [
   ThemeModeContextData,
   ThemeModeContextActions
-];
+]
 
 export interface ThemeModeProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }

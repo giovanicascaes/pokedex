@@ -1,15 +1,17 @@
-import { DetailedHTMLProps, HTMLAttributes, ReactNode, Ref } from "react";
+import { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface SelectOptionsChildrenFnArgs {
-  open: boolean;
+  open: boolean
 }
 
 export interface SelectOptionsProps
   extends Omit<
-    DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>,
-    "ref" | "children"
+    WithNonLegacyRef<
+      DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>,
+      HTMLUListElement
+    >,
+    "children"
   > {
-  // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLUListElement>;
-  children: ReactNode | ((args: SelectOptionsChildrenFnArgs) => ReactNode);
+  children: ReactNode | ((args: SelectOptionsChildrenFnArgs) => ReactNode)
 }

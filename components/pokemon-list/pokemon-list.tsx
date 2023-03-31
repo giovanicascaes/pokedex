@@ -1,59 +1,60 @@
-import { animated, easings, useTransition } from "@react-spring/web";
-import { PokemonActionAnimation, PokemonListItem } from "components";
-import { usePokemonView } from "contexts";
-import { PokemonSpeciesSimple } from "lib";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import { animated, easings, useTransition } from "@react-spring/web"
+import { PokemonListItem } from "components"
+import { usePokemonView } from "contexts"
+import { usePrevious } from "hooks"
+import { PokemonSpeciesSimple } from "lib"
+import { useCallback, useMemo, useRef, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import {
-  CatchingOrReleasingPokemonList,
   PokemonListData,
   PokemonListItemData,
-  PokemonListProps
-} from "./pokemon-list.types";
+  PokemonListProps,
+} from "./pokemon-list.types"
+import useShouldAnimate from "./use-should-animate"
 
-const CONTAINER_BOTTOM_PADDING = 80;
+const CONTAINER_BOTTOM_PADDING = 20
 
-const LIST_GAP = 6;
+const LIST_GAP = 10
 
-const LIST_TRANSITION_DURATION = 300;
+const LIST_TRANSITION_DURATION = 300
 
-const LIST_TRAIL = 60;
-
-const CAUGHT_OR_RELEASE_ANIMATION_SIZE = 40;
+const LIST_TRAIL = 60
 
 interface ListAnimationControl {
-  rendered: Set<number>;
+  rendered: Set<number>
 }
 
 export default function PokemonList({
   pokemons,
+  skipInitialAnimation = false,
+  onReady,
   className,
   style,
   ...other
 }: PokemonListProps) {
-  const [itemDimensions, setItemDimensions] = useState<DOMRect | null>(null);
-  const [catchingOrReleasingPokemons, setCatchingOrReleasingPokemons] =
-    useState<CatchingOrReleasingPokemonList[]>([]);
+  const [itemDimensions, setItemDimensions] = useState<DOMRect | null>(null)
   const [{ pokedex }, { addPokemonToPokedex, removePokemonFromPokedex }] =
-    usePokemonView();
+    usePokemonView()
   const itemAnimationControl = useRef<ListAnimationControl>({
     rendered: new Set(),
-  });
+  })
+  const prevPokemons = usePrevious(pokemons)
+  const pokemonsHaveChanged = useMemo(
+    () => prevPokemons && prevPokemons.length !== pokemons.length,
+    [pokemons.length, prevPokemons]
+  )
+  const animate = useShouldAnimate(pokemonsHaveChanged, !skipInitialAnimation)
 
-  const handleOnPokemonActionFinished = useCallback(
+  const handleOnPokemonCatchReleaseFinished = useCallback(
     (pokemon: PokemonSpeciesSimple) => {
       if (pokedex.some(({ id }) => id === pokemon.id)) {
-        removePokemonFromPokedex(pokemon.id);
+        removePokemonFromPokedex(pokemon.id)
       } else {
-        addPokemonToPokedex(pokemon);
+        addPokemonToPokedex(pokemon)
       }
-
-      setCatchingOrReleasingPokemons((current) =>
-        current.filter(({ id }) => id !== pokemon.id)
-      );
     },
     [addPokemonToPokedex, pokedex, removePokemonFromPokedex]
-  );
+  )
 
   const [{ height: containerHeight }, listItems] =
     useMemo<PokemonListData>(() => {
@@ -68,18 +69,18 @@ export default function PokemonList({
             y: 0,
             measureOnly: true,
           })),
-        ];
+        ]
       }
 
-      const { height: itemHeight } = itemDimensions;
+      const { height: itemHeight } = itemDimensions
       const listItems = pokemons.map((pokemon, i) => {
-        const y = i * itemHeight + i * LIST_GAP;
+        const y = i * itemHeight + i * LIST_GAP
 
         return {
           ...pokemon,
           y,
-        };
-      });
+        }
+      })
       return [
         {
           // Adding extra padding for the loading element
@@ -89,8 +90,8 @@ export default function PokemonList({
             CONTAINER_BOTTOM_PADDING,
         },
         listItems,
-      ];
-    }, [itemDimensions, pokemons]);
+      ]
+    }, [itemDimensions, pokemons])
 
   const listTransitions = useTransition(listItems, {
     key: ({ id }: PokemonListItemData) => id,
@@ -115,15 +116,23 @@ export default function PokemonList({
       easing: easings.easeOutCirc,
     },
     onRest: (_result, _ctrl, { id }) => {
-      if (id !== null) {
-        itemAnimationControl.current.rendered.add(id);
+      itemAnimationControl.current.rendered.add(id)
+
+      if (
+        !pokemonsHaveChanged &&
+        itemAnimationControl.current.rendered.size === pokemons.length
+      ) {
+        onReady?.()
       }
     },
+    immediate: !animate,
     delay: (key) => {
-      const typeSafeKey = key as unknown as number;
+      if (!animate) return 0
+
+      const typeSafeKey = key as unknown as number
 
       if (itemAnimationControl.current.rendered.has(typeSafeKey)) {
-        return 0;
+        return 0
       }
 
       return (
@@ -134,9 +143,9 @@ export default function PokemonList({
             )
           )
           .findIndex(({ id }) => id === typeSafeKey) * LIST_TRAIL
-      );
+      )
     },
-  });
+  })
 
   return (
     <animated.ul
@@ -148,14 +157,10 @@ export default function PokemonList({
       }}
     >
       {listTransitions((listStyles, pokemon) => {
-        const { id, artSrc, measureOnly, ...other } = pokemon;
-        const actionData = catchingOrReleasingPokemons.find(
-          (actionPokemon) => actionPokemon.id === id
-        );
-        const isBeingCaughtOrReleased = !!actionData;
-        const isCaught = pokedex.some(
+        const { id, artSrc, measureOnly, ...other } = pokemon
+        const isOnPokedex = pokedex.some(
           (pokedexPokemon) => pokedexPokemon.id === id
-        );
+        )
 
         return (
           <animated.li
@@ -170,40 +175,21 @@ export default function PokemonList({
             ref={(el) => {
               setItemDimensions(
                 (curr) => curr ?? el?.getBoundingClientRect().toJSON()
-              );
+              )
             }}
           >
             <PokemonListItem
               {...other}
               artSrc={artSrc}
               identifier={id}
-              onPokemonAction={(artRef) => {
-                setCatchingOrReleasingPokemons((current) => [
-                  ...current,
-                  {
-                    id,
-                    artPosition: artRef.current
-                      ?.getBoundingClientRect()
-                      .toJSON(),
-                  },
-                ]);
-              }}
-              actionAllowed={!isBeingCaughtOrReleased}
-              isCaught={isCaught}
+              isOnPokedex={isOnPokedex}
+              onCatchReleaseFinish={() =>
+                handleOnPokemonCatchReleaseFinished(pokemon)
+              }
             />
-            {isBeingCaughtOrReleased && (
-              <PokemonActionAnimation
-                artPosition={actionData.artPosition}
-                artSrc={artSrc}
-                onFinish={() => handleOnPokemonActionFinished(pokemon)}
-                isBeingCaught={!isCaught}
-                catchSize={CAUGHT_OR_RELEASE_ANIMATION_SIZE}
-                releaseSize={CAUGHT_OR_RELEASE_ANIMATION_SIZE}
-              />
-            )}
           </animated.li>
-        );
+        )
       })}
     </animated.ul>
-  );
+  )
 }

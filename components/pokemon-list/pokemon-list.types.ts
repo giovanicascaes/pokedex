@@ -1,27 +1,23 @@
-import { PokemonSpeciesSimple } from "lib";
-import { DetailedHTMLProps, HTMLAttributes, Ref } from "react";
+import { PokemonSpeciesSimple } from "lib"
+import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface PokemonListProps
-  extends Omit<
+  extends WithNonLegacyRef<
     DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>,
-    "ref"
+    HTMLUListElement
   > {
-  // `react-spring`'s `animated` api doesn't support legacy ref api (`string` type)
-  ref?: Ref<HTMLUListElement>;
-  pokemons: PokemonSpeciesSimple[];
-}
-
-export interface CatchingOrReleasingPokemonList {
-  id: number;
-  artPosition: DOMRect;
+  pokemons: PokemonSpeciesSimple[]
+  skipInitialAnimation?: boolean
+  onReady?: () => void
 }
 
 export interface PokemonListItemData extends PokemonSpeciesSimple {
-  y: number;
-  measureOnly?: boolean;
+  y: number
+  measureOnly?: boolean
 }
 
 export type PokemonListData = readonly [
   { height: number },
   PokemonListItemData[]
-];
+]

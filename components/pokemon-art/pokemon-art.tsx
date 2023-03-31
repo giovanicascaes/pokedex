@@ -1,8 +1,8 @@
-import { animated, easings, useSpring } from "@react-spring/web";
-import Image from "next/image";
-import { forwardRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { PokemonArtProps } from "./pokemon-art.types";
+import { animated, easings, useSpring } from "@react-spring/web"
+import Image from "next/image"
+import { forwardRef, useState } from "react"
+import { twMerge } from "tailwind-merge"
+import { PokemonArtProps } from "./pokemon-art.types"
 
 export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
   {
@@ -17,8 +17,8 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
   },
   ref
 ) {
-  const [isError, setIsError] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isError, setIsError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const styles = useSpring({
     config: {
@@ -29,7 +29,7 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
       opacity: isLoaded || isError || !animate ? 1 : 0,
     },
     immediate: !animate,
-  });
+  })
 
   return (
     <div
@@ -65,5 +65,5 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
         </animated.div>
       )}
     </div>
-  );
-});
+  )
+})

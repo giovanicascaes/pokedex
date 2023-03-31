@@ -1,11 +1,11 @@
-import { PokemonView } from "components";
-import { usePokemonView } from "contexts";
-import { InferGetStaticPropsType } from "next";
+import { PokemonView } from "components"
+import { usePokemonView } from "contexts"
+import { InferGetStaticPropsType } from "next"
 
-type PokedexProps = InferGetStaticPropsType<typeof getStaticProps>;
+type PokedexProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Pokedex(props: PokedexProps) {
-  const [{ pokedex }] = usePokemonView();
+  const [{ pokedex }] = usePokemonView()
 
   return (
     <ul className="flex flex-col">
@@ -13,11 +13,11 @@ export default function Pokedex(props: PokedexProps) {
         <li></li>
       ))}
     </ul>
-  );
+  )
 }
 
 export async function getStaticProps() {
   return {
     props: {},
-  };
+  }
 }

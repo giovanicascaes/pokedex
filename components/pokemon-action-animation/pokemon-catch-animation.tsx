@@ -1,18 +1,15 @@
-import { animated, to, useSpring } from "@react-spring/web";
-import Pokeball from "assets/img/pokeball.png";
-import {
-  POKEDEX_LINK_ELEMENT_ID,
-  SHELL_LAYOUT_CONTAINER_ELEMENT_ID,
-} from "lib";
-import Image from "next/image";
-import { useMemo, useState } from "react";
-import ReactDOM from "react-dom";
-import { PokemonArt } from "../pokemon-art";
-import { PokemonCatchAnimationProps } from "./pokemon-action-animation.types";
+import { animated, to, useSpring } from "@react-spring/web"
+import Pokeball from "assets/img/pokeball.png"
+import { POKEDEX_LINK_ELEMENT_ID, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
+import Image from "next/image"
+import { useMemo, useState } from "react"
+import ReactDOM from "react-dom"
+import { PokemonArt } from "../pokemon-art"
+import { PokemonCatchAnimationProps } from "./pokemon-action-animation.types"
 
-const CATCH_ANIMATION_DURATION = 100;
+const CATCH_ANIMATION_DURATION = 100
 
-const MOVE_ANIMATION_DURATION = 1200;
+const MOVE_ANIMATION_DURATION = 1200
 
 export default function PokemonCatchAnimation({
   artPosition: { left, top, width, height },
@@ -21,14 +18,14 @@ export default function PokemonCatchAnimation({
   onFinish,
   size,
 }: PokemonCatchAnimationProps) {
-  const [isCaught, setIsCaught] = useState(false);
+  const [isCaught, setIsCaught] = useState(false)
 
   const {
     left: pokedexLeft,
     top: pokedexTop,
     width: pokedexWidth,
     height: pokedexHeight,
-  } = document.getElementById(POKEDEX_LINK_ELEMENT_ID)!.getBoundingClientRect();
+  } = document.getElementById(POKEDEX_LINK_ELEMENT_ID)!.getBoundingClientRect()
 
   const catchStyles = useSpring({
     config: {
@@ -43,9 +40,9 @@ export default function PokemonCatchAnimation({
       filter: "brightness(0) invert(1)",
     },
     onRest: () => {
-      setIsCaught(true);
+      setIsCaught(true)
     },
-  });
+  })
   const moveStyles = useSpring({
     config: {
       duration: MOVE_ANIMATION_DURATION,
@@ -58,26 +55,26 @@ export default function PokemonCatchAnimation({
     },
     delay: 100,
     onRest: () => {
-      onFinish?.();
+      onFinish?.()
     },
-  });
+  })
 
   const pokeballStartLeft = useMemo(
     () => left + (width - size) / 2,
     [left, size, width]
-  );
+  )
   const pokeballEndLeft = useMemo(
     () => pokedexLeft - size / 2 + pokedexWidth / 2,
     [pokedexLeft, pokedexWidth, size]
-  );
+  )
   const pokeballStartTop = useMemo(
     () => top + (height - size) / 2,
     [height, size, top]
-  );
+  )
   const pokeballEndTop = useMemo(
     () => pokedexTop - size / 2 + pokedexHeight / 2,
     [pokedexHeight, pokedexTop, size]
-  );
+  )
 
   const { backgroundColor, ...styles } = useMemo(
     () =>
@@ -133,7 +130,7 @@ export default function PokemonCatchAnimation({
       moveStyles.x,
       top,
     ]
-  );
+  )
 
   return (
     <>
@@ -163,5 +160,5 @@ export default function PokemonCatchAnimation({
         document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!
       )}
     </>
-  );
+  )
 }

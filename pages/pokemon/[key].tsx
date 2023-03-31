@@ -1,22 +1,22 @@
-import { FadeOnChange, PokemonDetails } from "components";
-import { usePokemonView } from "contexts";
-import { getPokemon } from "lib";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import Head from "next/head";
-import { useEffect } from "react";
+import { FadeOnChange, PokemonDetails } from "components"
+import { usePokemonView } from "contexts"
+import { getPokemon } from "lib"
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import Head from "next/head"
+import { useEffect } from "react"
 
-type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function Pokemon({ pokemon }: PokemonProps) {
-  const [, { setViewingPokemon, clearViewingPokemon }] = usePokemonView();
+  const [, { setViewingPokemon, clearViewingPokemon }] = usePokemonView()
 
   useEffect(() => {
-    setViewingPokemon(pokemon);
+    setViewingPokemon(pokemon)
 
     return () => {
-      clearViewingPokemon();
-    };
-  }, [clearViewingPokemon, pokemon, setViewingPokemon]);
+      clearViewingPokemon()
+    }
+  }, [clearViewingPokemon, pokemon, setViewingPokemon])
 
   return (
     <>
@@ -31,23 +31,23 @@ export default function Pokemon({ pokemon }: PokemonProps) {
         </FadeOnChange>
       </div>
     </>
-  );
+  )
 }
 
 export async function getServerSideProps({
   params,
 }: GetServerSidePropsContext<{ key: string }>) {
-  const pokemon = await getPokemon(params!.key);
+  const pokemon = await getPokemon(params!.key)
 
   if (!pokemon) {
     return {
       notFound: true,
-    };
+    }
   }
 
   return {
     props: {
       pokemon,
     },
-  };
+  }
 }

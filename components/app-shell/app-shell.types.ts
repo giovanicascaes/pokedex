@@ -1,6 +1,7 @@
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { ReactNode } from "react"
 
-export type AppShellProps = Omit<
-  DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
-  "className"
->;
+export interface AppShellProps {
+  children: ReactNode
+}
+
+export type ShellLayoutProps = Pick<AppShellProps, "children">

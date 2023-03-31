@@ -1,28 +1,28 @@
-import { EvolutionChainLink } from "lib";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { EvolutionChainLink } from "lib"
+import { DetailedHTMLProps, HTMLAttributes } from "react"
 
 export interface PokemonEvolutionChainProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  evolutionChain: EvolutionChainLink;
+  evolutionChain: EvolutionChainLink
 }
 
 export interface PokemonEvolutionChainNodeContainerProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  vertical?: boolean;
+  vertical?: boolean
 }
 
 export type PokemonEvolutionChainPathProps = DetailedHTMLProps<
   HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
 > &
-  EvolutionChainLink;
+  EvolutionChainLink
 
 export interface PokemonEvolutionChainLinkProps
   extends PokemonEvolutionChainPathProps {
-  vertical?: boolean;
+  vertical?: boolean
 }
 
 export interface PokemonEvolutionChainArrowProps
   extends DetailedHTMLProps<HTMLAttributes<SVGElement>, SVGElement> {
-  vertical?: boolean;
+  vertical?: boolean
 }

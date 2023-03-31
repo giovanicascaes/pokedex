@@ -1,31 +1,31 @@
-import { animated, easings, useSpring } from "@react-spring/web";
-import { useThemeMode } from "contexts";
-import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
-import { match, range } from "utils";
-import { PokemonStatsMeterProps } from "./pokemon-stats-meter.types";
+import { animated, easings, useSpring } from "@react-spring/web"
+import { useThemeMode } from "contexts"
+import { useMemo } from "react"
+import { twMerge } from "tailwind-merge"
+import { match, range } from "utils"
+import { PokemonStatsMeterProps } from "./pokemon-stats-meter.types"
 
-const TRANSITION_DURATION = 700;
+const TRANSITION_DURATION = 700
 
-const TRANSITION_DELAY = 500;
+const TRANSITION_DELAY = 500
 
-const MAX_VALUE = 255;
+const MAX_VALUE = 255
 
 interface MeterBarProps {
-  totalBars: number;
-  value: number;
+  totalBars: number
+  value: number
 }
 
 function MeterBar({ totalBars, value }: MeterBarProps) {
   const valueAsNumberOfBars = useMemo(() => {
-    const numberOfBars = (value * totalBars) / MAX_VALUE;
+    const numberOfBars = (value * totalBars) / MAX_VALUE
 
     return numberOfBars < totalBars - 1
       ? Math.ceil(numberOfBars)
-      : Math.floor(numberOfBars);
-  }, [totalBars, value]);
+      : Math.floor(numberOfBars)
+  }, [totalBars, value])
 
-  const [{ isDark }] = useThemeMode();
+  const [{ isDark }] = useThemeMode()
 
   const styles = useSpring({
     config: {
@@ -58,20 +58,20 @@ function MeterBar({ totalBars, value }: MeterBarProps) {
       }%`,
     },
     delay: TRANSITION_DELAY,
-  });
+  })
 
   const linearGradient = range(1, totalBars * 2 - 1)
     .map((i) => {
-      const step = (100 / (totalBars * 2 - 1)) * i;
+      const step = (100 / (totalBars * 2 - 1)) * i
 
       return `${
         i % 2 === 0
           ? `transparent ${step}%,#000 ${step}%`
           : `#000 ${step}%,transparent ${step}%`
-      }`;
+      }`
     })
-    .join(",");
-  const mask = `linear-gradient(${linearGradient})`;
+    .join(",")
+  const mask = `linear-gradient(${linearGradient})`
 
   return (
     <div
@@ -92,7 +92,7 @@ function MeterBar({ totalBars, value }: MeterBarProps) {
         }}
       />
     </div>
-  );
+  )
 }
 
 export default function PokemonStatsMeter({
@@ -120,5 +120,5 @@ export default function PokemonStatsMeter({
         {label}
       </span>
     </div>
-  );
+  )
 }

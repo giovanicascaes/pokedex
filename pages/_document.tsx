@@ -1,6 +1,6 @@
-import { ThemeMode, THEME_MODE } from "contexts";
-import { Head, Html, Main, NextScript } from "next/document";
-import Script from "next/script";
+import { ThemeMode, THEME_MODE } from "contexts"
+import { Head, Html, Main, NextScript } from "next/document"
+import Script from "next/script"
 
 export default function Document() {
   return (
@@ -43,5 +43,5 @@ export default function Document() {
         </Script>
       </body>
     </Html>
-  );
+  )
 }

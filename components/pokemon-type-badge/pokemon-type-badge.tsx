@@ -1,8 +1,7 @@
-import { Tooltip } from "components";
-import { useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { getForegroundStyleForColor } from "utils";
-import { PokemonTypeBadgeProps } from "./pokemon-type-badge.types";
+import { Tooltip } from "components"
+import { twMerge } from "tailwind-merge"
+import { getForegroundStyleForColor } from "utils"
+import { PokemonTypeBadgeProps } from "./pokemon-type-badge.types"
 
 export default function PokemonTypeBadge({
   color,
@@ -11,28 +10,19 @@ export default function PokemonTypeBadge({
   className,
   ...other
 }: PokemonTypeBadgeProps) {
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-
-  const showToolTip = () => {
-    setTooltipVisible(true);
-  };
-  const hideToolTip = () => {
-    setTooltipVisible(false);
-  };
-
-  let color1: string;
-  let color2: string | undefined;
+  let color1: string
+  let color2: string | undefined
 
   if (!color) {
-    color1 = "#3d3d3d";
+    color1 = "#3d3d3d"
   } else if (typeof color === "string") {
-    color1 = color;
+    color1 = color
   } else {
-    [color1, color2] = color;
+    ;[color1, color2] = color
   }
 
-  const foregroundStyle = getForegroundStyleForColor(color1);
-  const textColor = foregroundStyle === "light" ? "text-white" : "text-black";
+  const foregroundStyle = getForegroundStyleForColor(color1)
+  const textColor = foregroundStyle === "light" ? "text-white" : "text-black"
 
   return (
     <div
@@ -50,27 +40,19 @@ export default function PokemonTypeBadge({
     >
       {children}
       {doubleDamage && (
-        <span
-          className={twMerge(
-            "absolute right-2.5 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
-            textColor,
-            foregroundStyle === "light" && "bg-black/50"
-          )}
-          tabIndex={0}
-          onFocus={showToolTip}
-          onMouseOver={showToolTip}
-          onBlur={hideToolTip}
-          onMouseLeave={hideToolTip}
-        >
-          <Tooltip
-            visible={tooltipVisible}
-            className="absolute z-10 -top-full min-w-max max-w-[300px] left-1/2"
+        <Tooltip content="Double Damage">
+          <span
+            className={twMerge(
+              "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
+              textColor,
+              foregroundStyle === "light" && "bg-black/50"
+            )}
+            tabIndex={0}
           >
-            Double Damage
-          </Tooltip>
-          x2
-        </span>
+            x2
+          </span>
+        </Tooltip>
       )}
     </div>
-  );
+  )
 }

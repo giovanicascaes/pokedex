@@ -1,32 +1,31 @@
-import { PokemonView } from "components";
-import { POKEMONS_PER_PAGE, usePokemonView } from "contexts";
-import { useIntersectionObserver } from "hooks";
-import { getPokemons } from "lib";
-import { InferGetStaticPropsType } from "next";
-import Head from "next/head";
-import { useEffect } from "react";
+import { PokemonView } from "components"
+import { POKEMONS_PER_PAGE, useLayoutControl, usePokemonView } from "contexts"
+import { useIntersectionObserver } from "hooks"
+import { getPokemons } from "lib"
+import { InferGetStaticPropsType } from "next"
+import Head from "next/head"
+import { useCallback, useEffect } from "react"
 
-type HomeProps = InferGetStaticPropsType<typeof getStaticProps>;
+type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
   const [
-    {
-      visiblePokemons,
-      hiddenPokemons,
-      hasFetchedAll,
-      isPokemonListScrollDisabled,
-      isPokemonListRendered,
-    },
-    { loadMore, onPokemonListRendered },
-  ] = usePokemonView();
+    { visiblePokemons, hiddenPokemons, hasFetchedAll, isScrollDirty },
+    { loadMore },
+  ] = usePokemonView()
+  const [, { setIsPageReady }] = useLayoutControl()
 
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     rootMargin: "20%",
-  });
+  })
+
+  const onViewReady = useCallback(() => {
+    setIsPageReady(true)
+  }, [setIsPageReady])
 
   useEffect(() => {
-    if (isIntersecting && !hasFetchedAll) loadMore();
-  }, [isIntersecting, loadMore, hasFetchedAll]);
+    if (isIntersecting && !hasFetchedAll) loadMore()
+  }, [isIntersecting, loadMore, hasFetchedAll])
 
   return (
     <>
@@ -35,13 +34,12 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-14 pt-4 h-full pb-[calc(100vh/2)]">
+      <div className="px-14 pt-4 h-full pb-8">
         <PokemonView
           pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
           hiddenPokemons={hiddenPokemons}
-          animateCards={!isPokemonListScrollDisabled}
-          onListRendered={onPokemonListRendered}
-          onInitialAnimationsDone={() => {}}
+          skipInitialAnimation={isScrollDirty}
+          onReady={onViewReady}
           className="mx-auto"
         />
         <div
@@ -52,7 +50,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         </div>
       </div>
     </>
-  );
+  )
 }
 
 export async function getStaticProps() {
@@ -60,5 +58,5 @@ export async function getStaticProps() {
     props: {
       serverLoadedPokemons: await getPokemons(POKEMONS_PER_PAGE),
     },
-  };
+  }
 }

@@ -1,13 +1,13 @@
-import { animated, useSpring } from "@react-spring/web";
-import { useEffect, useId, useRef, useState } from "react";
-import { MdDone } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
-import { setTimeout } from "timers";
-import { useSelect } from "../context";
-import { SelectPopupState } from "../select.types";
-import { SelectOptionProps } from "./option.types";
+import { animated, useSpring } from "@react-spring/web"
+import { useEffect, useId, useRef, useState } from "react"
+import { MdDone } from "react-icons/md"
+import { twMerge } from "tailwind-merge"
+import { setTimeout } from "timers"
+import { useSelect } from "../context"
+import { SelectPopupState } from "../select.types"
+import { SelectOptionProps } from "./option.types"
 
-const CLICK_TRANSITION_DURATION = 80;
+const CLICK_TRANSITION_DURATION = 80
 
 export default function Option({
   children,
@@ -19,22 +19,22 @@ export default function Option({
   const [
     { isSelected, popupState, clickedOption },
     { registerOption, selectOption, closePopup },
-  ] = useSelect();
-  const ref = useRef<HTMLLIElement | null>(null);
-  const id = useId();
-  const [blink, setBlink] = useState(false);
-  const [clicked, setClicked] = useState(false);
+  ] = useSelect()
+  const ref = useRef<HTMLLIElement | null>(null)
+  const id = useId()
+  const [blink, setBlink] = useState(false)
+  const [clicked, setClicked] = useState(false)
 
   useEffect(() => {
     registerOption({
       id,
       value,
       ref,
-    });
-  }, [id, registerOption, value]);
+    })
+  }, [id, registerOption, value])
 
   const selected =
-    clickedOption !== null ? clickedOption === id : isSelected(value);
+    clickedOption !== null ? clickedOption === id : isSelected(value)
 
   const styles = useSpring({
     config: { duration: CLICK_TRANSITION_DURATION },
@@ -45,19 +45,19 @@ export default function Option({
       opacity: blink ? 0 : 1,
     },
     onRest: () => {
-      setBlink(false);
-      setTimeout(closePopup, 200);
+      setBlink(false)
+      setTimeout(closePopup, 200)
     },
-  });
+  })
 
   return (
     <li
       {...other}
       onClick={() => {
         if (!disabled) {
-          selectOption(id);
-          setClicked(true);
-          setBlink(true);
+          selectOption(id)
+          setClicked(true)
+          setBlink(true)
         }
       }}
       className={twMerge(
@@ -96,5 +96,5 @@ export default function Option({
         <span className="block truncate w-full">{children}</span>
       )}
     </li>
-  );
+  )
 }

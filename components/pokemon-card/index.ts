@@ -1,3 +1,2 @@
-export { default as PokemonCard } from "./pokemon-card";
-export * from "./pokemon-card.types";
-
+export { default as PokemonCard } from "./pokemon-card"
+export * from "./pokemon-card.types"

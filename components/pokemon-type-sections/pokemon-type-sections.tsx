@@ -1,14 +1,14 @@
-import { PokemonSection, PokemonTypeBadge } from "components";
-import { TypeRelation } from "lib";
-import { ReactNode } from "react";
-import { PokemonTypeSectionsProps } from "./pokemon-type-sections.types";
+import { PokemonSection, PokemonTypeBadge } from "components"
+import { TypeRelation } from "lib"
+import { ReactNode } from "react"
+import { PokemonTypeSectionsProps } from "./pokemon-type-sections.types"
 
 function toTypeBadge({ color, name, isDouble }: TypeRelation) {
   return (
     <PokemonTypeBadge key={name} color={color} doubleDamage={isDouble}>
       {name}
     </PokemonTypeBadge>
-  );
+  )
 }
 
 function toTypeRelationBadge(types: TypeRelation[]) {
@@ -22,7 +22,7 @@ function toTypeRelationBadge(types: TypeRelation[]) {
     .sort(({ name: name1 }, { name: name2 }) =>
       name2 > name1 ? -1 : name1 > name2 ? 1 : 0
     )
-    .map(toTypeBadge);
+    .map(toTypeBadge)
 }
 
 function TypeListContainer({ children }: { children: ReactNode }) {
@@ -30,7 +30,7 @@ function TypeListContainer({ children }: { children: ReactNode }) {
     <div className="grid grid-cols-[repeat(3,minmax(min-content,max-content))] gap-2">
       {children}
     </div>
-  );
+  )
 }
 
 export default function PokemonTypeSections({
@@ -66,5 +66,5 @@ export default function PokemonTypeSections({
         </TypeListContainer>
       </PokemonSection>
     </>
-  );
+  )
 }

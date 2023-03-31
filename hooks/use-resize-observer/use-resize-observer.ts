@@ -1,27 +1,30 @@
-import debounce from "lodash.debounce";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { UseResizeObserverArgs } from "./use-resize-observer.types";
+import debounce from "lodash.debounce"
+import { useEffect, useRef, useState } from "react"
+import {
+  UseResizeObserverArgs,
+  UseResizeObserverReturn,
+} from "./use-resize-observer.types"
 
 export default function useResizeObserver({
   wait = 0,
-}: UseResizeObserverArgs = {}) {
-  const observerRef = useRef<ResizeObserver>();
-  const [ref, setRef] = useState<Element | null>(null);
-  const [rect, setRect] = useState<DOMRectReadOnly | null>(null);
+}: UseResizeObserverArgs = {}): UseResizeObserverReturn {
+  const observerRef = useRef<ResizeObserver>()
+  const [el, ref] = useState<Element | null>(null)
+  const [rect, setRect] = useState<DOMRectReadOnly | null>(null)
 
   useEffect(() => {
-    if (!ref) return;
+    if (!el) return
 
     const observerCallback = ([entry]: ResizeObserverEntry[]): void => {
-      const { contentRect } = entry;
+      const { contentRect } = entry
 
-      setRect(contentRect);
-    };
-    observerRef.current = new ResizeObserver(debounce(observerCallback, wait));
-    observerRef.current.observe(ref);
+      setRect(contentRect)
+    }
+    observerRef.current = new ResizeObserver(debounce(observerCallback, wait))
+    observerRef.current.observe(el)
 
-    return () => observerRef.current!.disconnect();
-  }, [ref, wait]);
+    return () => observerRef.current!.disconnect()
+  }, [el, wait])
 
-  return useMemo(() => [setRef, rect] as const, [rect]);
+  return [ref, rect]
 }

@@ -1,11 +1,11 @@
-import { animated, useTransition } from "@react-spring/web";
-import { Router } from "next/router";
-import { useEffect, useState } from "react";
-import { twJoin, twMerge } from "tailwind-merge";
+import { animated, useTransition } from "@react-spring/web"
+import { Router } from "next/router"
+import { useEffect, useState } from "react"
+import { twJoin, twMerge } from "tailwind-merge"
 import {
   PageLoadingBarsProps,
   PageLoadingIndicatorProps,
-} from "./page-loading-indicator.types";
+} from "./page-loading-indicator.types"
 
 function LoadingBar({ className, ...other }: PageLoadingBarsProps) {
   return (
@@ -16,35 +16,35 @@ function LoadingBar({ className, ...other }: PageLoadingBarsProps) {
         className
       )}
     />
-  );
+  )
 }
 
-const TRANSITION_DURATION = 200;
+const TRANSITION_DURATION = 200
 
 export default function PageLoadingIndicator({
   className,
   ...other
 }: PageLoadingIndicatorProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const start = () => {
-      setIsLoading(true);
-    };
+      setIsLoading(true)
+    }
     const end = () => {
-      setIsLoading(false);
-    };
+      setIsLoading(false)
+    }
 
-    Router.events.on("routeChangeStart", start);
-    Router.events.on("routeChangeComplete", end);
-    Router.events.on("routeChangeError", end);
+    Router.events.on("routeChangeStart", start)
+    Router.events.on("routeChangeComplete", end)
+    Router.events.on("routeChangeError", end)
 
     return () => {
-      Router.events.off("routeChangeStart", start);
-      Router.events.off("routeChangeComplete", end);
-      Router.events.off("routeChangeError", end);
-    };
-  }, []);
+      Router.events.off("routeChangeStart", start)
+      Router.events.off("routeChangeComplete", end)
+      Router.events.off("routeChangeError", end)
+    }
+  }, [])
 
   const transitions = useTransition(isLoading, {
     key: isLoading,
@@ -58,7 +58,7 @@ export default function PageLoadingIndicator({
     leave: {
       opacity: 0,
     },
-  });
+  })
 
   return transitions(
     (styles, show) =>
@@ -75,5 +75,5 @@ export default function PageLoadingIndicator({
           <LoadingBar className="animate-progress-bar-right" />
         </animated.div>
       )
-  );
+  )
 }

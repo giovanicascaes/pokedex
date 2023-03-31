@@ -1,6 +1,6 @@
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, HTMLAttributes } from "react"
 
-export type BadgeVariant = "default" | "rounded";
+export type BadgeVariant = "default" | "rounded"
 
 export type BadgeColors =
   | "red"
@@ -13,10 +13,10 @@ export type BadgeColors =
   | "cyan"
   | "gray"
   | "white"
-  | "black";
+  | "black"
 
 export interface BadgeProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  color?: BadgeColors;
-  variant?: BadgeVariant;
+  color?: BadgeColors
+  variant?: BadgeVariant
 }
