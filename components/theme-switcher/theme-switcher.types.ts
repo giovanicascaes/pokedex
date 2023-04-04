@@ -8,3 +8,7 @@ export interface ThemeSwitcherProps
   > {
   buttonClassName?: HTMLAttributes<HTMLDivElement>["className"]
 }
+
+export interface ThemeSwitcherOptionsPopupProps {
+  show: boolean
+}

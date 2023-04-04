@@ -1,6 +1,6 @@
 import { useIntersectionObserver, usePrevious } from "hooks"
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
-import { PokemonCard } from "../pokemon-card"
+import { PokemonCard } from "../pokemon-list-item/pokemon-list-item-card/pokemon-list-item-card"
 import { ViewportAwarePokemonCardProps } from "./viewport-aware-pokemon-card.types"
 
 export default forwardRef<HTMLDivElement, ViewportAwarePokemonCardProps>(

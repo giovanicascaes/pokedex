@@ -1,4 +1,4 @@
-import { PokemonView } from "components"
+import { PokemonList } from "components"
 import { POKEMONS_PER_PAGE, useLayoutControl, usePokemonView } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { getPokemons } from "lib"
@@ -10,10 +10,10 @@ type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
   const [
-    { visiblePokemons, hiddenPokemons, hasFetchedAll, isScrollDirty },
-    { loadMore },
-  ] = usePokemonView()
-  const [, { setIsPageReady }] = useLayoutControl()
+    { visiblePokemons, preloadPokemons, hasFetchedAll, isScrollDirty },
+    { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
+  ] = usePokemonView(serverLoadedPokemons)
+  const [{ isPageReady }, { setIsPageReady }] = useLayoutControl()
 
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     rootMargin: "20%",
@@ -35,19 +35,23 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="px-14 pt-4 h-full pb-8">
-        <PokemonView
-          pokemons={[...serverLoadedPokemons, ...visiblePokemons]}
-          hiddenPokemons={hiddenPokemons}
+        <PokemonList
+          pokemons={visiblePokemons}
+          preloadPokemons={preloadPokemons}
           skipInitialAnimation={isScrollDirty}
+          onAddToPokedex={addPokemonToPokedex}
+          onRemoveFromPokedex={removePokemonFromPokedex}
           onReady={onViewReady}
           className="mx-auto"
         />
-        <div
-          className="w-full text-center font-light text-slate-400"
-          ref={intersectionObserverRef}
-        >
-          {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}
-        </div>
+        {isPageReady && (
+          <div
+            className="w-full text-center font-light text-slate-400"
+            ref={intersectionObserverRef}
+          >
+            {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}
+          </div>
+        )}
       </div>
     </>
   )

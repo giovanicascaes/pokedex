@@ -9,10 +9,14 @@ export enum PokemonViewActionTypes {
   RemovePokemonFromPokedex,
 }
 
-export interface PokmeonViewState {
+export interface PokemonSpeciesPokedex extends PokemonSpeciesSimple {
+  isOnPokedex: boolean
+}
+
+export interface PokemonViewState {
   isScrollDirty: boolean
   viewingPokemon: PokemonSpeciesDetailed | null
-  pokedex: PokemonSpeciesSimple[]
+  pokedex: PokemonSpeciesPokedex[]
 }
 
 export type PokmeonViewActions =
@@ -28,7 +32,7 @@ export type PokmeonViewActions =
     }
   | {
       type: PokemonViewActionTypes.AddPokemonToPokedex
-      pokemon: PokemonSpeciesSimple
+      pokemon: PokemonSpeciesPokedex
     }
   | {
       type: PokemonViewActionTypes.RemovePokemonFromPokedex
@@ -37,9 +41,9 @@ export type PokmeonViewActions =
 
 export interface PokemonViewContextData {
   currentPage: number
-  visiblePokemons: PokemonSpeciesSimple[]
-  hiddenPokemons: PokemonSpeciesSimple[]
-  pokedex: PokemonSpeciesSimple[]
+  visiblePokemons: PokemonSpeciesPokedex[]
+  preloadPokemons: PokemonSpeciesPokedex[]
+  pokedex: PokemonSpeciesPokedex[]
   viewingPokemon: PokemonSpeciesDetailed | null
   hasFetchedAll: boolean
   isScrollDirty: boolean
@@ -50,7 +54,7 @@ export interface PokemonViewContextActions {
   dirtyScroll: () => void
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
   clearViewingPokemon: () => void
-  addPokemonToPokedex: (pokemon: PokemonSpeciesSimple) => void
+  addPokemonToPokedex: (pokemon: PokemonSpeciesPokedex) => void
   removePokemonFromPokedex: (id: number) => void
 }
 

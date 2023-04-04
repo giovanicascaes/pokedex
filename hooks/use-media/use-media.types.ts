@@ -1,3 +1,3 @@
 export interface UseMediaOptions {
-  wait?: number
+  fallback?: boolean | boolean[]
 }

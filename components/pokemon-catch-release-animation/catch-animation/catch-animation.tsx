@@ -12,7 +12,7 @@ import {
 import useCatchStyles from "./use-catch-styles"
 
 export default function CatchAnimation({
-  onAnimationFinished,
+  onAnimationFinish,
   pokemonRect,
   children,
   style,
@@ -23,7 +23,7 @@ export default function CatchAnimation({
   const { backgroundColor, currentAnimationPhase, ...styles } = useCatchStyles(
     pokemonRect,
     backgroundEl?.getBoundingClientRect(),
-    onAnimationFinished
+    onAnimationFinish
   )
 
   return ReactDOM.createPortal(

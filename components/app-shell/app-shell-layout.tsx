@@ -7,13 +7,13 @@ import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { ShellLayoutProps } from "./app-shell.types"
+import { AppShellLayoutProps } from "./app-shell.types"
 
 const TRANSITION_DURATION = 150
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
-export default function ShellLayout({ children }: ShellLayoutProps) {
+export default function AppShellLayout({ children }: AppShellLayoutProps) {
   const [isTransitionRunning, setIsTransitionRunning] = useState(false)
   const { asPath: currentPath } = useRouter()
   const prevPath = usePrevious(currentPath)

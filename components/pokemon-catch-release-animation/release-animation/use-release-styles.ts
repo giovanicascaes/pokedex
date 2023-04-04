@@ -16,7 +16,7 @@ const POKEMON_FLEE_ANIMATION_DURATION = 700
 export default function useReleaseStyles(
   pokemonRect: DOMRect,
   backgroundRect?: DOMRect,
-  onAnimationFinished?: () => void
+  onAnimationFinish?: () => void
 ) {
   const { left, top, width, height } = pokemonRect
 
@@ -69,7 +69,7 @@ export default function useReleaseStyles(
     },
     delay: 100,
     onRest: () => {
-      onAnimationFinished?.()
+      onAnimationFinish?.()
     },
   })
 

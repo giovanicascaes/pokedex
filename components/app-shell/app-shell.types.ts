@@ -4,4 +4,4 @@ export interface AppShellProps {
   children: ReactNode
 }
 
-export type ShellLayoutProps = Pick<AppShellProps, "children">
+export type AppShellLayoutProps = Pick<AppShellProps, "children">

@@ -6,6 +6,6 @@ export interface PokemonCatchReleaseAnimationProps
     "children" | "ref"
   > {
   isCaught?: boolean
-  onAnimationFinished?: () => void
+  onAnimationFinish?: () => void
   children: ReactElement
 }

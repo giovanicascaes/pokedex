@@ -4,7 +4,7 @@ import { Badge, Breadcrumb, ThemeSwitcher } from "components"
 import { usePokemonView } from "contexts"
 import {
   POKEDEX_LINK_ELEMENT_ID,
-  POKEMON_CAUGHT_RELEASE_FLAG_TRANSITION_DURATION,
+  POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
 } from "lib"
 import Image from "next/image"
 import Link from "next/link"
@@ -24,7 +24,7 @@ function ActionButtons() {
 
   const transition = useTransition(pokedex.length, {
     config: {
-      duration: POKEMON_CAUGHT_RELEASE_FLAG_TRANSITION_DURATION,
+      duration: POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
     },
     from: {
       scale: 0,

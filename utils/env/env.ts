@@ -1,7 +1,9 @@
-import { RenderingSide } from "./env.types"
+import { HydrationState, RenderingSide } from "./env.types"
 
 class Env {
   private current: RenderingSide = this.detect()
+
+  private hydrationState: HydrationState = "pending"
 
   get isServer(): boolean {
     return this.current === "server"
@@ -17,6 +19,16 @@ class Env {
     }
 
     return "client"
+  }
+
+  completeHydration(): void {
+    if (this.hydrationState === "pending") {
+      this.hydrationState = "complete"
+    }
+  }
+
+  get isHydrationComplete(): boolean {
+    return this.hydrationState === "complete"
   }
 }
 

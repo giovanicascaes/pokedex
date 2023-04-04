@@ -12,7 +12,7 @@ import {
 import useReleaseStyles from "./use-release-styles"
 
 export default function ReleaseAnimation({
-  onAnimationFinished,
+  onAnimationFinish,
   pokemonRect,
   children,
   style,
@@ -24,7 +24,7 @@ export default function ReleaseAnimation({
     useReleaseStyles(
       pokemonRect,
       backgroundEl?.getBoundingClientRect(),
-      onAnimationFinished
+      onAnimationFinish
     )
 
   return ReactDOM.createPortal(

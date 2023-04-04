@@ -1,23 +1,34 @@
-import { PokemonSpeciesSimple } from "lib"
+import { PokemonSpeciesPokedex } from "contexts"
 import { DetailedHTMLProps, HTMLAttributes } from "react"
-import { WithNonLegacyRef } from "types"
 
 export interface PokemonListProps
-  extends WithNonLegacyRef<
-    DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>,
-    HTMLUListElement
-  > {
-  pokemons: PokemonSpeciesSimple[]
+  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  pokemons: PokemonSpeciesPokedex[]
+  preloadPokemons?: PokemonSpeciesPokedex[]
   skipInitialAnimation?: boolean
+  onAddToPokedex: (pokemon: PokemonSpeciesPokedex) => void
+  onRemoveFromPokedex: (id: number) => void
   onReady?: () => void
 }
 
-export interface PokemonListItemData extends PokemonSpeciesSimple {
-  y: number
-  measureOnly?: boolean
-}
+export type PokemonListViewProps = Pick<
+  PokemonListProps,
+  | "pokemons"
+  | "preloadPokemons"
+  | "skipInitialAnimation"
+  | "onAddToPokedex"
+  | "onRemoveFromPokedex"
+  | "onReady"
+>
 
-export type PokemonListData = readonly [
-  { height: number },
-  PokemonListItemData[]
-]
+export interface UsePokemonListArgs
+  extends Pick<
+    PokemonListProps,
+    | "pokemons"
+    | "skipInitialAnimation"
+    | "onAddToPokedex"
+    | "onRemoveFromPokedex"
+    | "onReady"
+  > {
+  listTrailLength?: number
+}

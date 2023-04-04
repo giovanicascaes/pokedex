@@ -10,7 +10,10 @@ import {
 } from "react-icons/hi2"
 import { twMerge } from "tailwind-merge"
 import { match } from "utils"
-import { ThemeSwitcherProps } from "./theme-switcher.types"
+import {
+  ThemeSwitcherOptionsPopupProps,
+  ThemeSwitcherProps,
+} from "./theme-switcher.types"
 
 const POPUP_TRANSITION_DURATION = 220
 
@@ -27,8 +30,8 @@ const getThemeModeIcon = (mode: ThemeMode) => {
   return <Icon size={20} />
 }
 
-function OptionsPopup({ open }: { open: boolean }) {
-  const transition = useTransition(open, {
+function OptionsPopup({ show }: ThemeSwitcherOptionsPopupProps) {
+  const transition = useTransition(show, {
     config: {
       tension: 28,
       friction: 0,
@@ -113,7 +116,7 @@ export default function ThemeSwitcher({
         ))}
       </Select.Button>
       <Select.Options>
-        {({ open }) => <OptionsPopup open={open} />}
+        {({ open }) => <OptionsPopup show={open} />}
       </Select.Options>
     </Select>
   )

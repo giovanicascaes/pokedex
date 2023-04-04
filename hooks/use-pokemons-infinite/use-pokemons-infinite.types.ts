@@ -1,10 +1,15 @@
 import { PokemonSpeciesSimple } from "lib"
 
-export type UsePokemonListArgs = number
+export type UsePokemonInfiniteArgs = number
 
-export interface UsePokemonListReturn {
+export type UsePokemonInfinitePokemons = [
+  PokemonSpeciesSimple[],
+  PokemonSpeciesSimple[]
+]
+
+export interface UsePokemonInfiniteReturn {
   currentPage: number
-  pages: [PokemonSpeciesSimple[], PokemonSpeciesSimple[]]
+  pokemons: UsePokemonInfinitePokemons
   isLoadingMore: boolean
   hasFetchedAll: boolean
   error: any

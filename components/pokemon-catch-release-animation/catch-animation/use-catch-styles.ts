@@ -13,7 +13,7 @@ const MOVE_POKEBALL_TO_POKEDEX_ANIMATION_DURATION = 1200
 export default function useCatchStyles(
   pokemonRect: DOMRect,
   backgroundRect?: DOMRect,
-  onAnimationFinished?: () => void
+  onAnimationFinish?: () => void
 ) {
   const { left, top, width, height } = pokemonRect
 
@@ -73,7 +73,7 @@ export default function useCatchStyles(
     },
     delay: 100,
     onRest: () => {
-      onAnimationFinished?.()
+      onAnimationFinish?.()
     },
   })
 

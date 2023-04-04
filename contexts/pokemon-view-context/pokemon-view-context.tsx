@@ -1,32 +1,59 @@
-import { usePokemonsInfinite, usePrevious } from "hooks"
+import { usePokemonsInfinite } from "hooks"
 import { PokemonSpeciesDetailed, PokemonSpeciesSimple } from "lib"
-import { useRouter } from "next/router"
 import { useMemo, useReducer } from "react"
 import { createContext } from "utils"
 import {
+  PokemonSpeciesPokedex,
   PokemonViewActionTypes,
   PokemonViewContextActions,
   PokemonViewContextData,
   PokemonViewContextValue,
   PokemonViewProviderProps,
+  PokemonViewState,
   PokmeonViewActions,
-  PokmeonViewState,
 } from "./pokemon-view-context.types"
 
 export const POKEMONS_PER_PAGE = 12
+
+const mapWithOnPokedexState = (
+  pokemons: PokemonSpeciesSimple[],
+  pokedex: PokemonSpeciesPokedex[]
+) =>
+  pokemons.map((pokemon) => ({
+    ...pokemon,
+    isOnPokedex: pokedex.some(({ id }) => id === pokemon.id),
+  }))
 
 const [Provider, useContext] = createContext<PokemonViewContextValue>({
   hookName: "usePokemonView",
   providerName: "PokemonViewProvider",
 })
 
-export const usePokemonView = useContext
+export function usePokemonView(
+  serverLoadedPokemons: PokemonSpeciesSimple[] = []
+) {
+  const [data, actions] = useContext()
+
+  return [
+    {
+      ...data,
+      visiblePokemons: useMemo(
+        () => [
+          ...mapWithOnPokedexState(serverLoadedPokemons, data.pokedex),
+          ...data.visiblePokemons,
+        ],
+        [data.pokedex, data.visiblePokemons, serverLoadedPokemons]
+      ),
+    },
+    actions,
+  ] as PokemonViewContextValue
+}
 
 const reducers: {
   [P in PokemonViewActionTypes]: (
-    state: PokmeonViewState,
+    state: PokemonViewState,
     action: Extract<PokmeonViewActions, { type: P }>
-  ) => PokmeonViewState
+  ) => PokemonViewState
 } = {
   [PokemonViewActionTypes.DirtyScroll](state) {
     return { ...state, isScrollDirty: true }
@@ -49,17 +76,17 @@ const reducers: {
 }
 
 function matchReducer(
-  state: PokmeonViewState,
+  state: PokemonViewState,
   action: PokmeonViewActions
-): PokmeonViewState {
+): PokemonViewState {
   const reducer = reducers as Record<
     PokemonViewActionTypes,
-    (state: PokmeonViewState, action: PokmeonViewActions) => PokmeonViewState
+    (state: PokemonViewState, action: PokmeonViewActions) => PokemonViewState
   >
   return reducer[action.type](state, action)
 }
 
-const INITIAL_STATE: PokmeonViewState = {
+const INITIAL_STATE: PokemonViewState = {
   isScrollDirty: false,
   viewingPokemon: null,
   pokedex: [],
@@ -67,23 +94,24 @@ const INITIAL_STATE: PokmeonViewState = {
 
 export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
   const [state, dispatch] = useReducer(matchReducer, INITIAL_STATE)
-  const { pathname } = useRouter()
-  const prevPathName = usePrevious(pathname)
   const {
     currentPage,
-    pages: [visiblePokemons, hiddenPokemons],
+    pokemons: [visiblePokemons, preloadPokemons],
     hasFetchedAll,
     error,
     loadNext: loadMore,
   } = usePokemonsInfinite(POKEMONS_PER_PAGE)
 
-  const data: PokemonViewContextData = {
-    ...state,
-    currentPage,
-    visiblePokemons,
-    hiddenPokemons,
-    hasFetchedAll,
-  }
+  const data: PokemonViewContextData = useMemo(
+    () => ({
+      ...state,
+      currentPage,
+      visiblePokemons: mapWithOnPokedexState(visiblePokemons, state.pokedex),
+      preloadPokemons: mapWithOnPokedexState(preloadPokemons, state.pokedex),
+      hasFetchedAll,
+    }),
+    [currentPage, hasFetchedAll, preloadPokemons, state, visiblePokemons]
+  )
 
   const actions: PokemonViewContextActions = useMemo(
     () => ({
@@ -104,7 +132,7 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
           type: PokemonViewActionTypes.ClearViewingPokemon,
         })
       },
-      addPokemonToPokedex(pokemon: PokemonSpeciesSimple) {
+      addPokemonToPokedex(pokemon: PokemonSpeciesPokedex) {
         dispatch({
           type: PokemonViewActionTypes.AddPokemonToPokedex,
           pokemon,

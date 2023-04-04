@@ -7,7 +7,7 @@ import useChildrenRect from "./use-children-rect"
 
 export default function ClientSideComponent({
   isCaught = false,
-  onAnimationFinished: onFinishAnimation,
+  onAnimationFinish: onFinishAnimation,
   className,
   children,
   ...other
@@ -39,7 +39,7 @@ export default function ClientSideComponent({
       {animate && (
         <AnimationComponent
           {...other}
-          onAnimationFinished={handleOnFinishAnimation}
+          onAnimationFinish={handleOnFinishAnimation}
           pokemonRect={childrenRect}
           className="absolute top-0 left-0 z-40 w-full h-full pointer-events-none"
         >

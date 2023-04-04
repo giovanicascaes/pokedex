@@ -1,14 +1,15 @@
 import { fetchAsJson, PokemonSpeciesSimple } from "lib"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import useSWRInfinite from "swr/infinite"
 import {
-  UsePokemonListArgs,
-  UsePokemonListReturn,
+  UsePokemonInfiniteArgs,
+  UsePokemonInfinitePokemons,
+  UsePokemonInfiniteReturn,
 } from "./use-pokemons-infinite.types"
 
 export default function usePokemonsInfinite(
-  pokemonsPerPage: UsePokemonListArgs
-): UsePokemonListReturn {
+  pokemonsPerPage: UsePokemonInfiniteArgs
+): UsePokemonInfiniteReturn {
   const { data, error, size, setSize } = useSWRInfinite<{
     result: PokemonSpeciesSimple[]
   }>(
@@ -31,15 +32,25 @@ export default function usePokemonsInfinite(
   const hasFetchedAll =
     isEmpty ||
     (!!data && data[data.length - 1]?.result.length < pokemonsPerPage)
-  const pages = data?.map(({ result }) => result) ?? []
-  const hiddenPage = hasFetchedAll ? [] : pages.pop() ?? []
-  const oldPages = pages.flat()
+  const pages = useMemo(() => data?.map(({ result }) => result) ?? [], [data])
+  const hiddenPage = useMemo(
+    () => (hasFetchedAll ? [] : pages.pop() ?? []),
+    [hasFetchedAll, pages]
+  )
+
+  const pokemons = useMemo<UsePokemonInfinitePokemons>(() => {
+    const oldPages = pages.flat()
+
+    if (isLoadingMore) {
+      return [oldPages.concat(...hiddenPage), []]
+    }
+
+    return [oldPages, hiddenPage]
+  }, [hiddenPage, isLoadingMore, pages])
 
   return {
     currentPage: size,
-    pages: isLoadingMore
-      ? [oldPages.concat(...hiddenPage), []]
-      : [oldPages, hiddenPage],
+    pokemons,
     isLoadingMore,
     hasFetchedAll,
     error,
