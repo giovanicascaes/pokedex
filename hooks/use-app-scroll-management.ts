@@ -1,20 +1,37 @@
 import { usePokemonView } from "contexts"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import useIsomorphicEffect from "./use-isomorphic-effect"
+import { UIEvent, useCallback, useEffect, useState } from "react"
+import { useIsoMorphicEffect } from "./use-iso-morphic-effect"
 import usePrevious from "./use-previous"
 import useScrollTop from "./use-scroll-top"
 
 export default function useAppScrollManagement(
+  isSettingUpPage: string | null,
   disableScrollRestore: boolean = false
 ) {
-  const [disableScrollTrack, setDisableScrollTrack] = useState(false)
-  const [pathHasChanged, setPathHasChanged] = useState(false)
+  const [isScrollTrackEnabled, setIsScrollTrackEnabled] = useState(true)
+  const [isScrollReady, setIsScrollReady] = useState(true)
+  const [isChangingPath, setIsChangingPath] = useState(false)
   const [scrollContainer, scrollContainerRef] = useState<Element | null>(null)
   const { asPath: currentPath } = useRouter()
   const prevPath = usePrevious(currentPath)
   const [, { dirtyScroll }] = usePokemonView()
-  const [scrollTop, { onScroll }] = useScrollTop(disableScrollTrack)
+  const [scrollTop, { onScroll }] = useScrollTop(!isScrollTrackEnabled)
+
+  const handleOnScroll = useCallback(
+    (event: UIEvent) => {
+      const { scrollTop: nextScrollTop } = event.currentTarget
+
+      requestAnimationFrame(() => {
+        if (!isScrollReady && nextScrollTop === scrollTop) {
+          setIsScrollReady(true)
+        }
+      })
+
+      onScroll(event)
+    },
+    [isScrollReady, onScroll, scrollTop]
+  )
 
   useEffect(() => {
     if (scrollTop > 0) {
@@ -24,42 +41,47 @@ export default function useAppScrollManagement(
 
   useEffect(() => {
     if (prevPath && prevPath !== currentPath) {
-      setPathHasChanged(true)
+      setIsChangingPath(true)
+      setIsScrollReady(false)
     }
   }, [currentPath, prevPath])
 
-  useIsomorphicEffect(() => {
-    if (disableScrollRestore || !pathHasChanged) {
+  useIsoMorphicEffect(() => {
+    if (disableScrollRestore || !isChangingPath) {
       return
     }
 
     if (currentPath === "/") {
+      if (isSettingUpPage) return
+
       scrollContainer!.scrollTo({
         top: scrollTop,
       })
-      setDisableScrollTrack(false)
-    } else if (disableScrollTrack) {
+      setIsScrollTrackEnabled(true)
+    } else if (!isScrollTrackEnabled) {
       scrollContainer!.scrollTo({
         top: 0,
       })
+      setIsScrollReady(true)
     } else {
-      setDisableScrollTrack(true)
+      setIsScrollTrackEnabled(false)
 
       return
     }
 
-    setPathHasChanged(false)
+    setIsChangingPath(false)
   }, [
     currentPath,
     disableScrollRestore,
-    disableScrollTrack,
-    pathHasChanged,
-    scrollContainer,
+    isChangingPath,
+    isScrollTrackEnabled,
+    isSettingUpPage,
     scrollTop,
   ])
 
   return {
     ref: scrollContainerRef,
-    onScroll,
+    onScroll: handleOnScroll,
+    isScrollReady,
   }
 }

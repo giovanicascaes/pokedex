@@ -1,7 +1,8 @@
 import { animated, easings, useSpring, useTransition } from "@react-spring/web"
 import { PokemonListItemCard } from "components"
-import { useResizeObserver } from "hooks"
+import { usePrevious, useResizeObserver } from "hooks"
 import { useMemo, useState } from "react"
+import { omit } from "utils"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListGridViewData,
@@ -31,6 +32,7 @@ export default function PokemonListGridView({
 }: PokemonListGridViewProps) {
   const [cardDimensions, setCardDimensions] = useState<DOMRect | null>(null)
   const [resizeObserverRef, containerRect] = useResizeObserver()
+  const prevContainerRect = usePrevious(containerRect)
   const { handleOnPokemonCatchReleaseFinish, transitionProps } =
     usePokemonListView({
       onAddToPokedex,
@@ -87,7 +89,8 @@ export default function PokemonListGridView({
     }, [cardDimensions, columns, pokemons])
 
   const gridTransitions = useTransition(gridItems, {
-    key: ({ id }: PokemonListGridViewItemData) => id,
+    key: ({ id, isGettingDimensions }: PokemonListGridViewItemData) =>
+      isGettingDimensions ? "getDimensions" : id,
     from: ({ x, y }) => ({
       x,
       y,
@@ -114,13 +117,12 @@ export default function PokemonListGridView({
   })
 
   const containerStyles = useSpring({
-    ...(containerRect && {
-      x: (containerRect.width - containerWidth) / 2,
-      config: {
-        duration: CONTAINER_TRANSITION_DURATION,
-        easing: easings.linear,
-      },
-    }),
+    x: containerRect ? (containerRect.width - containerWidth) / 2 : 0,
+    config: {
+      duration: CONTAINER_TRANSITION_DURATION,
+      easing: easings.linear,
+    },
+    immediate: !prevContainerRect,
   })
 
   return (
@@ -131,12 +133,15 @@ export default function PokemonListGridView({
           style={{
             width: containerWidth,
             height: containerHeight,
+            opacity: containerRect ? 1 : 0,
             ...containerStyles,
           }}
         >
           {gridTransitions((gridStyles, pokemon) => {
-            const { id, artSrc, isOnPokedex, isGettingDimensions, ...other } =
-              pokemon
+            const { id, artSrc, isOnPokedex, ...other } = omit(
+              pokemon,
+              "isGettingDimensions"
+            )
 
             return (
               <animated.li
@@ -144,9 +149,6 @@ export default function PokemonListGridView({
                 className="absolute"
                 style={{
                   ...gridStyles,
-                  ...(isGettingDimensions && {
-                    opacity: 0,
-                  }),
                 }}
                 ref={(el) => {
                   setCardDimensions(

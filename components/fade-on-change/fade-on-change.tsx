@@ -4,13 +4,13 @@ import { FadeOnChangeProps } from "./fade-on-change.types"
 const DEFAULT_TRANSITION_DURATION = 200
 
 export default function FadeOnChange<T>({
-  watchChangesOn,
+  watch,
   children,
   transitionDuration = DEFAULT_TRANSITION_DURATION,
   ...other
 }: FadeOnChangeProps<T>) {
-  const transition = useTransition(watchChangesOn, {
-    key: watchChangesOn,
+  const transition = useTransition(watch, {
+    key: watch,
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },

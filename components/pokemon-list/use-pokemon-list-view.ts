@@ -15,7 +15,7 @@ export default function usePokemonListView({
 }: UsePokemonListArgs) {
   const animatedPokemons = useRef<Set<number>>(new Set())
   const prevPokemons = usePrevious(pokemons)
-  const pokemonsHaveChanged = useMemo(
+  const haveNewPokemonsBeenLoaded = useMemo(
     () => prevPokemons && prevPokemons.length !== pokemons.length,
     [pokemons.length, prevPokemons]
   )
@@ -34,26 +34,8 @@ export default function usePokemonListView({
 
   const transitionProps = useMemo(
     () => ({
-      onRest: (_result: any, _ctrl: any, { id }: PokemonSpeciesPokedex) => {
-        animatedPokemons.current.add(id)
-
-        if (
-          !pokemonsHaveChanged &&
-          animatedPokemons.current.size === pokemons.length
-        ) {
-          onReady?.()
-          setAnimate(true)
-        }
-      },
-      immediate: !animate,
       delay: (key: string) => {
         if (!animate) return 0
-
-        const typeSafeKey = key as unknown as number
-
-        if (animatedPokemons.current.has(typeSafeKey)) {
-          return 0
-        }
 
         return (
           pokemons
@@ -62,11 +44,24 @@ export default function usePokemonListView({
                 (renderedId) => renderedId !== id
               )
             )
-            .findIndex(({ id }) => id === typeSafeKey) * listTrailLength
+            .findIndex(({ id }) => id === (key as unknown as number)) *
+          listTrailLength
         )
       },
+      immediate: !animate,
+      onRest: (_result: any, _ctrl: any, { id }: PokemonSpeciesPokedex) => {
+        animatedPokemons.current.add(id)
+
+        if (
+          !haveNewPokemonsBeenLoaded &&
+          animatedPokemons.current.size === pokemons.length
+        ) {
+          onReady?.()
+          setAnimate(true)
+        }
+      },
     }),
-    [animate, listTrailLength, onReady, pokemons, pokemonsHaveChanged]
+    [animate, listTrailLength, onReady, pokemons, haveNewPokemonsBeenLoaded]
   )
 
   return {

@@ -1,10 +1,13 @@
+import { animated, easings, useSpring } from "@react-spring/web"
 import { FadeOnChange } from "components"
 import { useMedia } from "hooks"
-import { useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { PokemonListGridView } from "./pokemon-list-grid-view"
 import { PokemonListSimpleView } from "./pokemon-list-simple-view"
 import { PokemonListProps } from "./pokemon-list.types"
+
+const CONTAINER_TRANSITION_DURATION = 300
 
 export default function PokemonList({
   pokemons,
@@ -16,6 +19,7 @@ export default function PokemonList({
   className,
   ...otherProps
 }: PokemonListProps) {
+  const [isListReady, setIsListReady] = useState(false)
   const mediaMatches = useMedia(
     [
       "(min-width: 0px)",
@@ -25,7 +29,7 @@ export default function PokemonList({
       "(min-width: 1536px)",
     ],
     {
-      fallback: [false, false, false, true, false],
+      fallback: [true, false, false, false, false],
     }
   )
   const columns = useMemo(
@@ -34,20 +38,37 @@ export default function PokemonList({
     [mediaMatches]
   )
 
+  const containerStyles = useSpring({
+    // opacity: isListReady || !skipInitialAnimation ? 1 : 0,
+    config: {
+      duration: CONTAINER_TRANSITION_DURATION,
+      easing: easings.linear,
+    },
+  })
+
+  const handleOnViewReady = useCallback(() => {
+    setIsListReady(true)
+    onReady?.()
+  }, [onReady])
+
   const commonListViewProps = {
     pokemons,
     preloadPokemons,
     skipInitialAnimation,
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady,
+    onReady: handleOnViewReady,
   }
 
   return (
-    <div {...otherProps} className={twMerge("flex flex-col", className)}>
-      <FadeOnChange watchChangesOn={columns === 1}>
-        {(isList) =>
-          isList ? (
+    <animated.div
+      {...otherProps}
+      className={twMerge("flex flex-col", className)}
+      style={{ ...containerStyles }}
+    >
+      <FadeOnChange watch={columns === 1}>
+        {(isSimpleView) =>
+          isSimpleView ? (
             <PokemonListSimpleView {...commonListViewProps} />
           ) : (
             <PokemonListGridView
@@ -57,6 +78,6 @@ export default function PokemonList({
           )
         }
       </FadeOnChange>
-    </div>
+    </animated.div>
   )
 }

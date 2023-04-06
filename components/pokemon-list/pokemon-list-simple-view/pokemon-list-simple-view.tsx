@@ -2,6 +2,7 @@ import { animated, easings, useTransition } from "@react-spring/web"
 import { PokemonListItemSimple } from "components"
 import { useMemo, useState } from "react"
 import { twMerge } from "tailwind-merge"
+import { omit } from "utils"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListSimpleViewData,
@@ -77,7 +78,8 @@ export default function PokemonListSimpleView({
     }, [itemDimensions, pokemons])
 
   const listTransitions = useTransition(listItems, {
-    key: ({ id }: PokemonListSimpleViewItemData) => id,
+    key: ({ id, isGettingDimensions }: PokemonListSimpleViewItemData) =>
+      isGettingDimensions ? "getDimensions" : id,
     from: ({ y, isGettingDimensions }) => ({
       y,
       opacity: 0,
@@ -112,8 +114,10 @@ export default function PokemonListSimpleView({
         }}
       >
         {listTransitions((listStyles, pokemon) => {
-          const { id, artSrc, isOnPokedex, isGettingDimensions, ...other } =
-            pokemon
+          const { id, artSrc, isOnPokedex, ...other } = omit(
+            pokemon,
+            "isGettingDimensions"
+          )
 
           return (
             <animated.li
@@ -121,9 +125,6 @@ export default function PokemonListSimpleView({
               className="absolute w-full"
               style={{
                 ...listStyles,
-                ...(isGettingDimensions && {
-                  opacity: 0,
-                }),
               }}
               ref={(el) => {
                 setItemDimensions(

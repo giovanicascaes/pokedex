@@ -7,6 +7,6 @@ export interface FadeOnChangeProps<T>
   > {
   children: ReactNode | ((key: T) => ReactNode)
   ref?: Ref<HTMLDivElement>
-  watchChangesOn: T
+  watch: T
   transitionDuration?: number
 }

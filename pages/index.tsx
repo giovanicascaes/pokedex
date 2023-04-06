@@ -1,31 +1,37 @@
 import { PokemonList } from "components"
-import { POKEMONS_PER_PAGE, useLayoutControl, usePokemonView } from "contexts"
+import { POKEMONS_PER_PAGE, usePageState, usePokemonView } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { getPokemons } from "lib"
 import { InferGetStaticPropsType } from "next"
 import Head from "next/head"
-import { useCallback, useEffect } from "react"
+import { useRouter } from "next/router"
+import { useCallback, useEffect, useLayoutEffect } from "react"
 
 type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
+  const { asPath: currentPath } = useRouter()
   const [
     { visiblePokemons, preloadPokemons, hasFetchedAll, isScrollDirty },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemonView(serverLoadedPokemons)
-  const [{ isPageReady }, { setIsPageReady }] = useLayoutControl()
+  const [{ isSettingUpPage }, { setIsSettingUpPage }] = usePageState()
 
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     rootMargin: "20%",
   })
 
   const onViewReady = useCallback(() => {
-    setIsPageReady(true)
-  }, [setIsPageReady])
+    setIsSettingUpPage(null)
+  }, [setIsSettingUpPage])
 
   useEffect(() => {
     if (isIntersecting && !hasFetchedAll) loadMore()
   }, [isIntersecting, loadMore, hasFetchedAll])
+
+  useLayoutEffect(() => {
+    setIsSettingUpPage(currentPath)
+  }, [currentPath, setIsSettingUpPage])
 
   return (
     <>
@@ -44,7 +50,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
           onReady={onViewReady}
           className="mx-auto"
         />
-        {isPageReady && (
+        {!isSettingUpPage && (
           <div
             className="w-full text-center font-light text-slate-400"
             ref={intersectionObserverRef}

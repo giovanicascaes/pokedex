@@ -1,8 +1,12 @@
 import { PokemonSpeciesPokedex } from "contexts"
 import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface PokemonListProps
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  extends WithNonLegacyRef<
+    DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+    HTMLDivElement
+  > {
   pokemons: PokemonSpeciesPokedex[]
   preloadPokemons?: PokemonSpeciesPokedex[]
   skipInitialAnimation?: boolean

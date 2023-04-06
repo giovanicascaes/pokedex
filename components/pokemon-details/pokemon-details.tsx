@@ -123,7 +123,7 @@ export default function PokemonDetails({
           </Select>
         )}
         <FadeOnChange
-          watchChangesOn={selectedForm}
+          watch={selectedForm}
           className="w-full relative flex justify-center"
         >
           {({ abilities, artSrc, height, stats, types, weight }) => (

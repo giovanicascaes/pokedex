@@ -1,16 +1,30 @@
-export function pick<
-  T extends { [k: string]: any },
-  A extends readonly (keyof T)[]
->(object: T, ...attrs: A) {
+export function filter<T extends { [k: string]: any }, R extends T>(
+  object: T,
+  predicateFn: (attr: keyof T) => boolean
+) {
   return Object.entries(object)
-    .filter(([attr]) => attrs.includes(attr))
+    .filter(([attr]) => predicateFn(attr))
     .reduce(
       (obj, [k, v]) => ({
         ...obj,
         [k]: v,
       }),
       {}
-    ) as { [K in A[number]]: T[K] }
+    ) as R
+}
+
+export function pick<
+  T extends { [k: string]: any },
+  U extends readonly (keyof T)[]
+>(object: T, ...attrs: U): Pick<T, typeof attrs[number]> {
+  return filter(object, (attr) => attrs.includes(attr))
+}
+
+export function omit<
+  T extends { [k: string]: any },
+  U extends readonly (keyof T)[]
+>(object: T, ...attrs: U): Omit<T, typeof attrs[number]> {
+  return filter(object, (attr) => !attrs.includes(attr))
 }
 
 export function match<K extends PropertyKey = string, V = any>(
