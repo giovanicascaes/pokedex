@@ -25,7 +25,7 @@ export type PokemonListViewProps = Pick<
   | "onReady"
 >
 
-export interface UsePokemonListArgs
+export interface UsePokemonListViewArgs
   extends Pick<
     PokemonListProps,
     | "pokemons"

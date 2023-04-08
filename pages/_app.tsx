@@ -1,5 +1,5 @@
 import { AppShell } from "components"
-import { PokemonViewProvider, ThemeModeProvider } from "contexts"
+import { ThemeModeProvider } from "contexts"
 import { NextPage } from "next"
 import type { AppProps } from "next/app"
 import { ReactNode } from "react"
@@ -18,9 +18,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <ThemeModeProvider>
-      <PokemonViewProvider>
-        <AppShell>{getLayout(<Component {...pageProps} />)}</AppShell>
-      </PokemonViewProvider>
+      <AppShell>{getLayout(<Component {...pageProps} />)}</AppShell>
     </ThemeModeProvider>
   )
 }

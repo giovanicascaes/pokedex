@@ -1,4 +1,4 @@
-export { default as useAppScrollManagement } from "./use-app-scroll-management"
+export { default as useAppScroll } from "./use-app-scroll/use-app-scroll"
 export { default as useDocumentEvent } from "./use-document-event"
 export * from "./use-intersection-observer"
 export { default as useIsServerHydrationComplete } from "./use-is-server-hydration-complete"

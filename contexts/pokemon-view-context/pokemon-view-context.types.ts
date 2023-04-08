@@ -2,7 +2,6 @@ import { PokemonSpeciesDetailed, PokemonSpeciesSimple } from "lib"
 import { ReactNode } from "react"
 
 export enum PokemonViewActionTypes {
-  DirtyScroll,
   SetViewingPokemon,
   ClearViewingPokemon,
   AddPokemonToPokedex,
@@ -14,15 +13,11 @@ export interface PokemonSpeciesPokedex extends PokemonSpeciesSimple {
 }
 
 export interface PokemonViewState {
-  isScrollDirty: boolean
   viewingPokemon: PokemonSpeciesDetailed | null
   pokedex: PokemonSpeciesPokedex[]
 }
 
 export type PokmeonViewActions =
-  | {
-      type: PokemonViewActionTypes.DirtyScroll
-    }
   | {
       type: PokemonViewActionTypes.SetViewingPokemon
       pokemon: PokemonSpeciesDetailed
@@ -46,12 +41,10 @@ export interface PokemonViewContextData {
   pokedex: PokemonSpeciesPokedex[]
   viewingPokemon: PokemonSpeciesDetailed | null
   hasFetchedAll: boolean
-  isScrollDirty: boolean
 }
 
 export interface PokemonViewContextActions {
   loadMore: () => void
-  dirtyScroll: () => void
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
   clearViewingPokemon: () => void
   addPokemonToPokedex: (pokemon: PokemonSpeciesPokedex) => void

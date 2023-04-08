@@ -1,7 +1,7 @@
 import { PokemonSpeciesPokedex } from "contexts"
 import { usePrevious } from "hooks"
 import { useCallback, useMemo, useRef, useState } from "react"
-import { UsePokemonListArgs } from "./pokemon-list.types"
+import { UsePokemonListViewArgs } from "./pokemon-list.types"
 
 const LIST_TRAIL = 100
 
@@ -12,7 +12,7 @@ export default function usePokemonListView({
   listTrailLength = LIST_TRAIL,
   onReady,
   skipInitialAnimation = false,
-}: UsePokemonListArgs) {
+}: UsePokemonListViewArgs) {
   const animatedPokemons = useRef<Set<number>>(new Set())
   const prevPokemons = usePrevious(pokemons)
   const haveNewPokemonsBeenLoaded = useMemo(

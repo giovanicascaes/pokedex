@@ -8,7 +8,7 @@ export enum ThemeMode {
 
 export interface ThemeModeContextData {
   themeMode: ThemeMode
-  transitionClassNames: string
+  transitionClassName: string
   isDark: boolean
 }
 

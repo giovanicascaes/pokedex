@@ -34,19 +34,19 @@ export function usePokemonView(
 ) {
   const [data, actions] = useContext()
 
-  return [
-    {
-      ...data,
-      visiblePokemons: useMemo(
-        () => [
+  return useMemo<PokemonViewContextValue>(
+    () => [
+      {
+        ...data,
+        visiblePokemons: [
           ...mapWithOnPokedexState(serverLoadedPokemons, data.pokedex),
           ...data.visiblePokemons,
         ],
-        [data.pokedex, data.visiblePokemons, serverLoadedPokemons]
-      ),
-    },
-    actions,
-  ] as PokemonViewContextValue
+      },
+      actions,
+    ],
+    [actions, data, serverLoadedPokemons]
+  )
 }
 
 const reducers: {
@@ -55,9 +55,6 @@ const reducers: {
     action: Extract<PokmeonViewActions, { type: P }>
   ) => PokemonViewState
 } = {
-  [PokemonViewActionTypes.DirtyScroll](state) {
-    return { ...state, isScrollDirty: true }
-  },
   [PokemonViewActionTypes.SetViewingPokemon](state, action) {
     return { ...state, viewingPokemon: action.pokemon }
   },
@@ -87,7 +84,6 @@ function matchReducer(
 }
 
 const INITIAL_STATE: PokemonViewState = {
-  isScrollDirty: false,
   viewingPokemon: null,
   pokedex: [],
 }
@@ -116,11 +112,6 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
   const actions: PokemonViewContextActions = useMemo(
     () => ({
       loadMore,
-      dirtyScroll() {
-        dispatch({
-          type: PokemonViewActionTypes.DirtyScroll,
-        })
-      },
       setViewingPokemon(pokemon: PokemonSpeciesDetailed) {
         dispatch({
           type: PokemonViewActionTypes.SetViewingPokemon,

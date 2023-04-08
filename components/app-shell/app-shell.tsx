@@ -7,12 +7,13 @@ import {
 } from "@react-spring/web"
 import { AppHeader, PageLoadingIndicator } from "components"
 import {
-  PageStateContextActions,
-  PageStateContextData,
-  PageStateProvider,
+  PagesContextActions,
+  PagesContextData,
+  PagesProvider,
+  PokemonViewProvider,
   useThemeMode,
 } from "contexts"
-import { useAppScrollManagement } from "hooks"
+import { useAppScroll, useIsoMorphicEffect } from "hooks"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
@@ -25,25 +26,28 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export default function AppShell({ children }: AppShellProps) {
   const [isTransitionRunning, setIsTransitionRunning] = useState(false)
-  const [isSettingUpPage, setIsSettingUpPage] = useState<string | null>(null)
+  const [loadingPage, setLoadingPage] = useState<string | null>(null)
+  const [{ transitionClassName }] = useThemeMode()
   const { asPath: currentPath } = useRouter()
+
   const {
     onScroll,
     ref: scrollRef,
     isScrollReady,
-  } = useAppScrollManagement(isSettingUpPage, isTransitionRunning)
-  const [{ transitionClassNames }] = useThemeMode()
+    isScrollDirty,
+  } = useAppScroll(loadingPage, isTransitionRunning)
 
-  useEffect(() => {
-    setIsSettingUpPage(currentPath)
-  }, [currentPath, setIsSettingUpPage])
+  useIsoMorphicEffect(() => {
+    setLoadingPage(currentPath)
+  }, [currentPath, setLoadingPage])
 
-  const data: PageStateContextData = {
-    isSettingUpPage,
+  const data: PagesContextData = {
+    loadingPage,
+    isScrollDirty,
   }
 
-  const actions: PageStateContextActions = {
-    setIsSettingUpPage,
+  const actions: PagesContextActions = {
+    setLoadingPage,
   }
 
   const transitionRef = useSpringRef()
@@ -88,18 +92,18 @@ export default function AppShell({ children }: AppShellProps) {
   }, [isScrollReady, transitionRef])
 
   return (
-    <PageStateProvider value={[data, actions]}>
-      <main
-        id={SHELL_LAYOUT_CONTAINER_ELEMENT_ID}
-        className={twMerge(
-          inter.variable,
-          "font-sans h-full overflow-auto",
-          transitionClassNames
-        )}
-        onScroll={onScroll}
-        ref={scrollRef}
-      >
-        <PageLoadingIndicator />
+    <main
+      id={SHELL_LAYOUT_CONTAINER_ELEMENT_ID}
+      className={twMerge(
+        inter.variable,
+        "font-sans h-full overflow-auto",
+        transitionClassName
+      )}
+      onScroll={onScroll}
+      ref={scrollRef}
+    >
+      <PageLoadingIndicator />
+      <PokemonViewProvider>
         <AppHeader className="sticky top-0 z-40" />
         {transition((transitionStyle, page) => (
           <animated.div
@@ -108,10 +112,10 @@ export default function AppShell({ children }: AppShellProps) {
               ...transitionStyle,
             }}
           >
-            {page}
+            <PagesProvider value={[data, actions]}>{page}</PagesProvider>
           </animated.div>
         ))}
-      </main>
-    </PageStateProvider>
+      </PokemonViewProvider>
+    </main>
   )
 }
