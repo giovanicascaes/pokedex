@@ -1,8 +1,12 @@
 import { animated, easings, useSpring, useTransition } from "@react-spring/web"
-import { PokemonListItemCard } from "components"
+import {
+  IntersectionObserverPokemonListItemCard,
+  PokemonListItemCard,
+} from "components"
 import { usePrevious, useResizeObserver } from "hooks"
-import { useMemo, useState } from "react"
-import { omit } from "utils"
+import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListGridViewData,
@@ -12,13 +16,32 @@ import {
 
 const CONTAINER_BOTTOM_PADDING = 30
 
+const CONTAINER_TRANSITION_DURATION = 300
+
 const GRID_GAP_X = 20
 
 const GRID_GAP_Y = 40
 
 const GRID_TRANSITION_DURATION = 300
 
-const CONTAINER_TRANSITION_DURATION = 300
+const CARD_TRAIL = 100
+
+const CARD_TRANSITION_DURATION = 300
+
+const CARD_ANIMATION_PROPERTIES = {
+  trail: CARD_TRAIL,
+  duration: CARD_TRANSITION_DURATION,
+  values: {
+    from: {
+      opacity: 0,
+      transform: "translateY(-50px)",
+    },
+    to: {
+      opacity: 1,
+      transform: "translateY(0px)",
+    },
+  },
+}
 
 export default function PokemonListGridView({
   pokemons,
@@ -31,32 +54,36 @@ export default function PokemonListGridView({
   ...other
 }: PokemonListGridViewProps) {
   const [cardDimensions, setCardDimensions] = useState<DOMRect | null>(null)
+  const cardDimensionsRef = useRef<HTMLDivElement | null>(null)
   const [resizeObserverRef, containerRect] = useResizeObserver()
   const prevContainerRect = usePrevious(containerRect)
-  const { handleOnPokemonCatchReleaseFinish, transitionProps } =
-    usePokemonListView({
-      onAddToPokedex,
-      onRemoveFromPokedex,
-      pokemons,
-      onReady,
-      skipInitialAnimation,
-    })
+  const {
+    handleOnCatchReleaseFinish,
+    handleOnIntersectionChange,
+    getStyles,
+    isAnimationDone,
+  } = usePokemonListView({
+    onAddToPokedex,
+    onRemoveFromPokedex,
+    pokemons,
+    onReady,
+    skipInitialAnimation,
+    animationProperties: CARD_ANIMATION_PROPERTIES,
+  })
+
+  useLayoutEffect(() => {
+    setCardDimensions(cardDimensionsRef.current!.getBoundingClientRect())
+  }, [])
 
   const [{ width: containerWidth, height: containerHeight }, gridItems] =
     useMemo<PokemonListGridViewData>(() => {
-      // Renders the first pokemon only to get Pokémon card's dimensions
       if (!cardDimensions) {
         return [
           {
             width: 0,
             height: 0,
           },
-          pokemons.slice(0, 1).map((pokemon) => ({
-            ...pokemon,
-            x: 0,
-            y: 0,
-            isGettingDimensions: true,
-          })),
+          [],
         ]
       }
 
@@ -89,20 +116,16 @@ export default function PokemonListGridView({
     }, [cardDimensions, columns, pokemons])
 
   const gridTransitions = useTransition(gridItems, {
-    key: ({ id, isGettingDimensions }: PokemonListGridViewItemData) =>
-      isGettingDimensions ? "getDimensions" : id,
+    key: ({ id }: PokemonListGridViewItemData) => id,
     from: ({ x, y }) => ({
       x,
       y,
-      opacity: 0,
-      transform: "translateY(-50px)",
     }),
-    enter: ({ x, y }) => ({
+    enter: ({ x, y, id }) => ({
       x,
       y,
       scale: 1,
-      opacity: 1,
-      transform: "translateY(0)",
+      opacity: isAnimationDone(id) ? 1 : 0,
     }),
     update: ({ x, y }) => ({ x, y }),
     leave: { scale: 0, opacity: 0 },
@@ -113,7 +136,6 @@ export default function PokemonListGridView({
       duration: GRID_TRANSITION_DURATION,
       easing: easings.easeOutSine,
     },
-    ...transitionProps,
   })
 
   const containerStyles = useSpring({
@@ -124,6 +146,17 @@ export default function PokemonListGridView({
     },
     immediate: !prevContainerRect,
   })
+
+  if (!cardDimensions) {
+    const { id, ...other } = pokemons[0]
+
+    return createPortal(
+      <div className="w-min" ref={cardDimensionsRef}>
+        <PokemonListItemCard {...other} identifier={id} />
+      </div>,
+      document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!
+    )
+  }
 
   return (
     <>
@@ -138,10 +171,7 @@ export default function PokemonListGridView({
           }}
         >
           {gridTransitions((gridStyles, pokemon) => {
-            const { id, artSrc, isOnPokedex, ...other } = omit(
-              pokemon,
-              "isGettingDimensions"
-            )
+            const { id, ...other } = pokemon
 
             return (
               <animated.li
@@ -149,20 +179,17 @@ export default function PokemonListGridView({
                 className="absolute"
                 style={{
                   ...gridStyles,
-                }}
-                ref={(el) => {
-                  setCardDimensions(
-                    (curr) => curr ?? el?.getBoundingClientRect().toJSON()
-                  )
+                  ...getStyles(id),
                 }}
               >
-                <PokemonListItemCard
+                <IntersectionObserverPokemonListItemCard
                   {...other}
-                  artSrc={artSrc}
                   identifier={id}
-                  isOnPokedex={isOnPokedex}
                   onCatchReleaseFinish={() =>
-                    handleOnPokemonCatchReleaseFinish(pokemon)
+                    handleOnCatchReleaseFinish(pokemon)
+                  }
+                  onIntersectionChange={(isIntersecting: boolean) =>
+                    handleOnIntersectionChange(pokemon.id, isIntersecting)
                   }
                 />
               </animated.li>
@@ -172,7 +199,7 @@ export default function PokemonListGridView({
       </div>
       {preloadPokemons?.map(({ id, ...other }) => (
         <li key={id} className="hidden">
-          <PokemonListItemCard identifier={id} {...other} />
+          <IntersectionObserverPokemonListItemCard identifier={id} {...other} />
         </li>
       ))}
     </>

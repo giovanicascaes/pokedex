@@ -1,27 +1,24 @@
 import { PokemonSpeciesPokedex } from "contexts"
-import { usePrevious } from "hooks"
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { UsePokemonListViewArgs } from "./pokemon-list.types"
-
-const LIST_TRAIL = 100
+import PokemonListItemAnimationController from "./PokemonListItemAnimationController"
 
 export default function usePokemonListView({
   onAddToPokedex,
   onRemoveFromPokedex,
   pokemons,
-  listTrailLength = LIST_TRAIL,
   onReady,
   skipInitialAnimation = false,
+  animationProperties,
 }: UsePokemonListViewArgs) {
-  const animatedPokemons = useRef<Set<number>>(new Set())
-  const prevPokemons = usePrevious(pokemons)
-  const haveNewPokemonsBeenLoaded = useMemo(
-    () => prevPokemons && prevPokemons.length !== pokemons.length,
-    [pokemons.length, prevPokemons]
+  const animationController = useRef(
+    new PokemonListItemAnimationController(animationProperties)
   )
-  const [animate, setAnimate] = useState(!skipInitialAnimation)
+  const [isInitialAnimationDone, setIsInitialAnimationDone] = useState(
+    !skipInitialAnimation
+  )
 
-  const handleOnPokemonCatchReleaseFinish = useCallback(
+  const handleOnCatchReleaseFinish = useCallback(
     (pokemon: PokemonSpeciesPokedex) => {
       if (pokemon.isOnPokedex) {
         onRemoveFromPokedex(pokemon.id)
@@ -32,40 +29,46 @@ export default function usePokemonListView({
     [onAddToPokedex, onRemoveFromPokedex]
   )
 
-  const transitionProps = useMemo(
-    () => ({
-      delay: (key: string) => {
-        if (!animate) return 0
+  const handleOnIntersectionChange = useCallback(
+    (id: number, isIntersecting: boolean) => {
+      if (!isInitialAnimationDone) return
 
-        return (
-          pokemons
-            .filter(({ id }) =>
-              Array.from(animatedPokemons.current.values()).every(
-                (renderedId) => renderedId !== id
-              )
-            )
-            .findIndex(({ id }) => id === (key as unknown as number)) *
-          listTrailLength
-        )
-      },
-      immediate: !animate,
-      onRest: (_result: any, _ctrl: any, { id }: PokemonSpeciesPokedex) => {
-        animatedPokemons.current.add(id)
-
-        if (
-          !haveNewPokemonsBeenLoaded &&
-          animatedPokemons.current.size === pokemons.length
-        ) {
-          onReady?.()
-          setAnimate(true)
-        }
-      },
-    }),
-    [animate, listTrailLength, onReady, pokemons, haveNewPokemonsBeenLoaded]
+      if (isIntersecting) {
+        animationController.current.queue(id)
+      } else {
+        animationController.current.skip(id)
+      }
+    },
+    [isInitialAnimationDone]
   )
 
+  const isAnimationDone = useCallback(
+    (id: number) => animationController.current.isDone(id),
+    []
+  )
+
+  const getStyles = useCallback(
+    (id: number) => animationController.current.getStyles(id),
+    []
+  )
+
+  useEffect(() => {
+    animationController.current.setPokemons(pokemons)
+  }, [pokemons])
+
+  useEffect(() => {
+    if (!isInitialAnimationDone) {
+      animationController.current.skipAll()
+      setIsInitialAnimationDone(true)
+    }
+
+    onReady?.()
+  }, [isInitialAnimationDone, onReady])
+
   return {
-    handleOnPokemonCatchReleaseFinish,
-    transitionProps,
+    handleOnCatchReleaseFinish,
+    handleOnIntersectionChange,
+    isAnimationDone,
+    getStyles,
   }
 }

@@ -1,5 +1,5 @@
-import { usePrevious } from "hooks"
-import { useEffect, useRef, useState } from "react"
+import { useIsoMorphicEffect, usePrevious } from "hooks"
+import { useRef, useState } from "react"
 import {
   UseIntersectionObserverArgs,
   UseIntersectionObserverReturn,
@@ -11,14 +11,14 @@ export default function useIntersectionObserver({
   rootMargin = "0%",
   freezeOnceVisible = false,
   disconnectOnceVisible = false,
-  disconnectOnceNotVisibleThenNotVisible = false,
+  disconnectOnceNoLongerVisible = false,
 }: UseIntersectionObserverArgs = {}): UseIntersectionObserverReturn {
   const observerRef = useRef<IntersectionObserver>()
   const [el, ref] = useState<Element | null>(null)
   const [isIntersecting, setIsIntersecting] = useState<boolean>(false)
   const prevIsIntersecting = usePrevious(isIntersecting)
 
-  useEffect(() => {
+  useIsoMorphicEffect(() => {
     if (!el) return
 
     const observerCallback = ([entry]: IntersectionObserverEntry[]): void => {
@@ -41,19 +41,17 @@ export default function useIntersectionObserver({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [root, rootMargin, el, threshold.toString(), freezeOnceVisible])
 
-  useEffect(() => {
+  useIsoMorphicEffect(() => {
     if (
       (disconnectOnceVisible && isIntersecting) ||
-      (disconnectOnceNotVisibleThenNotVisible &&
-        prevIsIntersecting &&
-        !isIntersecting)
+      (disconnectOnceNoLongerVisible && !isIntersecting && prevIsIntersecting)
     ) {
       observerRef.current?.disconnect()
     }
   }, [
     isIntersecting,
     disconnectOnceVisible,
-    disconnectOnceNotVisibleThenNotVisible,
+    disconnectOnceNoLongerVisible,
     prevIsIntersecting,
   ])
 

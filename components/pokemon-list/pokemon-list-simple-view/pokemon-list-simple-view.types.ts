@@ -11,7 +11,6 @@ export type PokemonListSimpleViewProps = WithNonLegacyRef<
 
 export interface PokemonListSimpleViewItemData extends PokemonSpeciesPokedex {
   y: number
-  isGettingDimensions?: boolean
 }
 
 export type PokemonListSimpleViewData = readonly [

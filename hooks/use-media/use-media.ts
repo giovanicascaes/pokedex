@@ -1,4 +1,4 @@
-import useIsServerHydrationComplete from "hooks/use-is-server-hydration-complete"
+import { useIsServerHydrationComplete } from "hooks"
 import { useEffect, useMemo, useState } from "react"
 import { UseMediaOptions } from "./use-media.types"
 

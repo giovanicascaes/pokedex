@@ -1,8 +1,6 @@
+import { useIsoMorphicEffect, usePrevious, useScrollTop } from "hooks"
 import { useRouter } from "next/router"
 import { UIEvent, useCallback, useEffect, useReducer, useState } from "react"
-import { useIsoMorphicEffect } from "../use-iso-morphic-effect"
-import usePrevious from "../use-previous"
-import useScrollTop from "../use-scroll-top"
 import {
   UseAppScrollActions,
   UseAppScrollActionTypes,

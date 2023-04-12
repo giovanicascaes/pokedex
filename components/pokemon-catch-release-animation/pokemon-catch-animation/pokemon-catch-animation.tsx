@@ -4,20 +4,20 @@ import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import Image from "next/image"
 import { useState } from "react"
 import ReactDOM from "react-dom"
-import { POKEBALL_SIZE_AT_CENTER } from "../contants"
+import { POKEBALL_SIZE_AT_CENTER } from "../constants"
 import {
-  CatchAnimationPhase,
-  CatchAnimationProps,
-} from "./catch-animation.types"
+  PokemonCatchAnimationPhase,
+  PokemonCatchAnimationProps,
+} from "./pokemon-catch-animation.types"
 import useCatchStyles from "./use-catch-styles"
 
-export default function CatchAnimation({
+export default function PokemonCatchAnimation({
   onAnimationFinish,
   pokemonRect,
   children,
   style,
   ...other
-}: CatchAnimationProps) {
+}: PokemonCatchAnimationProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
   const { backgroundColor, currentAnimationPhase, ...styles } = useCatchStyles(
@@ -33,7 +33,8 @@ export default function CatchAnimation({
       ref={backgroundRef}
     >
       <animated.div className="absolute origin-center" style={{ ...styles }}>
-        {currentAnimationPhase === CatchAnimationPhase.MovingToPokedex ? (
+        {currentAnimationPhase ===
+        PokemonCatchAnimationPhase.MovingToPokedex ? (
           <Image
             src={Pokeball}
             alt="Pokéball"

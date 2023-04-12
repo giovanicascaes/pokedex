@@ -1,8 +1,13 @@
 import { animated, easings, useTransition } from "@react-spring/web"
-import { PokemonListItemSimple } from "components"
-import { useMemo, useState } from "react"
+import {
+  IntersectionObserverPokemonListItemSimple,
+  PokemonListItemSimple,
+} from "components"
+import { useIsServerHydrationComplete } from "hooks"
+import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
-import { omit } from "utils"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListSimpleViewData,
@@ -16,7 +21,24 @@ const LIST_GAP = 10
 
 const LIST_TRANSITION_DURATION = 300
 
-const LIST_TRAIL = 60
+const ITEM_TRAIL = 100
+
+const ITEM_TRANSITION_DURATION = 300
+
+const ITEM_ANIMATION_PROPERTIES = {
+  trail: ITEM_TRAIL,
+  duration: ITEM_TRANSITION_DURATION,
+  values: {
+    from: {
+      opacity: 0,
+      scale: 0.5,
+    },
+    to: {
+      opacity: 1,
+      scale: 1,
+    },
+  },
+}
 
 export default function PokemonListSimpleView({
   pokemons,
@@ -30,29 +52,37 @@ export default function PokemonListSimpleView({
   ...other
 }: PokemonListSimpleViewProps) {
   const [itemDimensions, setItemDimensions] = useState<DOMRect | null>(null)
-  const { handleOnPokemonCatchReleaseFinish, transitionProps } =
-    usePokemonListView({
-      onAddToPokedex,
-      onRemoveFromPokedex,
-      pokemons,
-      listTrailLength: LIST_TRAIL,
-      onReady,
-      skipInitialAnimation,
-    })
+  const itemDimensionsRef = useRef<HTMLDivElement | null>(null)
+  const {
+    handleOnCatchReleaseFinish,
+    handleOnIntersectionChange,
+    getStyles,
+    isAnimationDone,
+  } = usePokemonListView({
+    onAddToPokedex,
+    onRemoveFromPokedex,
+    pokemons,
+    onReady,
+    skipInitialAnimation,
+    animationProperties: ITEM_ANIMATION_PROPERTIES,
+  })
+
+  const ready = useIsServerHydrationComplete()
+
+  useLayoutEffect(() => {
+    if (ready) {
+      setItemDimensions(itemDimensionsRef.current!.getBoundingClientRect())
+    }
+  }, [ready])
 
   const [{ height: containerHeight }, listItems] =
     useMemo<PokemonListSimpleViewData>(() => {
-      // Renders the first pokemon only to get Pokémon card's dimensions
       if (!itemDimensions) {
         return [
           {
             height: 0,
           },
-          pokemons.slice(0, 1).map((pokemon) => ({
-            ...pokemon,
-            y: 0,
-            isGettingDimensions: true,
-          })),
+          [],
         ]
       }
 
@@ -78,18 +108,14 @@ export default function PokemonListSimpleView({
     }, [itemDimensions, pokemons])
 
   const listTransitions = useTransition(listItems, {
-    key: ({ id, isGettingDimensions }: PokemonListSimpleViewItemData) =>
-      isGettingDimensions ? "getDimensions" : id,
-    from: ({ y, isGettingDimensions }) => ({
+    key: ({ id }: PokemonListSimpleViewItemData) => id,
+    from: ({ y }) => ({
       y,
-      opacity: 0,
-      scale: isGettingDimensions ? 1 : 0,
     }),
-    enter: ({ y }) => ({
+    enter: ({ y, id }) => ({
       y,
       x: "0%",
-      opacity: 1,
-      scale: 1,
+      opacity: isAnimationDone(id) ? 1 : 0,
     }),
     update: ({ y }) => ({ y }),
     leave: { x: "-100%", opacity: 0 },
@@ -100,8 +126,20 @@ export default function PokemonListSimpleView({
       duration: LIST_TRANSITION_DURATION,
       easing: easings.easeOutCirc,
     },
-    ...transitionProps,
   })
+
+  if (!itemDimensions) {
+    const { id, ...other } = pokemons[0]
+
+    return ready
+      ? createPortal(
+          <div ref={itemDimensionsRef}>
+            <PokemonListItemSimple {...other} identifier={id} />
+          </div>,
+          document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!
+        )
+      : null
+  }
 
   return (
     <>
@@ -114,10 +152,7 @@ export default function PokemonListSimpleView({
         }}
       >
         {listTransitions((listStyles, pokemon) => {
-          const { id, artSrc, isOnPokedex, ...other } = omit(
-            pokemon,
-            "isGettingDimensions"
-          )
+          const { id, artSrc, isOnPokedex, ...other } = pokemon
 
           return (
             <animated.li
@@ -125,20 +160,17 @@ export default function PokemonListSimpleView({
               className="absolute w-full"
               style={{
                 ...listStyles,
-              }}
-              ref={(el) => {
-                setItemDimensions(
-                  (curr) => curr ?? el?.getBoundingClientRect().toJSON()
-                )
+                ...getStyles(id),
               }}
             >
-              <PokemonListItemSimple
+              <IntersectionObserverPokemonListItemSimple
                 {...other}
                 artSrc={artSrc}
                 identifier={id}
                 isOnPokedex={isOnPokedex}
-                onCatchReleaseFinish={() =>
-                  handleOnPokemonCatchReleaseFinish(pokemon)
+                onCatchReleaseFinish={() => handleOnCatchReleaseFinish(pokemon)}
+                onIntersectionChange={(isIntersecting: boolean) =>
+                  handleOnIntersectionChange(pokemon.id, isIntersecting)
                 }
               />
             </animated.li>
@@ -147,7 +179,10 @@ export default function PokemonListSimpleView({
       </animated.ul>
       {preloadPokemons?.map(({ id, ...other }) => (
         <li key={id} className="hidden">
-          <PokemonListItemSimple identifier={id} {...other} />
+          <IntersectionObserverPokemonListItemSimple
+            identifier={id}
+            {...other}
+          />
         </li>
       ))}
     </>

@@ -25,6 +25,17 @@ export type PokemonListViewProps = Pick<
   | "onReady"
 >
 
+export interface PokemonListItemAnimationValues {
+  from: PokemonListItemAnimationValuesLookup
+  to: PokemonListItemAnimationValuesLookup
+}
+
+export interface PokemonListItemAnimationProperties {
+  trail: number
+  duration: number
+  values: PokemonListItemAnimationValues
+}
+
 export interface UsePokemonListViewArgs
   extends Pick<
     PokemonListProps,
@@ -34,5 +45,13 @@ export interface UsePokemonListViewArgs
     | "onRemoveFromPokedex"
     | "onReady"
   > {
-  listTrailLength?: number
+  animationProperties: PokemonListItemAnimationProperties
+}
+
+export interface PokemonListItemAnimationRunToken {
+  cancel?: () => void
+}
+
+interface PokemonListItemAnimationValuesLookup<T = any> {
+  [key: string]: T
 }

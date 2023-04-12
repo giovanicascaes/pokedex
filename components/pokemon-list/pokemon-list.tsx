@@ -1,7 +1,7 @@
 import { animated, easings, useSpring } from "@react-spring/web"
 import { FadeOnChange } from "components"
 import { useMedia } from "hooks"
-import { useCallback, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { PokemonListGridView } from "./pokemon-list-grid-view"
 import { PokemonListSimpleView } from "./pokemon-list-simple-view"
@@ -19,7 +19,6 @@ export default function PokemonList({
   className,
   ...otherProps
 }: PokemonListProps) {
-  const [isListReady, setIsListReady] = useState(false)
   const mediaMatches = useMedia(
     [
       "(min-width: 0px)",
@@ -46,18 +45,13 @@ export default function PokemonList({
     },
   })
 
-  const handleOnViewReady = useCallback(() => {
-    setIsListReady(true)
-    onReady?.()
-  }, [onReady])
-
   const commonListViewProps = {
     pokemons,
     preloadPokemons,
     skipInitialAnimation,
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady: handleOnViewReady,
+    onReady,
   }
 
   return (
@@ -66,14 +60,14 @@ export default function PokemonList({
       className={twMerge("flex flex-col", className)}
       style={{ ...containerStyles }}
     >
-      <FadeOnChange watch={columns === 1}>
-        {(isSimpleView) =>
-          isSimpleView ? (
+      <FadeOnChange watch={columns}>
+        {(numberOfColumns) =>
+          numberOfColumns === 1 ? (
             <PokemonListSimpleView {...commonListViewProps} />
           ) : (
             <PokemonListGridView
               {...commonListViewProps}
-              columns={Math.max(columns, 2)}
+              columns={numberOfColumns}
             />
           )
         }

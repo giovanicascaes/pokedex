@@ -1,12 +1,12 @@
 import { PokemonCatchReleaseAnimationProps } from "../pokemon-catch-release-animation.types"
 
-export interface CatchAnimationProps
+export interface PokemonReleaseAnimationProps
   extends Omit<PokemonCatchReleaseAnimationProps, "isCaught"> {
   pokemonRect: DOMRect
 }
 
-export enum CatchAnimationPhase {
+export enum PokemonReleaseAnimationPhase {
   MovingToCenter,
-  Catching,
-  MovingToPokedex,
+  Releasing,
+  Fleeing,
 }

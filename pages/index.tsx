@@ -1,16 +1,15 @@
 import { PokemonList } from "components"
 import { POKEMONS_PER_PAGE, usePages, usePokemonView } from "contexts"
 import { useIntersectionObserver } from "hooks"
-import { getPokemons } from "lib"
+import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { InferGetStaticPropsType } from "next"
 import Head from "next/head"
-import { useRouter } from "next/router"
-import { useCallback, useEffect, useLayoutEffect } from "react"
+import { useCallback, useEffect } from "react"
+import { env } from "utils"
 
 type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
-  const { asPath: currentPath } = useRouter()
   const [
     { visiblePokemons, preloadPokemons, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
@@ -18,7 +17,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
   const [{ loadingPage, isScrollDirty }, { setLoadingPage }] = usePages()
 
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
-    rootMargin: "20%",
+    root: env.isServer
+      ? null
+      : document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!,
+    rootMargin: "50%",
   })
 
   const onViewReady = useCallback(() => {

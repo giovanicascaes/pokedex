@@ -1,8 +1,8 @@
 import { easings, to, useSpring } from "@react-spring/web"
 import { POKEDEX_LINK_ELEMENT_ID } from "lib"
 import { useMemo, useState } from "react"
-import { POKEBALL_SIZE_AT_CENTER, POKEMON_SIZE_AT_CENTER } from "../contants"
-import { CatchAnimationPhase } from "./catch-animation.types"
+import { POKEBALL_SIZE_AT_CENTER, POKEMON_SIZE_AT_CENTER } from "../constants"
+import { PokemonCatchAnimationPhase } from "./pokemon-catch-animation.types"
 
 const MOVE_POKEMON_TO_CENTER_ANIMATION_DURATION = 500
 
@@ -18,7 +18,7 @@ export default function useCatchStyles(
   const { left, top, width, height } = pokemonRect
 
   const [currentAnimationPhase, setCurrentAnimationPhase] = useState(
-    CatchAnimationPhase.MovingToCenter
+    PokemonCatchAnimationPhase.MovingToCenter
   )
 
   const {
@@ -42,7 +42,7 @@ export default function useCatchStyles(
       x: 1,
     },
     onRest: () => {
-      setCurrentAnimationPhase(CatchAnimationPhase.Catching)
+      setCurrentAnimationPhase(PokemonCatchAnimationPhase.Catching)
     },
   })
   const catchSpring = useSpring({
@@ -55,10 +55,10 @@ export default function useCatchStyles(
       x: 0,
     },
     to: {
-      x: currentAnimationPhase === CatchAnimationPhase.Catching ? 1 : 0,
+      x: currentAnimationPhase === PokemonCatchAnimationPhase.Catching ? 1 : 0,
     },
     onRest: () => {
-      setCurrentAnimationPhase(CatchAnimationPhase.MovingToPokedex)
+      setCurrentAnimationPhase(PokemonCatchAnimationPhase.MovingToPokedex)
     },
   })
   const moveToPokedexSpring = useSpring({
@@ -69,7 +69,10 @@ export default function useCatchStyles(
       x: 0,
     },
     to: {
-      x: currentAnimationPhase === CatchAnimationPhase.MovingToPokedex ? 1 : 0,
+      x:
+        currentAnimationPhase === PokemonCatchAnimationPhase.MovingToPokedex
+          ? 1
+          : 0,
     },
     delay: 100,
     onRest: () => {
@@ -130,7 +133,7 @@ export default function useCatchStyles(
 
   const styles = useMemo(() => {
     switch (currentAnimationPhase) {
-      case CatchAnimationPhase.MovingToCenter: {
+      case PokemonCatchAnimationPhase.MovingToCenter: {
         return {
           backgroundColor: undefined,
           opacity: moveToCenterSpring.x,
@@ -142,7 +145,7 @@ export default function useCatchStyles(
           y: moveToCenterSpring.x.to([0, 1], [pokemonStartTop, pokemonEndTop]),
         }
       }
-      case CatchAnimationPhase.Catching: {
+      case PokemonCatchAnimationPhase.Catching: {
         return {
           backgroundColor: catchSpring.x
             .to([0, 1], [0, 1])

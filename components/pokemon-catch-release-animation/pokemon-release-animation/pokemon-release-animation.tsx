@@ -4,20 +4,20 @@ import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import Image from "next/image"
 import { useState } from "react"
 import ReactDOM from "react-dom"
-import { POKEBALL_SIZE_AT_CENTER } from "../contants"
+import { POKEBALL_SIZE_AT_CENTER } from "../constants"
 import {
-  ReleaseAnimationPhase,
-  ReleaseAnimationProps,
-} from "./release-animation.types"
+  PokemonReleaseAnimationPhase,
+  PokemonReleaseAnimationProps,
+} from "./pokemon-release-animation.types"
 import useReleaseStyles from "./use-release-styles"
 
-export default function ReleaseAnimation({
+export default function PokemonReleaseAnimation({
   onAnimationFinish,
   pokemonRect,
   children,
   style,
   ...other
-}: ReleaseAnimationProps) {
+}: PokemonReleaseAnimationProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
   const { backgroundColor, currentAnimationPhase, ...styles } =
@@ -34,7 +34,7 @@ export default function ReleaseAnimation({
       ref={backgroundRef}
     >
       <animated.div className="absolute origin-center" style={{ ...styles }}>
-        {currentAnimationPhase === ReleaseAnimationPhase.Fleeing ? (
+        {currentAnimationPhase === PokemonReleaseAnimationPhase.Fleeing ? (
           children
         ) : (
           <Image

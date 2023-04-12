@@ -1,5 +1,5 @@
+import { useDocumentEvent } from "hooks"
 import { MutableRefObject, useCallback } from "react"
-import useDocumentEvent from "./use-document-event"
 
 export default function useOnClickOutside(
   el: MutableRefObject<HTMLElement | null> | HTMLElement | null,

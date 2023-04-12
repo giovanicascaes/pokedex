@@ -11,10 +11,14 @@ export interface PokemonListGridViewProps
 export interface PokemonListGridViewItemData extends PokemonSpeciesPokedex {
   x: number
   y: number
-  isGettingDimensions?: boolean
 }
 
 export type PokemonListGridViewData = readonly [
   { width: number; height: number },
   PokemonListGridViewItemData[]
 ]
+
+export interface PokemonListItemAnimationState {
+  opacity: number
+  transform: string
+}

@@ -4,8 +4,8 @@ import {
   POKEBALL_SCALE,
   POKEBALL_SIZE_AT_CENTER,
   POKEMON_SIZE_AT_CENTER,
-} from "../contants"
-import { ReleaseAnimationPhase } from "./release-animation.types"
+} from "../constants"
+import { PokemonReleaseAnimationPhase } from "./pokemon-release-animation.types"
 
 const MOVE_POKEBALL_TO_CENTER_ANIMATION_DURATION = 500
 
@@ -21,7 +21,7 @@ export default function useReleaseStyles(
   const { left, top, width, height } = pokemonRect
 
   const [currentAnimationPhase, setCurrentAnimationPhase] = useState(
-    ReleaseAnimationPhase.MovingToCenter
+    PokemonReleaseAnimationPhase.MovingToCenter
   )
 
   const moveToCenterSpring = useSpring({
@@ -38,7 +38,7 @@ export default function useReleaseStyles(
       x: 1,
     },
     onRest: () => {
-      setCurrentAnimationPhase(ReleaseAnimationPhase.Releasing)
+      setCurrentAnimationPhase(PokemonReleaseAnimationPhase.Releasing)
     },
   })
   const releaseSpring = useSpring({
@@ -51,10 +51,13 @@ export default function useReleaseStyles(
       x: 0,
     },
     to: {
-      x: currentAnimationPhase === ReleaseAnimationPhase.Releasing ? 1 : 0,
+      x:
+        currentAnimationPhase === PokemonReleaseAnimationPhase.Releasing
+          ? 1
+          : 0,
     },
     onRest: () => {
-      setCurrentAnimationPhase(ReleaseAnimationPhase.Fleeing)
+      setCurrentAnimationPhase(PokemonReleaseAnimationPhase.Fleeing)
     },
   })
   const fleeingSpring = useSpring({
@@ -65,7 +68,7 @@ export default function useReleaseStyles(
       x: 0,
     },
     to: {
-      x: currentAnimationPhase === ReleaseAnimationPhase.Fleeing ? 1 : 0,
+      x: currentAnimationPhase === PokemonReleaseAnimationPhase.Fleeing ? 1 : 0,
     },
     delay: 100,
     onRest: () => {
@@ -112,7 +115,7 @@ export default function useReleaseStyles(
 
   const styles = useMemo(() => {
     switch (currentAnimationPhase) {
-      case ReleaseAnimationPhase.MovingToCenter: {
+      case PokemonReleaseAnimationPhase.MovingToCenter: {
         return {
           backgroundColor: undefined,
           opacity: moveToCenterSpring.x,
@@ -127,7 +130,7 @@ export default function useReleaseStyles(
           ),
         }
       }
-      case ReleaseAnimationPhase.Releasing: {
+      case PokemonReleaseAnimationPhase.Releasing: {
         return {
           backgroundColor: releaseSpring.x
             .to([0, 1], [0, 1])
