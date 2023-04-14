@@ -1,56 +1,21 @@
 import { useIsoMorphicEffect, usePrevious, useScrollTop } from "hooks"
 import { useRouter } from "next/router"
-import { UIEvent, useCallback, useEffect, useReducer, useState } from "react"
-import {
-  UseAppScrollActions,
-  UseAppScrollActionTypes,
-  UseAppScrollState,
-} from "./use-app-scroll.types"
-
-const reducers: {
-  [P in UseAppScrollActionTypes]: (
-    state: UseAppScrollState,
-    action: Extract<UseAppScrollActions, { type: P }>
-  ) => UseAppScrollState
-} = {
-  [UseAppScrollActionTypes.DirtyScroll](state) {
-    return { ...state, isScrollDirty: true }
-  },
-  [UseAppScrollActionTypes.SetIsScrollReady](state, action) {
-    return { ...state, isScrollReady: action.ready }
-  },
-  [UseAppScrollActionTypes.SetIsScrollTrackEnabled](state, action) {
-    return { ...state, isScrollTrackEnabled: action.enabled }
-  },
-}
-
-function matchReducer(
-  state: UseAppScrollState,
-  action: UseAppScrollActions
-): UseAppScrollState {
-  const reducer = reducers as Record<
-    UseAppScrollActionTypes,
-    (state: UseAppScrollState, action: UseAppScrollActions) => UseAppScrollState
-  >
-  return reducer[action.type](state, action)
-}
-
-const INITIAL_STATE: UseAppScrollState = {
-  isScrollDirty: false,
-  isScrollTrackEnabled: true,
-  isScrollReady: true,
-}
+import { UIEvent, useCallback, useEffect, useState } from "react"
+import useAppScrollPath from "./use-app-scroll-path"
 
 export default function useAppScroll(
   loadingPage: string | null,
   disableScrollRestore: boolean = false
 ) {
-  const [scrollContainer, scrollContainerRef] = useState<Element | null>(null)
-  const [{ isScrollDirty, isScrollReady, isScrollTrackEnabled }, dispatch] =
-    useReducer(matchReducer, INITIAL_STATE)
-  const { asPath: currentPath } = useRouter()
+  const { pathname: currentPath } = useRouter()
   const prevPath = usePrevious(currentPath)
-  const [scrollTop, { onScroll }] = useScrollTop(!isScrollTrackEnabled)
+  const [scrollContainer, scrollContainerRef] = useState<Element | null>(null)
+  const [isScrollReady, setIsScrollReady] = useState(true)
+  const [isScrollTrackEnabled, setIsScrollTrackEnabled] = useState(true)
+  const [scrollTop, setScrollTop] = useAppScrollPath()
+  const [currentScrollTop, { onScroll }] = useScrollTop(!isScrollTrackEnabled)
+
+  const isScrollDirty = scrollTop > 0
 
   const handleOnScroll = useCallback(
     (event: UIEvent) => {
@@ -58,32 +23,32 @@ export default function useAppScroll(
 
       requestAnimationFrame(() => {
         if (!isScrollReady && nextScrollTop === scrollTop) {
-          dispatch({
-            type: UseAppScrollActionTypes.SetIsScrollReady,
-            ready: true,
-          })
+          setIsScrollReady(true)
         }
       })
 
       onScroll(event)
     },
-    [onScroll, scrollTop, isScrollReady]
+    [onScroll, isScrollReady, scrollTop]
   )
 
   useEffect(() => {
-    if (scrollTop > 0) {
-      dispatch({
-        type: UseAppScrollActionTypes.DirtyScroll,
-      })
+    if (isScrollReady && isScrollTrackEnabled && prevPath === currentPath) {
+      setScrollTop(currentScrollTop)
     }
-  }, [scrollTop])
+  }, [
+    currentPath,
+    currentScrollTop,
+    isScrollReady,
+    isScrollTrackEnabled,
+    prevPath,
+    setScrollTop,
+  ])
 
   useEffect(() => {
     if (prevPath && prevPath !== currentPath) {
-      dispatch({
-        type: UseAppScrollActionTypes.SetIsScrollReady,
-        ready: false,
-      })
+      setIsScrollTrackEnabled(false)
+      setIsScrollReady(false)
     }
   }, [currentPath, prevPath])
 
@@ -98,29 +63,26 @@ export default function useAppScroll(
       scrollContainer!.scrollTo({
         top: scrollTop,
       })
-      dispatch({
-        type: UseAppScrollActionTypes.SetIsScrollTrackEnabled,
-        enabled: true,
-      })
+
+      if (scrollTop === currentScrollTop) {
+        setIsScrollReady(true)
+      }
+
+      setIsScrollTrackEnabled(true)
     } else if (!isScrollTrackEnabled) {
       scrollContainer!.scrollTo({
         top: 0,
       })
-      dispatch({
-        type: UseAppScrollActionTypes.SetIsScrollReady,
-        ready: true,
-      })
-    } else {
-      dispatch({
-        type: UseAppScrollActionTypes.SetIsScrollTrackEnabled,
-        enabled: false,
-      })
+      setIsScrollReady(true)
     }
   }, [
     currentPath,
+    currentScrollTop,
     disableScrollRestore,
+    isScrollReady,
     isScrollTrackEnabled,
     loadingPage,
+    scrollContainer,
     scrollTop,
   ])
 

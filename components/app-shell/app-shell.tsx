@@ -28,7 +28,7 @@ export default function AppShell({ children }: AppShellProps) {
   const [isTransitionRunning, setIsTransitionRunning] = useState(false)
   const [loadingPage, setLoadingPage] = useState<string | null>(null)
   const [{ transitionClassName }] = useThemeMode()
-  const { asPath: currentPath } = useRouter()
+  const { pathname: currentPath } = useRouter()
 
   const {
     onScroll,

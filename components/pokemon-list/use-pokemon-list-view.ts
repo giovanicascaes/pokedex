@@ -20,10 +20,10 @@ export default function usePokemonListView({
 
   const handleOnCatchReleaseFinish = useCallback(
     (pokemon: PokemonSpeciesPokedex) => {
-      if (pokemon.isOnPokedex) {
+      if (pokemon.onPokedex) {
         onRemoveFromPokedex(pokemon.id)
       } else {
-        onAddToPokedex(pokemon)
+        onAddToPokedex?.(pokemon)
       }
     },
     [onAddToPokedex, onRemoveFromPokedex]

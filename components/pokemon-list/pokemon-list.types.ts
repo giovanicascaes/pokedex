@@ -10,7 +10,7 @@ export interface PokemonListProps
   pokemons: PokemonSpeciesPokedex[]
   preloadPokemons?: PokemonSpeciesPokedex[]
   skipInitialAnimation?: boolean
-  onAddToPokedex: (pokemon: PokemonSpeciesPokedex) => void
+  onAddToPokedex?: (pokemon: PokemonSpeciesPokedex) => void
   onRemoveFromPokedex: (id: number) => void
   onReady?: () => void
 }

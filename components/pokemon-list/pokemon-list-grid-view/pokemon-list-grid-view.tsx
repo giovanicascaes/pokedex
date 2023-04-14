@@ -3,10 +3,11 @@ import {
   IntersectionObserverPokemonListItemCard,
   PokemonListItemCard,
 } from "components"
-import { usePrevious, useResizeObserver } from "hooks"
+import { useIsoMorphicEffect, usePrevious, useResizeObserver } from "hooks"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
-import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+import { omit } from "utils"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListGridViewData,
@@ -71,7 +72,7 @@ export default function PokemonListGridView({
     animationProperties: CARD_ANIMATION_PROPERTIES,
   })
 
-  useLayoutEffect(() => {
+  useIsoMorphicEffect(() => {
     setCardDimensions(cardDimensionsRef.current!.getBoundingClientRect())
   }, [])
 
@@ -148,7 +149,7 @@ export default function PokemonListGridView({
   })
 
   if (!cardDimensions) {
-    const { id, ...other } = pokemons[0]
+    const { id, ...other } = omit(pokemons[0], "onPokedex")
 
     return createPortal(
       <div className="w-min" ref={cardDimensionsRef}>
@@ -171,7 +172,7 @@ export default function PokemonListGridView({
           }}
         >
           {gridTransitions((gridStyles, pokemon) => {
-            const { id, ...other } = pokemon
+            const { id, onPokedex, ...other } = pokemon
 
             return (
               <animated.li
@@ -185,6 +186,7 @@ export default function PokemonListGridView({
                 <IntersectionObserverPokemonListItemCard
                   {...other}
                   identifier={id}
+                  isOnPokedex={onPokedex}
                   onCatchReleaseFinish={() =>
                     handleOnCatchReleaseFinish(pokemon)
                   }
@@ -197,9 +199,13 @@ export default function PokemonListGridView({
           })}
         </animated.ul>
       </div>
-      {preloadPokemons?.map(({ id, ...other }) => (
+      {preloadPokemons?.map(({ id, onPokedex, ...other }) => (
         <li key={id} className="hidden">
-          <IntersectionObserverPokemonListItemCard identifier={id} {...other} />
+          <IntersectionObserverPokemonListItemCard
+            identifier={id}
+            isOnPokedex={onPokedex}
+            {...other}
+          />
         </li>
       ))}
     </>

@@ -3,11 +3,12 @@ import {
   IntersectionObserverPokemonListItemSimple,
   PokemonListItemSimple,
 } from "components"
-import { useIsServerHydrationComplete } from "hooks"
+import { useIsoMorphicEffect, useIsServerHydrationComplete } from "hooks"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
-import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { twMerge } from "tailwind-merge"
+import { omit } from "utils"
 import usePokemonListView from "../use-pokemon-list-view"
 import {
   PokemonListSimpleViewData,
@@ -69,7 +70,7 @@ export default function PokemonListSimpleView({
 
   const ready = useIsServerHydrationComplete()
 
-  useLayoutEffect(() => {
+  useIsoMorphicEffect(() => {
     if (ready) {
       setItemDimensions(itemDimensionsRef.current!.getBoundingClientRect())
     }
@@ -118,7 +119,7 @@ export default function PokemonListSimpleView({
       opacity: isAnimationDone(id) ? 1 : 0,
     }),
     update: ({ y }) => ({ y }),
-    leave: { x: "-100%", opacity: 0 },
+    leave: { x: "100%", opacity: 0 },
     config: {
       mass: 5,
       tension: 500,
@@ -129,7 +130,7 @@ export default function PokemonListSimpleView({
   })
 
   if (!itemDimensions) {
-    const { id, ...other } = pokemons[0]
+    const { id, ...other } = omit(pokemons[0], "onPokedex")
 
     return ready
       ? createPortal(
@@ -152,7 +153,7 @@ export default function PokemonListSimpleView({
         }}
       >
         {listTransitions((listStyles, pokemon) => {
-          const { id, artSrc, isOnPokedex, ...other } = pokemon
+          const { id, onPokedex, ...other } = pokemon
 
           return (
             <animated.li
@@ -165,9 +166,8 @@ export default function PokemonListSimpleView({
             >
               <IntersectionObserverPokemonListItemSimple
                 {...other}
-                artSrc={artSrc}
                 identifier={id}
-                isOnPokedex={isOnPokedex}
+                isOnPokedex={onPokedex}
                 onCatchReleaseFinish={() => handleOnCatchReleaseFinish(pokemon)}
                 onIntersectionChange={(isIntersecting: boolean) =>
                   handleOnIntersectionChange(pokemon.id, isIntersecting)
@@ -177,10 +177,11 @@ export default function PokemonListSimpleView({
           )
         })}
       </animated.ul>
-      {preloadPokemons?.map(({ id, ...other }) => (
+      {preloadPokemons?.map(({ id, onPokedex, ...other }) => (
         <li key={id} className="hidden">
           <IntersectionObserverPokemonListItemSimple
             identifier={id}
+            isOnPokedex={onPokedex}
             {...other}
           />
         </li>

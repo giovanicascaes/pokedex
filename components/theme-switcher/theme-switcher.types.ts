@@ -1,3 +1,4 @@
+import { ThemeMode } from "contexts"
 import { DetailedHTMLProps, HTMLAttributes } from "react"
 import { WithNonLegacyRef } from "types"
 
@@ -11,4 +12,8 @@ export interface ThemeSwitcherProps
 
 export interface ThemeSwitcherOptionsPopupProps {
   show: boolean
+}
+
+export interface ThemeSwitcherModeIconProps {
+  mode: ThemeMode
 }

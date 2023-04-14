@@ -10,7 +10,7 @@ import {
   PokemonViewContextValue,
   PokemonViewProviderProps,
   PokemonViewState,
-  PokmeonViewActions,
+  PokemonViewActions,
 } from "./pokemon-view-context.types"
 
 export const POKEMONS_PER_PAGE = 12
@@ -21,7 +21,7 @@ const mapWithOnPokedexState = (
 ) =>
   pokemons.map((pokemon) => ({
     ...pokemon,
-    isOnPokedex: pokedex.some(({ id }) => id === pokemon.id),
+    onPokedex: pokedex.some(({ id }) => id === pokemon.id),
   }))
 
 const [Provider, useContext] = createContext<PokemonViewContextValue>({
@@ -52,7 +52,7 @@ export function usePokemonView(
 const reducers: {
   [P in PokemonViewActionTypes]: (
     state: PokemonViewState,
-    action: Extract<PokmeonViewActions, { type: P }>
+    action: Extract<PokemonViewActions, { type: P }>
   ) => PokemonViewState
 } = {
   [PokemonViewActionTypes.SetViewingPokemon](state, action) {
@@ -62,7 +62,10 @@ const reducers: {
     return { ...state, viewingPokemon: null }
   },
   [PokemonViewActionTypes.AddPokemonToPokedex](state, action) {
-    return { ...state, pokedex: [...state.pokedex, action.pokemon] }
+    return {
+      ...state,
+      pokedex: [...state.pokedex, { ...action.pokemon, onPokedex: true }],
+    }
   },
   [PokemonViewActionTypes.RemovePokemonFromPokedex](state, action) {
     return {
@@ -74,11 +77,11 @@ const reducers: {
 
 function matchReducer(
   state: PokemonViewState,
-  action: PokmeonViewActions
+  action: PokemonViewActions
 ): PokemonViewState {
   const reducer = reducers as Record<
     PokemonViewActionTypes,
-    (state: PokemonViewState, action: PokmeonViewActions) => PokemonViewState
+    (state: PokemonViewState, action: PokemonViewActions) => PokemonViewState
   >
   return reducer[action.type](state, action)
 }

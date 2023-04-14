@@ -1,24 +1,31 @@
 export enum UseAppScrollActionTypes {
-  DirtyScroll,
   SetIsScrollTrackEnabled,
   SetIsScrollReady,
 }
 
 export interface UseAppScrollState {
-  isScrollDirty: boolean
   isScrollTrackEnabled: boolean
   isScrollReady: boolean
 }
 
-export type UseAppScrollActions =
-  | {
-      type: UseAppScrollActionTypes.DirtyScroll
-    }
+export interface UseAppScrollPageState {
+  [k: string]: UseAppScrollState
+}
+
+export type UseAppScrollPageActions =
   | {
       type: UseAppScrollActionTypes.SetIsScrollTrackEnabled
       enabled: boolean
+      page: string
     }
   | {
       type: UseAppScrollActionTypes.SetIsScrollReady
       ready: boolean
+      page: string
     }
+
+export interface UseAppScrollActions {
+  setScrollTop: (scrollTop: number) => void
+  setIsScrollTrackEnabled: (enabled: boolean) => void
+  setIsScrollReady: (ready: boolean) => void
+}

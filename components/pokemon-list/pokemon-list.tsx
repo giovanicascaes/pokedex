@@ -60,14 +60,14 @@ export default function PokemonList({
       className={twMerge("flex flex-col", className)}
       style={{ ...containerStyles }}
     >
-      <FadeOnChange watch={columns}>
-        {(numberOfColumns) =>
-          numberOfColumns === 1 ? (
+      <FadeOnChange watch={columns === 1}>
+        {(isList) =>
+          isList ? (
             <PokemonListSimpleView {...commonListViewProps} />
           ) : (
             <PokemonListGridView
               {...commonListViewProps}
-              columns={numberOfColumns}
+              columns={Math.max(columns, 2)}
             />
           )
         }

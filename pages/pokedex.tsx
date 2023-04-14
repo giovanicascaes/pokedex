@@ -1,22 +1,29 @@
-import { PokemonView } from "components"
-import { usePokemonView } from "contexts"
-import { InferGetStaticPropsType } from "next"
+import { PokemonList } from "components"
+import { usePages, usePokemonView } from "contexts"
+import { useCallback } from "react"
 
-type PokedexProps = InferGetStaticPropsType<typeof getStaticProps>
+export default function Pokedex() {
+  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemonView()
+  const [{ isScrollDirty }, { setLoadingPage }] = usePages()
 
-export default function Pokedex(props: PokedexProps) {
-  const [{ pokedex }] = usePokemonView()
+  const onViewReady = useCallback(() => {
+    setLoadingPage(null)
+  }, [setLoadingPage])
 
   return (
-    <ul className="flex flex-col">
-      {pokedex.map((pokemon) => (
-        <li></li>
-      ))}
-    </ul>
+    <div className="px-14 pt-4 h-full pb-8">
+      <PokemonList
+        pokemons={pokedex}
+        skipInitialAnimation={isScrollDirty}
+        onRemoveFromPokedex={removePokemonFromPokedex}
+        onReady={onViewReady}
+        className="mx-auto"
+      />
+    </div>
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   return {
     props: {},
   }

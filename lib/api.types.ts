@@ -160,16 +160,26 @@ export interface Stat {
   value: number
 }
 
-export interface TypeRelation extends Omit<Type, "slot" | "damageRelations"> {
-  isDouble: boolean
+export interface Type {
+  resourceName: TypeName
+  name: string
+  color: string | [string, string] | null
+  slot?: number
+  isDouble?: boolean
 }
 
 export interface TypeRelations {
-  causeDamageTo: TypeRelation[]
-  takeDamageFrom: TypeRelation[]
+  causeDamageTo: Type[]
+  takeDamageFrom: Type[]
 }
 
-export type TypeValue =
+export interface TypeWithRelations extends Type {
+  damageRelations: TypeRelations
+}
+
+export type TypeRelation = Omit<Type, "damageRelations">
+
+export type TypeName =
   | "normal"
   | "fighting"
   | "flying"
@@ -191,14 +201,11 @@ export type TypeValue =
   | "unknown"
   | "shadow"
 
-export interface Type {
-  resourceName: TypeValue
-  name: string
-  damageRelations: TypeRelations
-  color: string | [string, string] | null
-  slot: number
+export interface Types {
+  main: Type[]
+  weaknesses: Type[]
+  strengths: Type[]
 }
-
 export interface PokemonVariety {
   id: number
   name: string | null
@@ -209,7 +216,7 @@ export interface PokemonVariety {
   artSrc: string
   abilities: Ability[]
   stats: Stat[]
-  types: Type[]
+  types: Types
 }
 
 export interface EvolutionChainLink {

@@ -21,7 +21,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
   return (
     <>
       <Head>
-        <title>{`${name} | A Pokédex`}</title>
+        <title>{`${pokemon.name} | A Pokédex`}</title>
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

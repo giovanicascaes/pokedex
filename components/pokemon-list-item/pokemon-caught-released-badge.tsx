@@ -28,6 +28,7 @@ export function PokemonCaughtBadge({
       scale: 0,
     },
     exitBeforeEnter: true,
+    initial: false,
   })
 
   return (

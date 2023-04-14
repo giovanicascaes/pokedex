@@ -1,4 +1,4 @@
-import { useMedia } from "hooks"
+import { useIsoMorphicEffect, useMedia } from "hooks"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { createContext } from "utils"
 import {
@@ -19,24 +19,23 @@ const [Provider, useContext] = createContext<ThemeModeContextValue>({
 export const useThemeMode = useContext
 
 export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
-  const [themeMode, setThemeMode] = useState(ThemeMode.Light)
-  const [transitionClassName, settransitionClassName] = useState("")
-
-  const isMediaDark = useMedia("(prefers-color-scheme: dark)")
+  const [themeMode, setThemeMode] = useState(ThemeMode.System)
+  const [transitionClassName, setTransitionClassName] = useState("")
+  const [isMediaDark] = useMedia("(prefers-color-scheme: dark)")
 
   const updateThemeMode = useCallback((mode: ThemeMode) => {
     setThemeMode(mode)
     // Adds transition to all elements in the application so that they can smoothly
     // transition to dark mode
-    settransitionClassName("[&_*]:transition-all [&_*]:duration-[200ms]")
+    setTransitionClassName("[&_*]:transition-all [&_*]:duration-[200ms]")
   }, [])
 
   useEffect(() => {
     if (transitionClassName) {
-      // Removes transition classes after 300 ms
+      // Removes transition classes after 200 ms
       const timeoutId = setTimeout(() => {
-        settransitionClassName("")
-      }, 300)
+        setTransitionClassName("")
+      }, 200)
 
       return () => {
         clearTimeout(timeoutId)
@@ -44,8 +43,8 @@ export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
     }
   }, [transitionClassName])
 
-  useEffect(() => {
-    updateThemeMode(localStorage[THEME_MODE] ?? ThemeMode.Light)
+  useIsoMorphicEffect(() => {
+    updateThemeMode(localStorage[THEME_MODE] ?? ThemeMode.System)
   }, [updateThemeMode])
 
   const data: ThemeModeContextData = useMemo(

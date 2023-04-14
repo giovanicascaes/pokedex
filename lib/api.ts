@@ -1,5 +1,5 @@
 import { fetchAsJson } from "lib/fetch"
-import { join, pick } from "utils"
+import { join, mergeUniqueBy, omit, pick } from "utils"
 import {
   Ability,
   ApiAbility,
@@ -27,8 +27,10 @@ import {
   PokemonVariety,
   Stat,
   Type,
+  TypeName,
   TypeRelation,
-  TypeValue,
+  Types,
+  TypeWithRelations as TypeWithRelations,
 } from "./api.types"
 import { FetchError } from "./fetch.types"
 
@@ -39,7 +41,7 @@ const DEFAULT_LANGUAGE = "en"
 const BASE_URL = "https://pokeapi.co/api/v2"
 
 export const ApiTypesColors: {
-  [K in TypeValue]: Type["color"]
+  [K in TypeName]: Type["color"]
 } = {
   normal: "#A4ACAF",
   fighting: "#D46822",
@@ -142,7 +144,7 @@ async function namedResourceToTypeRelation({
   url,
 }: ApiNamedResource): Promise<TypeRelation> {
   const type = await fetchAsJson<ApiType>(url)
-  const value = type.name as TypeValue
+  const value = type.name as TypeName
 
   return {
     resourceName: value,
@@ -167,9 +169,9 @@ async function toDamageRelation(
   ])
 }
 
-async function namedResourceToType({
+async function namedResourceToTypeWithRelations({
   url,
-}: ApiNamedResource): Promise<Omit<Type, "slot">> {
+}: ApiNamedResource): Promise<TypeWithRelations> {
   const type = await fetchAsJson<ApiType>(url)
   const {
     name,
@@ -180,7 +182,7 @@ async function namedResourceToType({
       half_damage_to,
     },
   } = type
-  const resourceName = name as TypeValue
+  const resourceName = name as TypeName
 
   return {
     resourceName,
@@ -196,11 +198,40 @@ async function namedResourceToType({
   }
 }
 
-async function toType({ type, ...other }: ApiPokemonType): Promise<Type> {
+async function toTypeWithRelations({
+  type,
+  ...other
+}: ApiPokemonType): Promise<TypeWithRelations> {
   return {
     ...pick(other, "slot"),
-    ...(await namedResourceToType(type)),
+    ...(await namedResourceToTypeWithRelations(type)),
   }
+}
+
+async function toTypes(types: ApiPokemonType[]) {
+  return Promise.all(types.map(toTypeWithRelations)).then(
+    (typesWithRelations) =>
+      typesWithRelations.reduce<Types>(
+        ({ main, weaknesses, strengths }, curr) => ({
+          main: [...main, omit(curr, "damageRelations")],
+          weaknesses: mergeUniqueBy(
+            weaknesses,
+            curr.damageRelations.takeDamageFrom,
+            (type) => type.resourceName
+          ),
+          strengths: mergeUniqueBy(
+            strengths,
+            curr.damageRelations.causeDamageTo,
+            (type) => type.resourceName
+          ),
+        }),
+        {
+          main: [],
+          weaknesses: [],
+          strengths: [],
+        }
+      )
+  )
 }
 
 async function toPokemonVariety({
@@ -221,7 +252,7 @@ async function toPokemonVariety({
     isMega: defaultForm.is_mega,
     abilities: await Promise.all(abilities.map(toAbility)),
     stats: await Promise.all(stats.map(toStat)),
-    types: await Promise.all(types.map(toType)),
+    types: await toTypes(types),
   }
 }
 

@@ -7,7 +7,7 @@ import {
   PokemonProfile,
   PokemonSection,
   PokemonStats,
-  PokemonTypeSections,
+  PokemonTypes,
   Select,
 } from "components"
 import { Children, isValidElement, useEffect, useState } from "react"
@@ -17,7 +17,7 @@ import {
   PokemonDetailsProps,
 } from "./pokemon-details.types"
 
-function SpeciesBadgeContainer({
+function BadgesContainer({
   children,
   className,
   ...other
@@ -41,7 +41,6 @@ export default function PokemonDetails({
     name,
     nextPokemon,
     previousPokemon,
-    resourceName,
     shape,
     varieties,
   },
@@ -76,11 +75,11 @@ export default function PokemonDetails({
             {name}
           </span>
         </span>
-        <SpeciesBadgeContainer className="mt-4">
+        <BadgesContainer className="mt-4">
           {isBaby && <Badge color="red">Baby</Badge>}
           {isLegendary && <Badge color="pink">Legendary</Badge>}
           {isMythical && <Badge color="yellow">Mythical</Badge>}
-        </SpeciesBadgeContainer>
+        </BadgesContainer>
         {varieties.length > 1 && (
           <Select
             value={selectedForm}
@@ -165,7 +164,7 @@ export default function PokemonDetails({
                     gender={gender}
                   />
                 </PokemonSection>
-                <PokemonTypeSections types={types} />
+                <PokemonTypes types={types} />
               </div>
             </div>
           )}
