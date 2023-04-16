@@ -1,5 +1,4 @@
-import { usePrevious } from "hooks"
-import { Children, useCallback, useEffect, useState } from "react"
+import { Children, useCallback } from "react"
 import { env } from "utils"
 import { PokemonCatchAnimation } from "./pokemon-catch-animation"
 import { PokemonCatchReleaseAnimationProps } from "./pokemon-catch-release-animation.types"
@@ -7,35 +6,23 @@ import { PokemonReleaseAnimation } from "./pokemon-release-animation"
 import useChildrenRect from "./use-children-rect"
 
 function ClientSideComponent({
-  isCaught = false,
+  state = "idle",
   onAnimationFinish: onFinishAnimation,
   className,
   children,
   ...other
 }: PokemonCatchReleaseAnimationProps) {
-  const [animate, setAnimate] = useState(false)
+  const animate = state !== "idle"
   const { trackedChildren, childrenRect } = useChildrenRect(
     Children.only(children),
     animate
   )
-  const prevIsCaught = usePrevious(isCaught)
-  const haveBeenCaughtOrReleased =
-    prevIsCaught !== undefined && prevIsCaught !== isCaught
-
-  useEffect(() => {
-    if (haveBeenCaughtOrReleased) {
-      setAnimate(true)
-    }
-  }, [haveBeenCaughtOrReleased])
-
   const handleOnFinishAnimation = useCallback(() => {
-    setAnimate(false)
     onFinishAnimation?.()
   }, [onFinishAnimation])
 
-  const AnimationComponent = isCaught
-    ? PokemonCatchAnimation
-    : PokemonReleaseAnimation
+  const AnimationComponent =
+    state === "catching" ? PokemonCatchAnimation : PokemonReleaseAnimation
 
   return (
     <>

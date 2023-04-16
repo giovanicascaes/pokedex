@@ -4,7 +4,7 @@ import { POKEMON_CAUGHT_BADGE_TRANSITION_DURATION } from "lib"
 import { MdCatchingPokemon } from "react-icons/md"
 import { PokemonCaughtBadgeProps } from "./pokemon-list-item.types"
 
-export function PokemonCaughtBadge({
+export default function PokemonCaughtBadge({
   isCaught,
   style,
   ...other

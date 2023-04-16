@@ -5,10 +5,8 @@ import Image from "next/image"
 import { useState } from "react"
 import ReactDOM from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
-import {
-  PokemonReleaseAnimationPhase,
-  PokemonReleaseAnimationProps,
-} from "./pokemon-release-animation.types"
+import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
+import { PokemonReleaseAnimationPhase } from "./pokemon-release-animation.types"
 import useReleaseStyles from "./use-release-styles"
 
 export default function PokemonReleaseAnimation({
@@ -17,7 +15,7 @@ export default function PokemonReleaseAnimation({
   children,
   style,
   ...other
-}: PokemonReleaseAnimationProps) {
+}: PokemonCatchReleaseAnimationStateProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
   const { backgroundColor, currentAnimationPhase, ...styles } =

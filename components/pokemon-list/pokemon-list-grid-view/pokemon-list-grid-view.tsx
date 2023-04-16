@@ -41,6 +41,9 @@ const CARD_ANIMATION_PROPERTIES = {
       opacity: 1,
       transform: "translateY(0px)",
     },
+    leave: {
+      opacity: 0,
+    },
   },
 }
 
@@ -58,19 +61,15 @@ export default function PokemonListGridView({
   const cardDimensionsRef = useRef<HTMLDivElement | null>(null)
   const [resizeObserverRef, containerRect] = useResizeObserver()
   const prevContainerRect = usePrevious(containerRect)
-  const {
-    handleOnCatchReleaseFinish,
-    handleOnIntersectionChange,
-    getStyles,
-    isAnimationDone,
-  } = usePokemonListView({
-    onAddToPokedex,
-    onRemoveFromPokedex,
-    pokemons,
-    onReady,
-    skipInitialAnimation,
-    animationProperties: CARD_ANIMATION_PROPERTIES,
-  })
+  const { handleOnCatchReleaseFinish, handleOnIntersectionChange, getStyles } =
+    usePokemonListView({
+      onAddToPokedex,
+      onRemoveFromPokedex,
+      pokemons,
+      onReady,
+      skipInitialAnimation,
+      animationProperties: CARD_ANIMATION_PROPERTIES,
+    })
 
   useIsoMorphicEffect(() => {
     setCardDimensions(cardDimensionsRef.current!.getBoundingClientRect())
@@ -122,11 +121,9 @@ export default function PokemonListGridView({
       x,
       y,
     }),
-    enter: ({ x, y, id }) => ({
+    enter: ({ x, y }) => ({
       x,
       y,
-      scale: 1,
-      opacity: isAnimationDone(id) ? 1 : 0,
     }),
     update: ({ x, y }) => ({ x, y }),
     leave: { scale: 0, opacity: 0 },
@@ -149,7 +146,7 @@ export default function PokemonListGridView({
   })
 
   if (!cardDimensions) {
-    const { id, ...other } = omit(pokemons[0], "onPokedex")
+    const { id, ...other } = omit(pokemons[0], "isOnPokedex")
 
     return createPortal(
       <div className="w-min" ref={cardDimensionsRef}>
@@ -172,7 +169,7 @@ export default function PokemonListGridView({
           }}
         >
           {gridTransitions((gridStyles, pokemon) => {
-            const { id, onPokedex, ...other } = pokemon
+            const { id, ...other } = pokemon
 
             return (
               <animated.li
@@ -186,12 +183,11 @@ export default function PokemonListGridView({
                 <IntersectionObserverPokemonListItemCard
                   {...other}
                   identifier={id}
-                  isOnPokedex={onPokedex}
                   onCatchReleaseFinish={() =>
                     handleOnCatchReleaseFinish(pokemon)
                   }
                   onIntersectionChange={(isIntersecting: boolean) =>
-                    handleOnIntersectionChange(pokemon.id, isIntersecting)
+                    handleOnIntersectionChange(id, isIntersecting)
                   }
                 />
               </animated.li>
@@ -199,13 +195,9 @@ export default function PokemonListGridView({
           })}
         </animated.ul>
       </div>
-      {preloadPokemons?.map(({ id, onPokedex, ...other }) => (
+      {preloadPokemons?.map(({ id, ...other }) => (
         <li key={id} className="hidden">
-          <IntersectionObserverPokemonListItemCard
-            identifier={id}
-            isOnPokedex={onPokedex}
-            {...other}
-          />
+          <IntersectionObserverPokemonListItemCard identifier={id} {...other} />
         </li>
       ))}
     </>

@@ -5,7 +5,7 @@ import Link from "next/link"
 export default function Custom404() {
   return (
     <div className="flex flex-col items-center p-10 min-h-full">
-      <span className="text-9xl font-thin text-slate-600 dark:text-slate-300 mb-4">
+      <span className="text-9xl font-medium text-slate-600 dark:text-slate-300 mb-4">
         404
       </span>
       <span className="text-sm text-slate-500 dark:text-slate-400 mb-12">

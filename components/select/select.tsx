@@ -9,7 +9,7 @@ import {
 } from "react"
 import { twMerge } from "tailwind-merge"
 import { SelectButton } from "./button"
-import { SelectContext } from "./context"
+import { SelectProvider } from "./context"
 import { SelectOption } from "./option"
 import { SelectOptions } from "./options"
 import {
@@ -160,11 +160,11 @@ function Select({
   useOnClickOutside(ref, actions.closePopup)
 
   return (
-    <SelectContext.Provider value={[data, actions]}>
+    <SelectProvider value={[data, actions]}>
       <div {...other} className={twMerge("w-full", className)} ref={ref}>
         {children}
       </div>
-    </SelectContext.Provider>
+    </SelectProvider>
   )
 }
 

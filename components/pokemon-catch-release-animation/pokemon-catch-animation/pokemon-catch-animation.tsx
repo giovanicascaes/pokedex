@@ -5,10 +5,8 @@ import Image from "next/image"
 import { useState } from "react"
 import ReactDOM from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
-import {
-  PokemonCatchAnimationPhase,
-  PokemonCatchAnimationProps,
-} from "./pokemon-catch-animation.types"
+import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
+import { PokemonCatchAnimationPhase } from "./pokemon-catch-animation.types"
 import useCatchStyles from "./use-catch-styles"
 
 export default function PokemonCatchAnimation({
@@ -17,7 +15,7 @@ export default function PokemonCatchAnimation({
   children,
   style,
   ...other
-}: PokemonCatchAnimationProps) {
+}: PokemonCatchReleaseAnimationStateProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
   const { backgroundColor, currentAnimationPhase, ...styles } = useCatchStyles(

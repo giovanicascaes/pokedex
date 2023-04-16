@@ -18,7 +18,7 @@ class PokemonListItemAnimation {
   private readonly animation: Controller
   private readonly runToken: PokemonListItemAnimationRunToken
   private _isRunning: boolean = false
-  private _isDone: boolean = false
+  private _isIdle: boolean = false
 
   constructor(
     pokemon: PokemonSpeciesPokedex,
@@ -47,8 +47,8 @@ class PokemonListItemAnimation {
     this.runToken = {}
   }
 
-  async run(noDelay: boolean = false) {
-    if (this._isRunning || this._isDone) return
+  async start(noDelay: boolean = false) {
+    if (this._isRunning || this._isIdle) return
 
     return new Promise<void>((resolve) => {
       this._isRunning = true
@@ -69,6 +69,21 @@ class PokemonListItemAnimation {
     })
   }
 
+  async leave() {
+    return new Promise<void>((resolve) => {
+      const {
+        values: { leave: to },
+      } = this._properties
+
+      this.animation.start({
+        to,
+        onRest: () => {
+          resolve()
+        },
+      })
+    })
+  }
+
   skip() {
     this.runToken.cancel?.()
     this.animation.set(this._properties.values.to)
@@ -76,13 +91,17 @@ class PokemonListItemAnimation {
   }
 
   finish() {
-    this._isDone = true
+    this._isIdle = true
     this._isRunning = false
     delete this.runToken.cancel
   }
 
-  get isDone() {
-    return this._isDone
+  cancel() {
+    this.animation.stop(true)
+  }
+
+  get isIdle() {
+    return this._isIdle
   }
 
   get isRunning() {
@@ -121,7 +140,7 @@ export default class PokemonListItemAnimationController {
 
   queue(id: number) {
     this._queue.push(id)
-    this.animate()
+    this.start()
   }
 
   skip(id: number) {
@@ -132,33 +151,45 @@ export default class PokemonListItemAnimationController {
     Array.from(this.indexes.keys()).forEach(this.skip.bind(this))
   }
 
-  animate() {
+  start() {
     if (this._isAnimating) return
 
     this._isAnimating = true
-    this.animateNext(true)
+    this.startNext(true)
   }
 
-  isDone(id: number) {
-    return this.get(id)?.isDone
+  async leave(id: number) {
+    await this.get(id)?.leave()
+  }
+
+  cancel() {
+    Array.from(this.indexes.values()).forEach((animation) => {
+      if (animation.isRunning) {
+        animation.cancel()
+      }
+    })
+  }
+
+  isIdle(id: number) {
+    return this.get(id)?.isIdle
   }
 
   getStyles(id: number) {
     return this.get(id)?.styles
   }
 
-  private async animateNext(noDelay: boolean = false) {
+  private async startNext(noDelay: boolean = false) {
     const next = this._queue.shift()
 
     if (next) {
       const animation = this.get(next)!
 
-      if (!animation.isDone) {
-        await animation.run(noDelay)
+      if (!animation.isIdle) {
+        await animation.start(noDelay)
         this.skipPrevious(next)
       }
 
-      this.animateNext()
+      this.startNext()
     } else {
       this._isAnimating = false
     }
@@ -169,7 +200,7 @@ export default class PokemonListItemAnimationController {
     const currentIndex = indexesAsList.findIndex(([id]) => id === current)
 
     indexesAsList.slice(0, currentIndex).forEach(([, animation]) => {
-      if (!animation.isDone) {
+      if (!animation.isIdle) {
         animation.skip()
       }
     })

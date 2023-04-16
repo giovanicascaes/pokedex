@@ -1,5 +1,5 @@
 import { PokemonSpeciesPokedex } from "contexts"
-import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react"
 import { WithNonLegacyRef } from "types"
 
 export interface PokemonListProps
@@ -25,9 +25,14 @@ export type PokemonListViewProps = Pick<
   | "onReady"
 >
 
+interface PokemonListItemAnimationValuesLookup<T = any> {
+  [key: string]: T
+}
+
 export interface PokemonListItemAnimationValues {
   from: PokemonListItemAnimationValuesLookup
   to: PokemonListItemAnimationValuesLookup
+  leave: PokemonListItemAnimationValuesLookup
 }
 
 export interface PokemonListItemAnimationProperties {
@@ -52,6 +57,21 @@ export interface PokemonListItemAnimationRunToken {
   cancel?: () => void
 }
 
-interface PokemonListItemAnimationValuesLookup<T = any> {
-  [key: string]: T
+export type PokemonListContextData = Pick<
+  PokemonListProps,
+  "pokemons" | "preloadPokemons" | "skipInitialAnimation"
+>
+
+export type PokemonListContextActions = Pick<
+  PokemonListProps,
+  "onAddToPokedex" | "onRemoveFromPokedex" | "onReady"
+>
+
+export type PokemonListContextValue = [
+  PokemonListContextData,
+  PokemonListContextActions
+]
+
+export interface PokemonListProviderProps {
+  children: ReactNode
 }

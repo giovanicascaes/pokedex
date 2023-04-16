@@ -3,7 +3,7 @@ import Link from "next/link"
 import { forwardRef } from "react"
 import { MdCatchingPokemon } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
-import { PokemonCaughtBadge } from "../pokemon-caught-released-badge"
+import PokemonCaughtBadge from "../pokemon-caught-badge"
 import usePokemonListItem from "../use-pokemon-list-item"
 import { PokemonListItemSimpleProps } from "./pokemon-list-item-simple.types"
 
@@ -27,7 +27,7 @@ export default forwardRef<HTMLAnchorElement, PokemonListItemSimpleProps>(
       handleCatchReleaseFinish,
       handleCatchReleaseStart,
       isCatchingOrReleasing,
-      isCaughtOrBeingCaught,
+      catchReleaseState,
     } = usePokemonListItem({ onCatchReleaseFinish, isOnPokedex })
 
     return (
@@ -41,7 +41,7 @@ export default forwardRef<HTMLAnchorElement, PokemonListItemSimpleProps>(
         ref={ref}
       >
         <PokemonCatchReleaseAnimation
-          isCaught={isCaughtOrBeingCaught}
+          state={catchReleaseState}
           onAnimationFinish={handleCatchReleaseFinish}
         >
           <PokemonArt

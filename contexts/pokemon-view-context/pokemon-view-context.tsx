@@ -15,13 +15,13 @@ import {
 
 export const POKEMONS_PER_PAGE = 12
 
-const mapWithOnPokedexState = (
+const addPokedexState = (
   pokemons: PokemonSpeciesSimple[],
   pokedex: PokemonSpeciesPokedex[]
 ) =>
   pokemons.map((pokemon) => ({
     ...pokemon,
-    onPokedex: pokedex.some(({ id }) => id === pokemon.id),
+    isOnPokedex: pokedex.some(({ id }) => id === pokemon.id),
   }))
 
 const [Provider, useContext] = createContext<PokemonViewContextValue>({
@@ -39,7 +39,7 @@ export function usePokemonView(
       {
         ...data,
         visiblePokemons: [
-          ...mapWithOnPokedexState(serverLoadedPokemons, data.pokedex),
+          ...addPokedexState(serverLoadedPokemons, data.pokedex),
           ...data.visiblePokemons,
         ],
       },
@@ -64,7 +64,7 @@ const reducers: {
   [PokemonViewActionTypes.AddPokemonToPokedex](state, action) {
     return {
       ...state,
-      pokedex: [...state.pokedex, { ...action.pokemon, onPokedex: true }],
+      pokedex: [...state.pokedex, { ...action.pokemon, isOnPokedex: true }],
     }
   },
   [PokemonViewActionTypes.RemovePokemonFromPokedex](state, action) {
@@ -105,8 +105,8 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
     () => ({
       ...state,
       currentPage,
-      visiblePokemons: mapWithOnPokedexState(visiblePokemons, state.pokedex),
-      preloadPokemons: mapWithOnPokedexState(preloadPokemons, state.pokedex),
+      visiblePokemons: addPokedexState(visiblePokemons, state.pokedex),
+      preloadPokemons: addPokedexState(preloadPokemons, state.pokedex),
       hasFetchedAll,
     }),
     [currentPage, hasFetchedAll, preloadPokemons, state, visiblePokemons]

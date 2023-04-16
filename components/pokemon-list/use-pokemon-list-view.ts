@@ -20,8 +20,12 @@ export default function usePokemonListView({
 
   const handleOnCatchReleaseFinish = useCallback(
     (pokemon: PokemonSpeciesPokedex) => {
-      if (pokemon.onPokedex) {
-        onRemoveFromPokedex(pokemon.id)
+      if (pokemon.isOnPokedex) {
+        const { id } = pokemon
+
+        animationController.current.leave(id).then(() => {
+          onRemoveFromPokedex(id)
+        })
       } else {
         onAddToPokedex?.(pokemon)
       }
@@ -42,11 +46,6 @@ export default function usePokemonListView({
     [isInitialAnimationDone]
   )
 
-  const isAnimationDone = useCallback(
-    (id: number) => animationController.current.isDone(id),
-    []
-  )
-
   const getStyles = useCallback(
     (id: number) => animationController.current.getStyles(id),
     []
@@ -65,10 +64,16 @@ export default function usePokemonListView({
     onReady?.()
   }, [isInitialAnimationDone, onReady])
 
+  useEffect(
+    () => () => {
+      animationController.current.cancel()
+    },
+    []
+  )
+
   return {
     handleOnCatchReleaseFinish,
     handleOnIntersectionChange,
-    isAnimationDone,
     getStyles,
   }
 }

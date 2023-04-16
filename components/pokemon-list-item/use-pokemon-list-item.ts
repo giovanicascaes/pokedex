@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react"
+import { PokemonCatchReleaseAnimationState } from "components/pokemon-catch-release-animation"
+import { useCallback, useMemo, useState } from "react"
 import { UsePokemonListItemArgs } from "./pokemon-list-item.types"
 
 export default function usePokemonListItem({
@@ -16,9 +17,17 @@ export default function usePokemonListItem({
     onCatchReleaseFinish?.()
   }, [onCatchReleaseFinish])
 
+  const catchReleaseState = useMemo<PokemonCatchReleaseAnimationState>(() => {
+    if (!isCatchingOrReleasing) return "idle"
+
+    if (isOnPokedex) return "releasing"
+
+    return "catching"
+  }, [isCatchingOrReleasing, isOnPokedex])
+
   return {
     isCatchingOrReleasing,
-    isCaughtOrBeingCaught: isCatchingOrReleasing !== isOnPokedex,
+    catchReleaseState,
     handleCatchReleaseStart,
     handleCatchReleaseFinish,
   }

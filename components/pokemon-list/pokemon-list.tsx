@@ -3,9 +3,14 @@ import { FadeOnChange } from "components"
 import { useMedia } from "hooks"
 import { useMemo } from "react"
 import { twMerge } from "tailwind-merge"
+import { PokemonListProvider } from "./context"
 import { PokemonListGridView } from "./pokemon-list-grid-view"
 import { PokemonListSimpleView } from "./pokemon-list-simple-view"
-import { PokemonListProps } from "./pokemon-list.types"
+import {
+  PokemonListContextActions,
+  PokemonListContextData,
+  PokemonListProps,
+} from "./pokemon-list.types"
 
 const CONTAINER_TRANSITION_DURATION = 300
 
@@ -32,18 +37,28 @@ export default function PokemonList({
     }
   )
   const columns = useMemo(
-    () =>
-      mediaMatches.reduce((prev, matches, i) => (matches ? i + 1 : prev), 1),
+    () => mediaMatches.lastIndexOf(true) + 1,
     [mediaMatches]
   )
 
   const containerStyles = useSpring({
-    // opacity: isListReady || !skipInitialAnimation ? 1 : 0,
     config: {
       duration: CONTAINER_TRANSITION_DURATION,
       easing: easings.linear,
     },
   })
+
+  const data: PokemonListContextData = {
+    pokemons,
+    preloadPokemons,
+    skipInitialAnimation,
+  }
+
+  const actions: PokemonListContextActions = {
+    onAddToPokedex,
+    onRemoveFromPokedex,
+    onReady,
+  }
 
   const commonListViewProps = {
     pokemons,
@@ -61,16 +76,18 @@ export default function PokemonList({
       style={{ ...containerStyles }}
     >
       <FadeOnChange watch={columns === 1}>
-        {(isList) =>
-          isList ? (
-            <PokemonListSimpleView {...commonListViewProps} />
-          ) : (
-            <PokemonListGridView
-              {...commonListViewProps}
-              columns={Math.max(columns, 2)}
-            />
-          )
-        }
+        {(isList) => (
+          <PokemonListProvider value={[data, actions]}>
+            {isList ? (
+              <PokemonListSimpleView {...commonListViewProps} />
+            ) : (
+              <PokemonListGridView
+                {...commonListViewProps}
+                columns={Math.max(columns, 2)}
+              />
+            )}
+          </PokemonListProvider>
+        )}
       </FadeOnChange>
     </animated.div>
   )

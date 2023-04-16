@@ -9,7 +9,7 @@ export enum PokemonViewActionTypes {
 }
 
 export interface PokemonSpeciesPokedex extends PokemonSpeciesSimple {
-  onPokedex: boolean
+  isOnPokedex?: boolean
 }
 
 export interface PokemonViewState {
