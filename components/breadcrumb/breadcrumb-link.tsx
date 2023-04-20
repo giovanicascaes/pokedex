@@ -11,10 +11,7 @@ export default function BreadcrumbLink({
     <Link
       {...props}
       href={href}
-      className={twMerge(
-        "cursor-pointer focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 focus-visible:border-opacity-50 dark:focus-visible:border-red-400",
-        className
-      )}
+      className={twMerge("cursor-pointer focus-highlight-b", className)}
     />
   )
 }

@@ -17,7 +17,7 @@ import { AppHeaderProps } from "./app-header.types"
 const BREADCRUMB_TRANSITION_DURATION = 150
 
 const actionButtonClassName =
-  "w-8 h-8 flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
+  "w-8 h-8 flex items-center justify-center rounded-full focus-highlight text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
 
 function ActionButtons() {
   const [{ pokedex }] = usePokemonView()

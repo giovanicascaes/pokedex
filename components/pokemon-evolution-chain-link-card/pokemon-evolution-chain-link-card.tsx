@@ -22,7 +22,7 @@ export default function PokemonEvolutionChainLinkCard({
           if (isSamePage) event.preventDefault()
         }}
         className={twJoin(
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 focus-visible:rounded-full",
+          "focus-highlight focus-visible:rounded-full",
           isSamePage && "pointer-events-none"
         )}
       >

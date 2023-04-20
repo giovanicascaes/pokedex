@@ -32,7 +32,7 @@ export default function Button({
       }}
       className={twMerge(
         variant !== "unstyled" && [
-          "w-full pl-3 pr-2 py-2 shadow-md rounded-lg text-start text-sm bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/[0.16] active:bg-slate-100 dark:active:bg-white/[0.21] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50 group",
+          "w-full pl-3 pr-2 py-2 shadow-md rounded-lg text-start text-sm bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/[0.16] active:bg-slate-100 dark:active:bg-white/[0.21] flex items-center focus-highlight group",
           disabled &&
             "cursor-default opacity-50 hover:bg-white dark:hover:bg-slate-700 pointer-events-none",
         ],
