@@ -28,7 +28,7 @@ export default function PokemonTypeBadge({
     <div
       {...other}
       className={twMerge(
-        "flex items-center justify-center relative w-[180px] py-2.5 rounded-lg text-center text-sm uppercase font-semibold",
+        "flex items-center justify-center relative w-full py-2.5 rounded-lg text-center text-sm uppercase font-semibold",
         textColor,
         className
       )}
@@ -43,7 +43,7 @@ export default function PokemonTypeBadge({
         <Tooltip content="Double Damage">
           <span
             className={twMerge(
-              "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
+              "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
               textColor,
               foregroundStyle === "light" && "bg-black/50"
             )}

@@ -10,6 +10,7 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
     name,
     width,
     height,
+    fill = false,
     animate = true,
     className,
     artClassName,
@@ -31,32 +32,39 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
     immediate: !animate,
   })
 
+  const computedWidth = fill ? undefined : width
+  const computedHeight = fill ? undefined : width
+
   return (
     <div
       {...other}
       className={twMerge(
-        "flex items-center justify-center text-center text-black/50 dark:text-white/50",
+        "w-full aspect-square flex items-center justify-center text-center text-black/50 dark:text-white/50",
         className
       )}
       style={{
-        width: width,
-        height: height,
-        minWidth: width,
-        minHeight: height,
-        fontSize: height,
-        lineHeight: `${height}px`,
+        width: computedWidth,
+        height: computedHeight,
+        minWidth: computedWidth,
+        minHeight: computedHeight,
+        fontSize: computedHeight,
+        lineHeight: computedHeight ? `${computedHeight}px` : undefined,
       }}
       ref={ref}
     >
       {isError || !artSrc ? (
         <span>?</span>
       ) : (
-        <animated.div style={{ ...styles }}>
+        <animated.div
+          className="relative w-full aspect-square"
+          style={{ ...styles }}
+        >
           <Image
             src={artSrc}
             alt={name ? `${name}'s art` : "Unknown art for this pokémon"}
-            width={width}
-            height={width}
+            width={computedWidth}
+            height={computedHeight}
+            fill={fill}
             onLoadingComplete={() => setIsLoaded(true)}
             onError={() => setIsError(true)}
             priority

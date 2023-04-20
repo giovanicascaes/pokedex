@@ -1,5 +1,6 @@
 import { EvolutionChainLink } from "lib"
 import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { WithNonLegacyRef } from "types"
 
 export interface PokemonEvolutionChainProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -9,13 +10,17 @@ export interface PokemonEvolutionChainProps
 export interface PokemonEvolutionChainNodeContainerProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   vertical?: boolean
+  enableWrap?: boolean
 }
 
-export type PokemonEvolutionChainPathProps = DetailedHTMLProps<
-  HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
-> &
-  EvolutionChainLink
+export interface PokemonEvolutionChainPathProps
+  extends WithNonLegacyRef<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      HTMLDivElement
+    >,
+    EvolutionChainLink {
+  vertical?: boolean
+}
 
 export interface PokemonEvolutionChainLinkProps
   extends PokemonEvolutionChainPathProps {

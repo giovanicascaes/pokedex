@@ -21,7 +21,7 @@ export default function Custom404() {
       </div>
       <Link
         href="/"
-        className="text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 hover:underline focus:outline-none focus-visible:border-b-2 focus-visible:border-red-500 dark:focus-visible:border-red-400 focus-visible:border-opacity-50 text-sm font-medium"
+        className="text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 hover:underline focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 dark:focus-visible:border-red-400 focus-visible:border-opacity-50 text-sm font-medium"
       >
         Back to List
       </Link>

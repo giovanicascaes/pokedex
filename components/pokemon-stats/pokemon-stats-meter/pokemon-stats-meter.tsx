@@ -1,9 +1,15 @@
 import { animated, easings, useSpring } from "@react-spring/web"
+import { Tooltip } from "components"
 import { useThemeMode } from "contexts"
 import { useMemo } from "react"
 import { twMerge } from "tailwind-merge"
 import { match, range } from "utils"
-import { PokemonStatsMeterProps } from "./pokemon-stats-meter.types"
+import {
+  PokemonStatsMeterBarsProps,
+  PokemonStatsMeterProps,
+} from "./pokemon-stats-meter.types"
+
+const DEFAULT_TOTAL_BARS = 10
 
 const TRANSITION_DURATION = 700
 
@@ -11,12 +17,13 @@ const TRANSITION_DELAY = 500
 
 const MAX_VALUE = 255
 
-interface MeterBarProps {
-  totalBars: number
-  value: number
-}
-
-function MeterBar({ totalBars, value }: MeterBarProps) {
+function StatsMeterBars({
+  totalBars,
+  value,
+  className,
+  style,
+  ...other
+}: PokemonStatsMeterBarsProps) {
   const valueAsNumberOfBars = useMemo(() => {
     const numberOfBars = (value * totalBars) / MAX_VALUE
 
@@ -43,7 +50,7 @@ function MeterBar({ totalBars, value }: MeterBarProps) {
         match(
           range(1, totalBars * 2 - 1)
             .filter((i) => i % 2 !== 0)
-            .reduce<{ [K in number]: number }>(
+            .reduce<{ [k in number]: number }>(
               (acc, i) => ({
                 ...acc,
                 [i - (i - 1) / 2]: (100 * i) / (totalBars * 2 - 1),
@@ -75,10 +82,15 @@ function MeterBar({ totalBars, value }: MeterBarProps) {
 
   return (
     <div
-      className="relative bg-slate-200 dark:bg-slate-700/90 first:rounded-t last:rounded-b h-full w-full"
+      {...other}
+      className={twMerge(
+        "relative bg-slate-200 dark:bg-slate-700/90 h-full w-full",
+        className
+      )}
       style={{
         mask,
         WebkitMask: mask,
+        ...style,
       }}
     >
       <animated.div
@@ -96,7 +108,7 @@ function MeterBar({ totalBars, value }: MeterBarProps) {
 }
 
 export default function PokemonStatsMeter({
-  totalBars = 10,
+  totalBars = DEFAULT_TOTAL_BARS,
   value,
   label,
   className,
@@ -106,16 +118,26 @@ export default function PokemonStatsMeter({
   return (
     <div
       {...other}
-      className={twMerge("flex flex-col items-center w-full h-full", className)}
+      className={twMerge(
+        "flex flex-col items-center w-full h-full min-w-[50px]",
+        className
+      )}
     >
-      <div
-        className={twMerge(
-          "flex flex-col w-full h-full space-y-1.5",
-          barContainerClassName
-        )}
-      >
-        <MeterBar totalBars={totalBars} value={value} />
-      </div>
+      <Tooltip content={value}>
+        <div
+          className={twMerge(
+            "flex flex-col w-full h-full space-y-1.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
+            barContainerClassName
+          )}
+          tabIndex={0}
+        >
+          <StatsMeterBars
+            totalBars={totalBars}
+            value={value}
+            className="rounded"
+          />
+        </div>
+      </Tooltip>
       <span className="text-2xs font-semibold text-slate-500 text-center my-2">
         {label}
       </span>

@@ -39,7 +39,7 @@ export default function PokemonCaughtBadge({
             <animated.div {...other} style={{ ...style, ...transitionStyles }}>
               <Tooltip content="In Pokédex">
                 <div
-                  className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
+                  className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
                   tabIndex={0}
                 >
                   <MdCatchingPokemon

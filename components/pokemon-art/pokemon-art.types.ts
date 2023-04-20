@@ -8,8 +8,9 @@ export interface PokemonArtProps
   > {
   artSrc: string | null
   name?: string
-  width: number
-  height: number
+  width?: number
+  height?: number
+  fill?: boolean
   animate?: boolean
   artClassName?: string
 }

@@ -5,10 +5,10 @@ import { join } from "utils"
 import {
   PokemonNavigationButtonArrowProps,
   PokemonNavigationButtonProps,
-} from "./pokemon-navigation-button.types"
+} from "./pokemon-navigation.types"
 
 function PokemonNavigationArrow({
-  forwards = false,
+  backwards: forwards = false,
 }: PokemonNavigationButtonArrowProps) {
   return (
     <span
@@ -23,8 +23,8 @@ function PokemonNavigationArrow({
 }
 
 export default function PokemonNavigationButton({
-  toPokemon: { id, name, artSrc, resourceName },
-  forwards = false,
+  to: { id, name, resourceName },
+  backwards = true,
   className,
   ...other
 }: PokemonNavigationButtonProps) {
@@ -33,16 +33,16 @@ export default function PokemonNavigationButton({
       {...other}
       href={`/pokemon/${resourceName}`}
       className={twMerge(
-        "flex items-center w-96 rounded-xl p-5 space-x-2 ring-1 ring-slate-300/30 dark:ring-slate-500/20 hover:ring-slate-300/30 hover:bg-slate-300/30 active:ring-slate-300/50 active:bg-slate-300/50 dark:hover:ring-slate-500/20 dark:hover:bg-slate-500/20 dark:active:ring-slate-500/[0.35] dark:active:bg-slate-500/[0.35] group transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50",
-        forwards ? "pr-9 justify-end" : "pl-9",
+        "flex items-center w-96 rounded-xl p-5 space-x-2 border hover:border-transparent dark:hover:border-transparent border-slate-300/30 dark:border-slate-500/20 hover:bg-slate-300/30 active:bg-slate-300/50 dark:hover:bg-slate-500/20 dark:active:bg-slate-500/[0.35] group transition-colors highlight",
+        backwards ? "pl-9" : "pr-9 justify-end",
         className
       )}
     >
-      {!forwards && <PokemonNavigationArrow />}
+      {backwards && <PokemonNavigationArrow />}
       <span
         className={twMerge(
           "flex flex-col text-xl",
-          forwards ? "items-end" : "items-start"
+          backwards ? "items-start" : "items-end"
         )}
       >
         <span className="text-slate-500 group-hover:text-black dark:text-slate-400 dark:group-hover:text-white text-base">
@@ -52,7 +52,7 @@ export default function PokemonNavigationButton({
           {name}
         </span>
       </span>
-      {forwards && <PokemonNavigationArrow forwards />}
+      {!backwards && <PokemonNavigationArrow backwards />}
     </Link>
   )
 }

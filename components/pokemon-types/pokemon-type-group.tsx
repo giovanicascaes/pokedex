@@ -3,7 +3,7 @@ import { PokemonTypeGroupProps } from "./pokemon-types.types"
 
 export default function PokemonTypeGroup({ types }: PokemonTypeGroupProps) {
   return (
-    <div className="grid grid-cols-[repeat(3,minmax(min-content,max-content))] gap-2">
+    <div className="w-full grid grid-cols-[repeat(auto-fit,180px)] gap-2">
       {types
         .sort(({ slot: slot1, name: name1 }, { slot: slot2, name: name2 }) => {
           const field1: number | string = slot1 ?? name1

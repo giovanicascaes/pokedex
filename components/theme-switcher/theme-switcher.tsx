@@ -1,6 +1,6 @@
 import { animated, easings, useTransition } from "@react-spring/web"
 import { Select } from "components"
-import { useThemeMode } from "contexts"
+import { ThemeMode, useThemeMode } from "contexts"
 import ThemeSwitcherModeIcon from "./theme-switcher-mode-icon"
 import ThemeSwitcherPopup from "./theme-switcher-popup"
 import { ThemeSwitcherProps } from "./theme-switcher.types"
@@ -9,9 +9,9 @@ export default function ThemeSwitcher({
   buttonClassName,
   ...other
 }: ThemeSwitcherProps) {
-  const [{ themeMode }, { setThemeMode }] = useThemeMode()
+  const [{ themeMode, isDark }, { setThemeMode }] = useThemeMode()
 
-  const transitions = useTransition(themeMode, {
+  const transitions = useTransition(isDark, {
     from: { opacity: 0, x: "-50%" },
     enter: { opacity: 1, x: "0%" },
     leave: { opacity: 0, x: "100%" },
@@ -28,9 +28,11 @@ export default function ThemeSwitcher({
       className="w-min"
     >
       <Select.Button variant="unstyled" className={buttonClassName}>
-        {transitions((styles, theme) => (
+        {transitions((styles, dark) => (
           <animated.div style={{ ...styles }}>
-            <ThemeSwitcherModeIcon mode={theme} />
+            <ThemeSwitcherModeIcon
+              mode={dark ? ThemeMode.Dark : ThemeMode.Light}
+            />
           </animated.div>
         ))}
       </Select.Button>

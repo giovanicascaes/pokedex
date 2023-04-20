@@ -9,7 +9,7 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
-        <Script id="load-theme" strategy="beforeInteractive">
+        <Script id="load-theme-mode" strategy="beforeInteractive">
           {`
             const matchMediaDarkColorScheme = window.matchMedia(
               "(prefers-color-scheme: dark)"

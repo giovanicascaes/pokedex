@@ -1,5 +1,5 @@
 import { PokemonEvolutionChainLinkCard } from "components"
-import { EvolutionChainLink } from "lib"
+import { forwardRef } from "react"
 import { MdChevronRight } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
 import {
@@ -9,36 +9,14 @@ import {
   PokemonEvolutionChainPathProps,
   PokemonEvolutionChainProps,
 } from "./pokemon-evolution-chain.types"
+import useDirection from "./use-direction"
 
-function evolutionChainToLevelCountMap(
-  { evolvesTo }: EvolutionChainLink,
-  chainLevel = 1
-): number[] {
-  const nextChainLevels = evolvesTo
-    .map((evolution) =>
-      evolutionChainToLevelCountMap(evolution, chainLevel + 1)
-    )
-    .flat()
-
-  return [chainLevel, ...nextChainLevels]
-}
-
-function getEvolutionChainLinksDisposeDirection(
-  evolution: EvolutionChainLink
-): "vertical" | "horizontal" {
-  const map = evolutionChainToLevelCountMap(evolution).reduce<{
-    [K in number]: number
-  }>((prev, acc) => ({ ...prev, [acc]: (prev[acc] ?? 0) + 1 }), {})
-  const numberOfChainLevels = Object.keys(map).length
-  const maxEvolutionsInOneLevel = Math.max(...Object.values(map))
-
-  return numberOfChainLevels >= maxEvolutionsInOneLevel
-    ? "horizontal"
-    : "vertical"
+function isSecondToLast({ evolvesTo }: PokemonEvolutionChainPathProps) {
+  return evolvesTo.every((evolution) => !evolution.evolvesTo.length)
 }
 
 function Arrow({
-  vertical,
+  vertical = false,
   className,
   ...other
 }: PokemonEvolutionChainArrowProps) {
@@ -55,80 +33,94 @@ function Arrow({
   )
 }
 
-function NodeContainer({
-  vertical,
-  children,
-  className,
-  ...other
-}: PokemonEvolutionChainNodeContainerProps) {
+const EvolutionNodeContainer = forwardRef<
+  HTMLDivElement,
+  PokemonEvolutionChainNodeContainerProps
+>(function EvolutionNodeContainer(
+  { vertical = false, enableWrap = false, children, className, ...other },
+  ref
+) {
   return (
     <div
       {...other}
       className={twMerge(
-        "flex-wrap justify-center items-center",
+        "justify-center items-center",
         vertical ? "flex flex-col space-y-8" : "inline-flex gap-8",
+        enableWrap && "flex-wrap",
         className
       )}
+      ref={ref}
     >
       {children}
     </div>
   )
-}
+})
 
-function EvolutionChainPath({
-  evolvesTo,
-  isBaby,
-  species,
-  ...other
-}: PokemonEvolutionChainPathProps) {
+function EvolutionChainPath(pokemon: PokemonEvolutionChainPathProps) {
+  const { evolvesTo, isBaby, species, vertical = false, ...other } = pokemon
+
   return (
-    <NodeContainer {...other}>
+    <EvolutionNodeContainer {...other} vertical={vertical}>
       <PokemonEvolutionChainLinkCard pokemon={species} isBaby={isBaby} />
       {evolvesTo.length > 0 && (
-        <NodeContainer>
-          <Arrow />
-          <NodeContainer vertical>
+        <EvolutionNodeContainer vertical={vertical}>
+          <Arrow vertical={vertical} />
+          <EvolutionNodeContainer
+            vertical={!vertical}
+            enableWrap={isSecondToLast(pokemon)}
+          >
             {evolvesTo.map((evolution) => (
-              <EvolutionChainLink key={evolution.species.id} {...evolution} />
+              <EvolutionChainLink
+                key={evolution.species.id}
+                {...evolution}
+                vertical={vertical}
+              />
             ))}
-          </NodeContainer>
-        </NodeContainer>
+          </EvolutionNodeContainer>
+        </EvolutionNodeContainer>
       )}
-    </NodeContainer>
+    </EvolutionNodeContainer>
   )
 }
 
-function EvolutionChainLink({
-  evolvesTo,
-  isBaby,
-  species,
-  vertical,
-  ...other
-}: PokemonEvolutionChainLinkProps) {
+const EvolutionChainLink = forwardRef<
+  HTMLDivElement,
+  PokemonEvolutionChainLinkProps
+>(function EvolutionChainLink(pokemon, ref) {
+  const { evolvesTo, isBaby, species, vertical, ...other } = pokemon
+
   return (
-    <NodeContainer {...other} vertical={vertical}>
+    <EvolutionNodeContainer {...other} vertical={vertical} ref={ref}>
       <PokemonEvolutionChainLinkCard pokemon={species} isBaby={isBaby} />
       {evolvesTo.length > 0 && (
         <>
           <Arrow vertical={vertical} />
-          <NodeContainer vertical={!vertical}>
+          <EvolutionNodeContainer
+            vertical={!vertical}
+            enableWrap={isSecondToLast(pokemon)}
+            className="items-start"
+          >
             {evolvesTo.map((evolution) => (
-              <EvolutionChainPath key={evolution.species.id} {...evolution} />
+              <EvolutionChainPath
+                key={evolution.species.id}
+                {...evolution}
+                vertical={vertical}
+              />
             ))}
-          </NodeContainer>
+          </EvolutionNodeContainer>
         </>
       )}
-    </NodeContainer>
+    </EvolutionNodeContainer>
   )
-}
+})
 
 export default function PokemonEvolutionChain({
-  children,
   evolutionChain,
+  children,
   className,
   ...other
 }: PokemonEvolutionChainProps) {
-  const direction = getEvolutionChainLinksDisposeDirection(evolutionChain)
+  const [{ chainRef, containerRef }, direction] = useDirection(evolutionChain)
 
   return (
     <div
@@ -143,11 +135,13 @@ export default function PokemonEvolutionChain({
           This pokemon does not evolve
         </span>
       )}
-      <EvolutionChainLink
-        {...evolutionChain}
-        vertical={direction === "vertical"}
-        className="p-10"
-      />
+      <div className="p-10 flex justify-center" ref={containerRef}>
+        <EvolutionChainLink
+          {...evolutionChain}
+          vertical={direction === "vertical"}
+          ref={chainRef}
+        />
+      </div>
     </div>
   )
 }

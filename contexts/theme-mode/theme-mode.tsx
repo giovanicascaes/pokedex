@@ -32,10 +32,11 @@ export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
 
   useEffect(() => {
     if (transitionClassName) {
-      // Removes transition classes after 200 ms
+      // Removes transition class names after 500 ms
+      // TODO: remove transition class names after transition has ran
       const timeoutId = setTimeout(() => {
         setTransitionClassName("")
-      }, 200)
+      }, 500)
 
       return () => {
         clearTimeout(timeoutId)
@@ -50,10 +51,10 @@ export function ThemeModeProvider({ children }: ThemeModeProviderProps) {
   const data: ThemeModeContextData = useMemo(
     () => ({
       themeMode,
-      transitionClassName,
       isDark:
         themeMode === ThemeMode.Dark ||
         (themeMode === ThemeMode.System && isMediaDark),
+      transitionClassName,
     }),
     [isMediaDark, transitionClassName, themeMode]
   )

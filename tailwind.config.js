@@ -1,4 +1,4 @@
-const { fontFamily } = require("tailwindcss/defaultTheme");
+const { fontFamily } = require("tailwindcss/defaultTheme")
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -33,7 +33,13 @@ module.exports = {
         "progress-bar-left": "progress-bar-left 2s linear infinite",
         "progress-bar-right": "progress-bar-right 2s linear infinite",
       },
+      screens: {
+        sm: "768px",
+        md: "1024px",
+        lg: "1280px",
+        xl: "1536px",
+      },
     },
   },
   plugins: [],
-};
+}

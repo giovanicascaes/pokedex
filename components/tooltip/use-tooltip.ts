@@ -35,14 +35,13 @@ export default function useTooltip() {
         x: triggerX,
         y: triggerY,
         width: triggerWidth,
-        height: triggerHeight,
       } = triggerRef.current!.getBoundingClientRect()
 
       top =
         triggerY -
-        triggerHeight -
+        tooltipHeight -
         // Arrow height
-        18
+        8
       left = triggerX - tooltipWidth / 2 + triggerWidth / 2
     }
 

@@ -22,11 +22,14 @@ export default function AbilityDescriptionOverlay({
   })
 
   return transition(
-    (styles, item) =>
-      item && (
+    (styles, data) =>
+      data && (
         <animated.div
           {...other}
-          className="absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md [color-scheme:dark]"
+          className={twMerge(
+            "absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md [color-scheme:dark]",
+            className
+          )}
           style={{ ...styles }}
         >
           <div className="text-slate-300 dark:text-slate-400 text-sm flex flex-col h-full">
@@ -36,16 +39,16 @@ export default function AbilityDescriptionOverlay({
                 scrollTop > 0 && "shadow"
               )}
             >
-              {item?.name}
+              {data?.name}
             </span>
             <button
               onClick={onClose}
-              className="absolute z-10 top-3 right-3 text-slate-300 dark:text-slate-300/90 hover:text-slate-200 dark:hover:text-white p-0.5 rounded cursor-pointer bg-slate-600 dark:bg-slate-800/80 hover:bg-slate-700 dark:hover:bg-slate-900/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
+              className="absolute z-10 top-3 right-3 text-slate-300 dark:text-slate-300/90 hover:text-slate-200 dark:hover:text-white p-0.5 rounded cursor-pointer bg-slate-600 dark:bg-slate-800/80 hover:bg-slate-700 dark:hover:bg-slate-900/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50"
             >
               <MdClose size={20} />
             </button>
             <span onScroll={onScroll} className="overflow-auto p-4">
-              {item?.description}
+              {data?.description}
             </span>
           </div>
         </animated.div>

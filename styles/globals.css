@@ -16,4 +16,8 @@
   .dark {
     color-scheme: dark;
   }
+
+  .highlight {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
+  }
 }

@@ -2,6 +2,7 @@ import { animated, easings, useSpring } from "@react-spring/web"
 import { FadeOnChange } from "components"
 import { useMedia } from "hooks"
 import { useMemo } from "react"
+import theme from "styles/theme"
 import { twMerge } from "tailwind-merge"
 import { PokemonListProvider } from "./context"
 import { PokemonListGridView } from "./pokemon-list-grid-view"
@@ -14,6 +15,13 @@ import {
 
 const CONTAINER_TRANSITION_DURATION = 300
 
+const { sm, md, lg } = theme!.screens as { [k: string]: string }
+
+const xsQuery = `(min-width: 0px)`
+const smQuery = `(min-width: ${sm})`
+const mdQuery = `(min-width: ${md})`
+const lgQuery = `(min-width: ${lg})`
+
 export default function PokemonList({
   pokemons,
   preloadPokemons = [],
@@ -24,18 +32,9 @@ export default function PokemonList({
   className,
   ...otherProps
 }: PokemonListProps) {
-  const mediaMatches = useMedia(
-    [
-      "(min-width: 0px)",
-      "(min-width: 768px)",
-      "(min-width: 1024px)",
-      "(min-width: 1280px)",
-      "(min-width: 1536px)",
-    ],
-    {
-      fallback: [true, false, false, false, false],
-    }
-  )
+  const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery], {
+    fallback: [true, false, false, false],
+  })
   const columns = useMemo(
     () => mediaMatches.lastIndexOf(true) + 1,
     [mediaMatches]

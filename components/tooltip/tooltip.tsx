@@ -60,7 +60,7 @@ export default function Tooltip({
               {...other}
               {...tooltipProps}
               className={twMerge(
-                "absolute z-40 pointer-events-none px-2 py-1 text-sm normal-case font-normal rounded-md border shadow-md bg-slate-600 border-slate-700/70 text-slate-100 dark:bg-slate-700 dark:border-slate-500/40 dark:text-slate-200 dark:shadow-black/20",
+                "absolute z-20 pointer-events-none px-2 py-1 text-sm normal-case font-normal rounded-md border shadow-md bg-slate-600 border-slate-700/70 text-slate-100 dark:bg-slate-700 dark:border-slate-500/40 dark:text-slate-200 dark:shadow-black/20",
                 className
               )}
               style={{
