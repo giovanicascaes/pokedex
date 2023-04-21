@@ -1,7 +1,7 @@
 import { PokemonSpeciesDetailed, PokemonSpeciesSimple } from "lib"
 import { ReactNode } from "react"
 
-export enum PokemonViewActionTypes {
+export enum PokemonActionTypes {
   SetViewingPokemon,
   ClearViewingPokemon,
   AddPokemonToPokedex,
@@ -12,29 +12,29 @@ export interface PokemonSpeciesPokedex extends PokemonSpeciesSimple {
   isOnPokedex?: boolean
 }
 
-export interface PokemonViewState {
+export interface PokemonState {
   viewingPokemon: PokemonSpeciesDetailed | null
   pokedex: PokemonSpeciesPokedex[]
 }
 
-export type PokemonViewActions =
+export type PokemonActions =
   | {
-      type: PokemonViewActionTypes.SetViewingPokemon
+      type: PokemonActionTypes.SetViewingPokemon
       pokemon: PokemonSpeciesDetailed
     }
   | {
-      type: PokemonViewActionTypes.ClearViewingPokemon
+      type: PokemonActionTypes.ClearViewingPokemon
     }
   | {
-      type: PokemonViewActionTypes.AddPokemonToPokedex
+      type: PokemonActionTypes.AddPokemonToPokedex
       pokemon: PokemonSpeciesPokedex
     }
   | {
-      type: PokemonViewActionTypes.RemovePokemonFromPokedex
+      type: PokemonActionTypes.RemovePokemonFromPokedex
       id: number
     }
 
-export interface PokemonViewContextData {
+export interface PokemonContextData {
   currentPage: number
   visiblePokemons: PokemonSpeciesPokedex[]
   preloadPokemons: PokemonSpeciesPokedex[]
@@ -43,7 +43,7 @@ export interface PokemonViewContextData {
   hasFetchedAll: boolean
 }
 
-export interface PokemonViewContextActions {
+export interface PokemonContextActions {
   loadMore: () => void
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
   clearViewingPokemon: () => void
@@ -51,11 +51,8 @@ export interface PokemonViewContextActions {
   removePokemonFromPokedex: (id: number) => void
 }
 
-export type PokemonViewContextValue = [
-  PokemonViewContextData,
-  PokemonViewContextActions
-]
+export type PokemonContextValue = [PokemonContextData, PokemonContextActions]
 
-export interface PokemonViewProviderProps {
+export interface PokemonProviderProps {
   children: ReactNode
 }

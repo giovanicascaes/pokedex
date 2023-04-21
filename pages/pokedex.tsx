@@ -1,14 +1,19 @@
 import { PokemonList } from "components"
 import { usePages, usePokemonView } from "contexts"
+import { useIsoMorphicEffect } from "hooks"
 import { useCallback } from "react"
 
 export default function Pokedex() {
   const [{ pokedex }, { removePokemonFromPokedex }] = usePokemonView()
-  const [{ isScrollDirty }, { setLoadingPage }] = usePages()
+  const [{ isScrollDirty }, { setLoadingPage, setUpBreadcrumb }] = usePages()
 
   const onViewReady = useCallback(() => {
     setLoadingPage(null)
   }, [setLoadingPage])
+
+  useIsoMorphicEffect(() => {
+    return setUpBreadcrumb([{ label: "Pokedéx" }])
+  }, [setUpBreadcrumb])
 
   if (pokedex.length) {
     return (

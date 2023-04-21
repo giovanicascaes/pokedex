@@ -4,13 +4,13 @@ import { useMemo, useReducer } from "react"
 import { createContext } from "utils"
 import {
   PokemonSpeciesPokedex,
-  PokemonViewActionTypes,
-  PokemonViewContextActions,
-  PokemonViewContextData,
-  PokemonViewContextValue,
-  PokemonViewProviderProps,
-  PokemonViewState,
-  PokemonViewActions,
+  PokemonActionTypes,
+  PokemonContextActions,
+  PokemonContextData,
+  PokemonContextValue,
+  PokemonProviderProps,
+  PokemonState,
+  PokemonActions,
 } from "./pokemon-view-context.types"
 
 export const POKEMONS_PER_PAGE = 12
@@ -24,9 +24,9 @@ const addPokedexState = (
     isOnPokedex: pokedex.some(({ id }) => id === pokemon.id),
   }))
 
-const [Provider, useContext] = createContext<PokemonViewContextValue>({
+const [Provider, useContext] = createContext<PokemonContextValue>({
   hookName: "usePokemonView",
-  providerName: "PokemonViewProvider",
+  providerName: "PokemonProvider",
 })
 
 export function usePokemonView(
@@ -34,7 +34,7 @@ export function usePokemonView(
 ) {
   const [data, actions] = useContext()
 
-  return useMemo<PokemonViewContextValue>(
+  return useMemo<PokemonContextValue>(
     () => [
       {
         ...data,
@@ -50,24 +50,24 @@ export function usePokemonView(
 }
 
 const reducers: {
-  [P in PokemonViewActionTypes]: (
-    state: PokemonViewState,
-    action: Extract<PokemonViewActions, { type: P }>
-  ) => PokemonViewState
+  [P in PokemonActionTypes]: (
+    state: PokemonState,
+    action: Extract<PokemonActions, { type: P }>
+  ) => PokemonState
 } = {
-  [PokemonViewActionTypes.SetViewingPokemon](state, action) {
+  [PokemonActionTypes.SetViewingPokemon](state, action) {
     return { ...state, viewingPokemon: action.pokemon }
   },
-  [PokemonViewActionTypes.ClearViewingPokemon](state) {
+  [PokemonActionTypes.ClearViewingPokemon](state) {
     return { ...state, viewingPokemon: null }
   },
-  [PokemonViewActionTypes.AddPokemonToPokedex](state, action) {
+  [PokemonActionTypes.AddPokemonToPokedex](state, action) {
     return {
       ...state,
       pokedex: [...state.pokedex, { ...action.pokemon, isOnPokedex: true }],
     }
   },
-  [PokemonViewActionTypes.RemovePokemonFromPokedex](state, action) {
+  [PokemonActionTypes.RemovePokemonFromPokedex](state, action) {
     return {
       ...state,
       pokedex: state.pokedex.filter((pokemon) => pokemon.id !== action.id),
@@ -76,22 +76,22 @@ const reducers: {
 }
 
 function matchReducer(
-  state: PokemonViewState,
-  action: PokemonViewActions
-): PokemonViewState {
+  state: PokemonState,
+  action: PokemonActions
+): PokemonState {
   const reducer = reducers as Record<
-    PokemonViewActionTypes,
-    (state: PokemonViewState, action: PokemonViewActions) => PokemonViewState
+    PokemonActionTypes,
+    (state: PokemonState, action: PokemonActions) => PokemonState
   >
   return reducer[action.type](state, action)
 }
 
-const INITIAL_STATE: PokemonViewState = {
+const INITIAL_STATE: PokemonState = {
   viewingPokemon: null,
   pokedex: [],
 }
 
-export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
+export function PokemonProvider({ children }: PokemonProviderProps) {
   const [state, dispatch] = useReducer(matchReducer, INITIAL_STATE)
   const {
     currentPage,
@@ -101,7 +101,7 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
     loadNext: loadMore,
   } = usePokemonsInfinite(POKEMONS_PER_PAGE)
 
-  const data: PokemonViewContextData = useMemo(
+  const data: PokemonContextData = useMemo(
     () => ({
       ...state,
       currentPage,
@@ -112,29 +112,29 @@ export function PokemonViewProvider({ children }: PokemonViewProviderProps) {
     [currentPage, hasFetchedAll, preloadPokemons, state, visiblePokemons]
   )
 
-  const actions: PokemonViewContextActions = useMemo(
+  const actions: PokemonContextActions = useMemo(
     () => ({
       loadMore,
       setViewingPokemon(pokemon: PokemonSpeciesDetailed) {
         dispatch({
-          type: PokemonViewActionTypes.SetViewingPokemon,
+          type: PokemonActionTypes.SetViewingPokemon,
           pokemon,
         })
       },
       clearViewingPokemon() {
         dispatch({
-          type: PokemonViewActionTypes.ClearViewingPokemon,
+          type: PokemonActionTypes.ClearViewingPokemon,
         })
       },
       addPokemonToPokedex(pokemon: PokemonSpeciesPokedex) {
         dispatch({
-          type: PokemonViewActionTypes.AddPokemonToPokedex,
+          type: PokemonActionTypes.AddPokemonToPokedex,
           pokemon,
         })
       },
       removePokemonFromPokedex(id: number) {
         dispatch({
-          type: PokemonViewActionTypes.RemovePokemonFromPokedex,
+          type: PokemonActionTypes.RemovePokemonFromPokedex,
           id,
         })
       },

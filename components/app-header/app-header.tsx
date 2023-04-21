@@ -1,6 +1,6 @@
-import { animated, easings, useTransition } from "@react-spring/web"
+import { animated, useTransition } from "@react-spring/web"
 import PokemonLogo from "assets/img/pokemon-logo.png"
-import { Badge, Breadcrumb, ThemeSwitcher } from "components"
+import { AppBreadcrumb, Badge, ThemeSwitcher } from "components"
 import { usePokemonView } from "contexts"
 import {
   POKEDEX_LINK_ELEMENT_ID,
@@ -8,18 +8,15 @@ import {
 } from "lib"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/router"
 import { forwardRef } from "react"
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2"
 import { twJoin, twMerge } from "tailwind-merge"
 import { AppHeaderProps } from "./app-header.types"
 
-const BREADCRUMB_TRANSITION_DURATION = 150
-
 const actionButtonClassName =
-  "w-8 h-8 flex items-center justify-center rounded-full focus-highlight text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white"
+  "w-8 h-8 flex items-center justify-center rounded-full app-header-text"
 
-function ActionButtons() {
+function HeaderActionButtons() {
   const [{ pokedex }] = usePokemonView()
 
   const transition = useTransition(pokedex.length, {
@@ -48,7 +45,7 @@ function ActionButtons() {
       <Link
         id={POKEDEX_LINK_ELEMENT_ID}
         href="/pokedex"
-        className={twJoin(actionButtonClassName, "relative")}
+        className={twJoin(actionButtonClassName, "relative focus-highlight")}
       >
         {transition(
           (styles, count) =>
@@ -68,7 +65,9 @@ function ActionButtons() {
         )}
         <HiOutlineDevicePhoneMobile size={20} />
       </Link>
-      <ThemeSwitcher buttonClassName={actionButtonClassName} />
+      <ThemeSwitcher
+        buttonClassName={twJoin(actionButtonClassName, "focus-highlight")}
+      />
     </div>
   )
 }
@@ -77,29 +76,6 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   { className, ...other },
   ref
 ) {
-  const { pathname } = useRouter()
-  const [{ viewingPokemon }] = usePokemonView()
-
-  const shouldShowBreadCrumb =
-    pathname !== "/" && (pathname !== "/pokemon/[key]" || !!viewingPokemon)
-
-  const transition = useTransition(shouldShowBreadCrumb, {
-    config: {
-      easing: easings.linear,
-      duration: BREADCRUMB_TRANSITION_DURATION,
-    },
-    from: {
-      opacity: 0,
-    },
-    enter: {
-      opacity: 1,
-    },
-    leave: {
-      opacity: 0,
-    },
-    exitBeforeEnter: true,
-  })
-
   return (
     <header
       {...other}
@@ -110,29 +86,12 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
       ref={ref}
     >
       <div className="flex items-center">
-        <div>
+        <Link href="/" className="focus-highlight rounded">
           <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
-        </div>
-        {transition(
-          (styles, show) =>
-            show && (
-              <animated.div style={{ ...styles }}>
-                <Breadcrumb className="ml-4">
-                  <Breadcrumb.Item>
-                    <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
-                  </Breadcrumb.Item>
-                  <Breadcrumb.Item
-                    disabled
-                    className="font-semibold text-red-500 dark:text-red-400"
-                  >
-                    {viewingPokemon?.name ?? "Pokédex"}
-                  </Breadcrumb.Item>
-                </Breadcrumb>
-              </animated.div>
-            )
-        )}
+        </Link>
+        <AppBreadcrumb className="ml-4" />
       </div>
-      <ActionButtons />
+      <HeaderActionButtons />
     </header>
   )
 })

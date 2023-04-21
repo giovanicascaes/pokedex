@@ -16,12 +16,24 @@
   .dark {
     color-scheme: dark;
   }
+}
 
-  .focus-highlight {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
+@layer components {
+  .app-header-text {
+    @apply text-slate-500 dark:text-slate-300 hover:text-black dark:hover:text-white;
   }
+}
 
+@layer utilities {
   .focus-highlight-b {
     @apply focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 dark:focus-visible:border-red-400 focus-visible:border-opacity-50;
+  }
+
+  .focus-highlight-b-none {
+    @apply focus-visible:border-b-0;
+  }
+
+  .focus-highlight {
+    @apply focus-highlight-b-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
   }
 }

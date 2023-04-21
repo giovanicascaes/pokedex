@@ -36,7 +36,11 @@ export default function PokemonCaughtBadge({
       {transition(
         (transitionStyles, show) =>
           show && (
-            <animated.div {...other} style={{ ...style, ...transitionStyles }}>
+            <animated.div
+              {...other}
+              style={{ ...style, ...transitionStyles }}
+              onClick={(e) => e.preventDefault()}
+            >
               <Tooltip content="In Pokédex">
                 <div
                   className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus-highlight"

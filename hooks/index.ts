@@ -1,5 +1,6 @@
 export { default as useAppScroll } from "./use-app-scroll/use-app-scroll"
 export { default as useDocumentEvent } from "./use-document-event"
+export { default as useHistory } from "./use-history"
 export * from "./use-intersection-observer"
 export { default as useIsServerHydrationComplete } from "./use-is-server-hydration-complete"
 export * from "./use-iso-morphic-effect"

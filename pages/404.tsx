@@ -1,6 +1,6 @@
 import ConfusedPokemon from "assets/img/confused.png"
+import { Link } from "components"
 import Image from "next/image"
-import Link from "next/link"
 
 export default function Custom404() {
   return (
@@ -19,12 +19,7 @@ export default function Custom404() {
           className="rounded-full"
         />
       </div>
-      <Link
-        href="/"
-        className="text-red-600 dark:text-red-400 hover:text-slate-700 dark:hover:text-slate-200 text-sm font-medium focus-highlight-b"
-      >
-        Back to List
-      </Link>
+      <Link href="/">Back to List</Link>
     </div>
   )
 }

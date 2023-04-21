@@ -9,7 +9,10 @@ function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
   const childrenCount = childrenAsArray.length
 
   return (
-    <div {...other} className={twMerge("space-x-1", className)}>
+    <div
+      {...other}
+      className={twMerge("flex items-center space-x-1", className)}
+    >
       {childrenAsArray.map((child, i) => (
         <Fragment key={i}>
           {child}

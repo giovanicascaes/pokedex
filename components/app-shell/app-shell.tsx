@@ -7,16 +7,17 @@ import {
 } from "@react-spring/web"
 import { AppHeader, PageLoadingIndicator } from "components"
 import {
+  PageBreadcrumbItemProps,
   PagesContextActions,
   PagesContextData,
   PagesProvider,
-  PokemonViewProvider,
+  PokemonProvider,
   useThemeMode,
 } from "contexts"
-import { useAppScroll, useIsoMorphicEffect } from "hooks"
+import { useAppScroll, useHistory, useIsoMorphicEffect } from "hooks"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { AppShellProps } from "./app-shell.types"
 
@@ -27,15 +28,16 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 export default function AppShell({ children }: AppShellProps) {
   const [isTransitionRunning, setIsTransitionRunning] = useState(false)
   const [loadingPage, setLoadingPage] = useState<string | null>(null)
+  const [breadcrumb, setBreadcrumb] = useState<PageBreadcrumbItemProps[]>([])
   const [{ transitionClassName }] = useThemeMode()
   const { pathname: currentPath } = useRouter()
-
   const {
     onScroll,
     ref: scrollRef,
     isScrollReady,
     isScrollDirty,
   } = useAppScroll(loadingPage, isTransitionRunning)
+  const history = useHistory()
 
   useIsoMorphicEffect(() => {
     setLoadingPage(currentPath)
@@ -44,10 +46,24 @@ export default function AppShell({ children }: AppShellProps) {
   const data: PagesContextData = {
     loadingPage,
     isScrollDirty,
+    breadcrumb,
+    history,
   }
+
+  const setUpBreadcrumb = useCallback(
+    (breadcrumb: PageBreadcrumbItemProps[]) => {
+      setBreadcrumb(breadcrumb)
+
+      return () => {
+        setBreadcrumb([])
+      }
+    },
+    []
+  )
 
   const actions: PagesContextActions = {
     setLoadingPage,
+    setUpBreadcrumb,
   }
 
   const transitionRef = useSpringRef()
@@ -103,19 +119,21 @@ export default function AppShell({ children }: AppShellProps) {
       ref={scrollRef}
     >
       <PageLoadingIndicator />
-      <PokemonViewProvider>
-        <AppHeader className="sticky top-0 z-10 flex-shrink-0" />
-        {transition((transitionStyle, page) => (
-          <animated.div
-            className="flex-1"
-            style={{
-              ...transitionStyle,
-            }}
-          >
-            <PagesProvider value={[data, actions]}>{page}</PagesProvider>
-          </animated.div>
-        ))}
-      </PokemonViewProvider>
+      <PagesProvider value={[data, actions]}>
+        <PokemonProvider>
+          <AppHeader className="sticky top-0 z-10 flex-shrink-0" />
+          {transition((transitionStyle, page) => (
+            <animated.div
+              className="flex-1"
+              style={{
+                ...transitionStyle,
+              }}
+            >
+              {page}
+            </animated.div>
+          ))}
+        </PokemonProvider>
+      </PagesProvider>
     </main>
   )
 }
