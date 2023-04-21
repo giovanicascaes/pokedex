@@ -156,6 +156,7 @@ export default function PokemonListSimpleView({
               key={id}
               className="absolute w-full"
               style={{
+                opacity: 0,
                 ...listStyles,
                 ...getStyles(id),
               }}

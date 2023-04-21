@@ -126,7 +126,6 @@ export default function PokemonListGridView({
       y,
     }),
     update: ({ x, y }) => ({ x, y }),
-    leave: { scale: 0, opacity: 0 },
     config: {
       mass: 5,
       tension: 500,
@@ -176,6 +175,7 @@ export default function PokemonListGridView({
                 key={id}
                 className="absolute"
                 style={{
+                  opacity: 0,
                   ...gridStyles,
                   ...getStyles(id),
                 }}

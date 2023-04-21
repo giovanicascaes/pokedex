@@ -96,7 +96,7 @@ export default function AppShell({ children }: AppShellProps) {
       id={SHELL_LAYOUT_CONTAINER_ELEMENT_ID}
       className={twMerge(
         inter.variable,
-        "font-sans h-full overflow-auto",
+        "font-sans bg-slate-50 dark:bg-slate-800 flex flex-col h-full overflow-auto",
         transitionClassName
       )}
       onScroll={onScroll}
@@ -104,10 +104,10 @@ export default function AppShell({ children }: AppShellProps) {
     >
       <PageLoadingIndicator />
       <PokemonViewProvider>
-        <AppHeader className="sticky top-0 z-40" />
+        <AppHeader className="sticky top-0 z-10 flex-shrink-0" />
         {transition((transitionStyle, page) => (
           <animated.div
-            className="bg-slate-50 dark:bg-slate-800 min-h-screen"
+            className="flex-1"
             style={{
               ...transitionStyle,
             }}
