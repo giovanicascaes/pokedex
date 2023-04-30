@@ -9,20 +9,20 @@ export interface PokemonListProps
   > {
   pokemons: PokemonSpeciesPokedex[]
   preloadPokemons?: PokemonSpeciesPokedex[]
-  skipInitialAnimation?: boolean
+  skipFirstPokemonsAnimation?: boolean
   onAddToPokedex?: (pokemon: PokemonSpeciesPokedex) => void
   onRemoveFromPokedex: (id: number) => void
-  onReady?: () => void
+  onLoad?: () => void
 }
 
 export type PokemonListViewProps = Pick<
   PokemonListProps,
   | "pokemons"
   | "preloadPokemons"
-  | "skipInitialAnimation"
+  | "skipFirstPokemonsAnimation"
   | "onAddToPokedex"
   | "onRemoveFromPokedex"
-  | "onReady"
+  | "onLoad"
 >
 
 interface PokemonListItemAnimationValuesLookup<T = any> {
@@ -45,10 +45,10 @@ export interface UsePokemonListViewArgs
   extends Pick<
     PokemonListProps,
     | "pokemons"
-    | "skipInitialAnimation"
+    | "skipFirstPokemonsAnimation"
     | "onAddToPokedex"
     | "onRemoveFromPokedex"
-    | "onReady"
+    | "onLoad"
   > {
   animationProperties: PokemonListItemAnimationProperties
 }
@@ -59,12 +59,12 @@ export interface PokemonListItemAnimationRunToken {
 
 export type PokemonListContextData = Pick<
   PokemonListProps,
-  "pokemons" | "preloadPokemons" | "skipInitialAnimation"
+  "pokemons" | "preloadPokemons" | "skipFirstPokemonsAnimation"
 >
 
 export type PokemonListContextActions = Pick<
   PokemonListProps,
-  "onAddToPokedex" | "onRemoveFromPokedex" | "onReady"
+  "onAddToPokedex" | "onRemoveFromPokedex" | "onLoad"
 >
 
 export type PokemonListContextValue = [

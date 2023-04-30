@@ -33,7 +33,7 @@ export default function PokemonNavigationButton({
       {...other}
       href={`/pokemon/${resourceName}`}
       className={twMerge(
-        "flex items-center w-96 rounded-xl p-5 space-x-2 border hover:border-transparent dark:hover:border-transparent border-slate-300/30 dark:border-slate-500/20 hover:bg-slate-300/30 active:bg-slate-300/50 dark:hover:bg-slate-500/20 dark:active:bg-slate-500/[0.35] group transition-colors focus-highlight",
+        "flex items-center w-96 rounded-xl p-5 space-x-2 border hover:border-transparent dark:hover:border-transparent border-slate-300/30 dark:border-slate-500/20 hover:bg-slate-300/30 active:bg-slate-300/50 dark:hover:bg-slate-500/20 dark:active:bg-slate-500/[0.35] group transition-colors focus-default",
         backwards ? "pl-9" : "pr-9 justify-end",
         className
       )}

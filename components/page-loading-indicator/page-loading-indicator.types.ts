@@ -6,7 +6,7 @@ export type PageLoadingIndicatorProps = WithNonLegacyRef<
   HTMLDivElement
 >
 
-export type PageLoadingBarsProps = DetailedHTMLProps<
+export type PageLoadingIndicatorProgressBarProps = DetailedHTMLProps<
   HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
 >

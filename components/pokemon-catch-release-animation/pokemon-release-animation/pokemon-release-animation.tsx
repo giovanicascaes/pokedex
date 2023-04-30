@@ -3,7 +3,7 @@ import Pokeball from "assets/img/pokeball.png"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import Image from "next/image"
 import { useState } from "react"
-import ReactDOM from "react-dom"
+import { createPortal } from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
 import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
 import { PokemonReleaseAnimationPhase } from "./pokemon-release-animation.types"
@@ -25,7 +25,7 @@ export default function PokemonReleaseAnimation({
       onAnimationFinish
     )
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <animated.div
       {...other}
       style={{ ...style, backgroundColor }}

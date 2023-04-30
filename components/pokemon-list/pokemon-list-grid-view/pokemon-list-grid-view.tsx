@@ -50,10 +50,10 @@ const CARD_ANIMATION_PROPERTIES = {
 export default function PokemonListGridView({
   pokemons,
   preloadPokemons,
-  skipInitialAnimation = false,
+  skipFirstPokemonsAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
-  onReady,
+  onLoad,
   columns,
   ...other
 }: PokemonListGridViewProps) {
@@ -66,8 +66,8 @@ export default function PokemonListGridView({
       onAddToPokedex,
       onRemoveFromPokedex,
       pokemons,
-      onReady,
-      skipInitialAnimation,
+      onLoad,
+      skipFirstPokemonsAnimation,
       animationProperties: CARD_ANIMATION_PROPERTIES,
     })
 

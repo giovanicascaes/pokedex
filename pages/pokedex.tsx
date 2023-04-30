@@ -1,28 +1,31 @@
 import { PokemonList } from "components"
-import { usePages, usePokemonView } from "contexts"
+import { usePage, usePokemon, useScrollControl } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
-import { useCallback } from "react"
+import { useEffect } from "react"
 
 export default function Pokedex() {
-  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemonView()
-  const [{ isScrollDirty }, { setLoadingPage, setUpBreadcrumb }] = usePages()
-
-  const onViewReady = useCallback(() => {
-    setLoadingPage(null)
-  }, [setLoadingPage])
+  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
+  const [, { setUpBreadcrumb }] = usePage()
+  const [{ isScrollVisited }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
   }, [setUpBreadcrumb])
+
+  useEffect(() => {
+    if (!pokedex.length) {
+      onPageLoadComplete()
+    }
+  }, [onPageLoadComplete, pokedex.length])
 
   if (pokedex.length) {
     return (
       <div className="px-14 pt-4 h-full pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipInitialAnimation={isScrollDirty}
+          skipFirstPokemonsAnimation={isScrollVisited}
           onRemoveFromPokedex={removePokemonFromPokedex}
-          onReady={onViewReady}
+          onLoad={onPageLoadComplete}
           className="mx-auto"
         />
       </div>
@@ -37,6 +40,8 @@ export default function Pokedex() {
     </div>
   )
 }
+
+Pokedex.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
 
 export async function getServerSideProps() {
   return {

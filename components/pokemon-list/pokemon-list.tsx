@@ -15,6 +15,8 @@ import {
 
 const CONTAINER_TRANSITION_DURATION = 300
 
+const LIST_VIEW_TRANSITION_DURATION = 150
+
 const { sm, md, lg } = theme!.screens as { [k: string]: string }
 
 const xsQuery = `(min-width: 0px)`
@@ -25,10 +27,10 @@ const lgQuery = `(min-width: ${lg})`
 export default function PokemonList({
   pokemons,
   preloadPokemons = [],
-  skipInitialAnimation = false,
+  skipFirstPokemonsAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
-  onReady,
+  onLoad,
   className,
   ...otherProps
 }: PokemonListProps) {
@@ -50,22 +52,22 @@ export default function PokemonList({
   const data: PokemonListContextData = {
     pokemons,
     preloadPokemons,
-    skipInitialAnimation,
+    skipFirstPokemonsAnimation,
   }
 
   const actions: PokemonListContextActions = {
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady,
+    onLoad,
   }
 
   const commonListViewProps = {
     pokemons,
     preloadPokemons,
-    skipInitialAnimation,
+    skipFirstPokemonsAnimation,
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady,
+    onLoad,
   }
 
   return (
@@ -74,7 +76,10 @@ export default function PokemonList({
       className={twMerge("flex flex-col", className)}
       style={{ ...containerStyles }}
     >
-      <FadeOnChange watch={columns === 1}>
+      <FadeOnChange
+        watch={columns === 1}
+        transitionDuration={LIST_VIEW_TRANSITION_DURATION}
+      >
         {(isList) => (
           <PokemonListProvider value={[data, actions]}>
             {isList ? (

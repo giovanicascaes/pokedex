@@ -1,24 +1,24 @@
 import { animated, easings, useTransition } from "@react-spring/web"
 import { Breadcrumb } from "components"
-import { usePages } from "contexts"
+import { usePage } from "contexts"
 import { useMemo } from "react"
 import { AppBreadcrumbProps } from "./app-breadcrumb.types"
 
 const BREADCRUMB_TRANSITION_DURATION = 150
 
 export default function AppBreadcrumb(props: AppBreadcrumbProps) {
-  const [{ breadcrumb }] = usePages()
-  const breadcrumbId = breadcrumb.map(({ label }) => label).join(" / ")
+  const [{ breadcrumb }] = usePage()
+  const breadcrumbId = useMemo(
+    () => breadcrumb.map(({ label }) => label).join(" / "),
+    [breadcrumb]
+  )
 
   const breadcrumbData = useMemo(
     () => ({
       breadcrumbId,
       breadcrumb,
     }),
-    // Required to smooth transitions between breadcrumbs and correctly render "/"s
-    // between items
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [breadcrumbId]
+    [breadcrumb, breadcrumbId]
   )
 
   const transition = useTransition(breadcrumbData, {

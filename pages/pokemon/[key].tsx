@@ -1,6 +1,6 @@
 import { FadeOnChange, PokemonDetails } from "components"
-import { usePages, usePokemonView } from "contexts"
-import { useIsoMorphicEffect } from "hooks"
+import { usePage, usePokemon } from "contexts"
+import { useIsoMorphicEffect, useLastList } from "hooks"
 import { getPokemon } from "lib"
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import Head from "next/head"
@@ -9,8 +9,9 @@ import { useEffect } from "react"
 type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function Pokemon({ pokemon }: PokemonProps) {
-  const [, { setViewingPokemon, clearViewingPokemon }] = usePokemonView()
-  const [{ history }, { setUpBreadcrumb }] = usePages()
+  const [, { setViewingPokemon, clearViewingPokemon }] = usePokemon()
+  const [, { setUpBreadcrumb }] = usePage()
+  const lastList = useLastList()
 
   useEffect(() => {
     setViewingPokemon(pokemon)
@@ -21,14 +22,13 @@ export default function Pokemon({ pokemon }: PokemonProps) {
   }, [clearViewingPokemon, pokemon, setViewingPokemon])
 
   useIsoMorphicEffect(() => {
-    const origin = history.find((path) => path === "/" || path === "/pokedex")
     const previousPath =
-      !origin || origin === "/"
+      !lastList || lastList === "/"
         ? { label: "Pokémon", href: "/" }
         : { label: "Pokedéx", href: "/pokedex" }
 
     return setUpBreadcrumb([previousPath, { label: pokemon.name }])
-  }, [history, pokemon.name, setUpBreadcrumb])
+  }, [lastList, pokemon.name, setUpBreadcrumb])
 
   return (
     <>
@@ -45,6 +45,8 @@ export default function Pokemon({ pokemon }: PokemonProps) {
     </>
   )
 }
+
+Pokemon.enableScrollControl = false
 
 export async function getServerSideProps({
   params,

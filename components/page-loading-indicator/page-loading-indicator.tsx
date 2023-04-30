@@ -1,13 +1,16 @@
 import { animated, useTransition } from "@react-spring/web"
-import { Router } from "next/router"
-import { useEffect, useState } from "react"
+import { useRouterEvent } from "hooks"
+import { useState } from "react"
 import { twJoin, twMerge } from "tailwind-merge"
 import {
-  PageLoadingBarsProps,
+  PageLoadingIndicatorProgressBarProps,
   PageLoadingIndicatorProps,
 } from "./page-loading-indicator.types"
 
-function LoadingBar({ className, ...other }: PageLoadingBarsProps) {
+function ProgressBar({
+  className,
+  ...other
+}: PageLoadingIndicatorProgressBarProps) {
   return (
     <div
       {...other}
@@ -27,24 +30,16 @@ export default function PageLoadingIndicator({
 }: PageLoadingIndicatorProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const start = () => {
-      setIsLoading(true)
-    }
-    const end = () => {
-      setIsLoading(false)
-    }
+  const start = () => {
+    setIsLoading(true)
+  }
+  const end = () => {
+    setIsLoading(false)
+  }
 
-    Router.events.on("routeChangeStart", start)
-    Router.events.on("routeChangeComplete", end)
-    Router.events.on("routeChangeError", end)
-
-    return () => {
-      Router.events.off("routeChangeStart", start)
-      Router.events.off("routeChangeComplete", end)
-      Router.events.off("routeChangeError", end)
-    }
-  }, [])
+  useRouterEvent("routeChangeStart", start)
+  useRouterEvent("routeChangeComplete", end)
+  useRouterEvent("routeChangeError", end)
 
   const transitions = useTransition(isLoading, {
     key: isLoading,
@@ -71,8 +66,8 @@ export default function PageLoadingIndicator({
           )}
           style={{ ...styles }}
         >
-          <LoadingBar className="animate-progress-bar-left" />
-          <LoadingBar className="animate-progress-bar-right" />
+          <ProgressBar className="animate-progress-bar-left" />
+          <ProgressBar className="animate-progress-bar-right" />
         </animated.div>
       )
   )

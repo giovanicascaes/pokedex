@@ -43,7 +43,7 @@ export default function PokemonCaughtBadge({
             >
               <Tooltip content="In Pokédex">
                 <div
-                  className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus-highlight"
+                  className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus-default"
                   tabIndex={0}
                 >
                   <MdCatchingPokemon

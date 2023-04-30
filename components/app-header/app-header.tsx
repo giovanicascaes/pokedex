@@ -1,7 +1,7 @@
 import { animated, useTransition } from "@react-spring/web"
 import PokemonLogo from "assets/img/pokemon-logo.png"
 import { AppBreadcrumb, Badge, ThemeSwitcher } from "components"
-import { usePokemonView } from "contexts"
+import { usePokemon } from "contexts"
 import {
   POKEDEX_LINK_ELEMENT_ID,
   POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
@@ -17,7 +17,7 @@ const actionButtonClassName =
   "w-8 h-8 flex items-center justify-center rounded-full app-header-text"
 
 function HeaderActionButtons() {
-  const [{ pokedex }] = usePokemonView()
+  const [{ pokedex }] = usePokemon()
 
   const transition = useTransition(pokedex.length, {
     config: {
@@ -45,7 +45,7 @@ function HeaderActionButtons() {
       <Link
         id={POKEDEX_LINK_ELEMENT_ID}
         href="/pokedex"
-        className={twJoin(actionButtonClassName, "relative focus-highlight")}
+        className={twJoin(actionButtonClassName, "relative focus-default")}
       >
         {transition(
           (styles, count) =>
@@ -66,7 +66,7 @@ function HeaderActionButtons() {
         <HiOutlineDevicePhoneMobile size={20} />
       </Link>
       <ThemeSwitcher
-        buttonClassName={twJoin(actionButtonClassName, "focus-highlight")}
+        buttonClassName={twJoin(actionButtonClassName, "focus-default")}
       />
     </div>
   )
@@ -77,21 +77,16 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   ref
 ) {
   return (
-    <header
-      {...other}
-      className={twMerge(
-        "relative w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-lg border-b border-slate-600/10 dark:border-slate-300/10 px-6 h-[70px] flex items-center justify-between",
-        className
-      )}
-      ref={ref}
-    >
-      <div className="flex items-center">
-        <Link href="/" className="focus-highlight rounded">
-          <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
-        </Link>
-        <AppBreadcrumb className="ml-4" />
+    <header {...other} className={twMerge("p-2", className)} ref={ref}>
+      <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
+        <div className="flex items-center">
+          <Link href="/" className="focus-default rounded">
+            <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
+          </Link>
+          <AppBreadcrumb className="ml-4" />
+        </div>
+        <HeaderActionButtons />
       </div>
-      <HeaderActionButtons />
     </header>
   )
 })

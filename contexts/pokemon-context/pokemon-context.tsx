@@ -11,7 +11,7 @@ import {
   PokemonProviderProps,
   PokemonState,
   PokemonActions,
-} from "./pokemon-view-context.types"
+} from "./pokemon-context.types"
 
 export const POKEMONS_PER_PAGE = 12
 
@@ -25,13 +25,11 @@ const addPokedexState = (
   }))
 
 const [Provider, useContext] = createContext<PokemonContextValue>({
-  hookName: "usePokemonView",
+  hookName: "usePokemon",
   providerName: "PokemonProvider",
 })
 
-export function usePokemonView(
-  serverLoadedPokemons: PokemonSpeciesSimple[] = []
-) {
+export function usePokemon(serverLoadedPokemons: PokemonSpeciesSimple[] = []) {
   const [data, actions] = useContext()
 
   return useMemo<PokemonContextValue>(
