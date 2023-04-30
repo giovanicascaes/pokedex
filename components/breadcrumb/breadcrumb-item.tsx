@@ -6,7 +6,7 @@ export default function BreadcrumbItem({
   ...other
 }: BreadcrumbItemProps) {
   return (
-    <span
+    <ol
       {...other}
       className={twMerge(
         "font-medium text-sm px-2.5 py-1 transition-colors",

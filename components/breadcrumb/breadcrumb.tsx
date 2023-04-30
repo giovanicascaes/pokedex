@@ -9,7 +9,7 @@ function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
   const childrenCount = childrenAsArray.length
 
   return (
-    <div
+    <nav
       {...other}
       className={twMerge("flex items-center space-x-1", className)}
     >
@@ -23,7 +23,7 @@ function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
           )}
         </Fragment>
       ))}
-    </div>
+    </nav>
   )
 }
 

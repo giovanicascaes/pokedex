@@ -1,21 +1,14 @@
-import { Router, useRouter } from "next/router"
-import { useEffect, useRef } from "react"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import useRouterEvent from "./use-router-event"
 
 export default function useHistory() {
   const { pathname } = useRouter()
-  const history = useRef<string[]>([])
+  const [history, setHistory] = useState<string[]>([])
 
-  useEffect(() => {
-    const change = () => {
-      history.current.unshift(pathname)
-    }
+  useRouterEvent("beforeHistoryChange", () => {
+    setHistory((current) => [...current, pathname])
+  })
 
-    Router.events.on("beforeHistoryChange", change)
-
-    return () => {
-      Router.events.off("beforeHistoryChange", change)
-    }
-  }, [pathname])
-
-  return history.current
+  return history
 }

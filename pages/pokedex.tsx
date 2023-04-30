@@ -1,19 +1,27 @@
 import { PokemonList } from "components"
-import { usePages, usePokemonView } from "contexts"
+import AppShellControlledScroll from "components/app-shell-controlled-scroll/app-shell-controlled-scroll"
+import { usePage, usePokemon, useScrollControl } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
-import { useCallback } from "react"
+import { ReactNode, useEffect } from "react"
 
 export default function Pokedex() {
-  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemonView()
-  const [{ isScrollDirty }, { setLoadingPage, setUpBreadcrumb }] = usePages()
-
-  const onViewReady = useCallback(() => {
-    setLoadingPage(null)
-  }, [setLoadingPage])
+  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
+  const [{ history }, { setUpBreadcrumb }] = usePage()
+  const [{ isScrollDirty }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
   }, [setUpBreadcrumb])
+
+  useEffect(() => {
+    console.log("history:", history)
+  }, [history])
+
+  useEffect(() => {
+    if (!pokedex.length) {
+      onPageLoadComplete()
+    }
+  }, [onPageLoadComplete, pokedex.length])
 
   if (pokedex.length) {
     return (
@@ -22,7 +30,7 @@ export default function Pokedex() {
           pokemons={pokedex}
           skipInitialAnimation={isScrollDirty}
           onRemoveFromPokedex={removePokemonFromPokedex}
-          onReady={onViewReady}
+          onLoad={onPageLoadComplete}
           className="mx-auto"
         />
       </div>
@@ -36,6 +44,10 @@ export default function Pokedex() {
       </span>
     </div>
   )
+}
+
+Pokedex.getLayout = function getLayout(page: ReactNode) {
+  return <AppShellControlledScroll>{page}</AppShellControlledScroll>
 }
 
 export async function getServerSideProps() {

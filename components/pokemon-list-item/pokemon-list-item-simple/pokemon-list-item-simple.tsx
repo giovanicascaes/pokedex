@@ -34,7 +34,7 @@ export default forwardRef<HTMLAnchorElement, PokemonListItemSimpleProps>(
       <Link
         {...otherProps}
         className={twMerge(
-          "group/list-item shadow dark:shadow-md relative rounded-2xl flex p-2 space-x-4 bg-white hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-900 cursor-pointer transition-all focus-highlight",
+          "group/list-item shadow dark:shadow-md relative rounded-2xl flex p-2 space-x-4 bg-white hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-900 cursor-pointer transition-all focus-default",
           className
         )}
         href={`/pokemon/${resourceName}`}
@@ -69,7 +69,7 @@ export default forwardRef<HTMLAnchorElement, PokemonListItemSimpleProps>(
               e.preventDefault()
               handleCatchReleaseStart()
             }}
-            className="z-10 flex items-center space-x-1 absolute top-1/2 -translate-y-1/2 right-4 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/list-item:opacity-100 group-hover/list-item:visible transition-all text-xs font-semibold bg-slate-300 hover:bg-red-500/90 active:bg-red-600/90 text-black dark:bg-slate-700/60 dark:hover:bg-red-400 dark:hover:active:bg-red-500 dark:text-white hover:text-white focus-highlight group/catch-button"
+            className="z-10 flex items-center space-x-1 absolute top-1/2 -translate-y-1/2 right-4 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/list-item:opacity-100 group-hover/list-item:visible transition-all text-xs font-semibold bg-slate-300 hover:bg-red-500/90 active:bg-red-600/90 text-black dark:bg-slate-700/60 dark:hover:bg-red-400 dark:hover:active:bg-red-500 dark:text-white hover:text-white focus-default group/catch-button"
           >
             <MdCatchingPokemon size={22} />
             <span>{isOnPokedex ? "Release" : "Catch"}</span>

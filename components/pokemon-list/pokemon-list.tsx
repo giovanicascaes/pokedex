@@ -28,7 +28,7 @@ export default function PokemonList({
   skipInitialAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
-  onReady,
+  onLoad,
   className,
   ...otherProps
 }: PokemonListProps) {
@@ -56,7 +56,7 @@ export default function PokemonList({
   const actions: PokemonListContextActions = {
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady,
+    onLoad,
   }
 
   const commonListViewProps = {
@@ -65,7 +65,7 @@ export default function PokemonList({
     skipInitialAnimation,
     onAddToPokedex,
     onRemoveFromPokedex,
-    onReady,
+    onLoad,
   }
 
   return (

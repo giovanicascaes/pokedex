@@ -1,15 +1,12 @@
 import { useIsServerHydrationComplete } from "hooks"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { UseMediaOptions } from "./use-media.types"
 
 export default function useMedia(
   query: string | string[],
   { fallback = [] }: UseMediaOptions = {}
 ): boolean[] {
-  const queries = useMemo(
-    () => (Array.isArray(query) ? query : [query]),
-    [query]
-  )
+  const queries = Array.isArray(query) ? query : [query]
   const isReady = useIsServerHydrationComplete()
 
   const [value, setValue] = useState(() => {
@@ -52,6 +49,8 @@ export default function useMedia(
         mediaQuery.removeEventListener("change", handler)
       })
     }
+
+    // No need to watch for `query` changes, as it is not likely to change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

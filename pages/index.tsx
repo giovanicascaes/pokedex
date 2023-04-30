@@ -1,20 +1,22 @@
 import { PokemonList } from "components"
-import { POKEMONS_PER_PAGE, usePages, usePokemonView } from "contexts"
+import AppShellControlledScroll from "components/app-shell-controlled-scroll/app-shell-controlled-scroll"
+import { POKEMONS_PER_PAGE, usePokemon, useScrollControl } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { InferGetStaticPropsType } from "next"
 import Head from "next/head"
-import { useCallback, useEffect } from "react"
+import { ReactNode, useCallback, useEffect, useState } from "react"
 import { env } from "utils"
 
 type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export default function Home({ serverLoadedPokemons }: HomeProps) {
+  const [isListLoaded, setIsListLoaded] = useState(false)
   const [
     { visiblePokemons, preloadPokemons, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
-  ] = usePokemonView(serverLoadedPokemons)
-  const [{ loadingPage, isScrollDirty }, { setLoadingPage }] = usePages()
+  ] = usePokemon(serverLoadedPokemons)
+  const [{ isScrollDirty }, { onPageLoadComplete }] = useScrollControl()
 
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
@@ -23,9 +25,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
     rootMargin: "50%",
   })
 
-  const onViewReady = useCallback(() => {
-    setLoadingPage(null)
-  }, [setLoadingPage])
+  const onListLoad = useCallback(() => {
+    setIsListLoaded(true)
+    onPageLoadComplete()
+  }, [onPageLoadComplete])
 
   useEffect(() => {
     if (isIntersecting && !hasFetchedAll) loadMore()
@@ -45,10 +48,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
           skipInitialAnimation={isScrollDirty}
           onAddToPokedex={addPokemonToPokedex}
           onRemoveFromPokedex={removePokemonFromPokedex}
-          onReady={onViewReady}
+          onLoad={onListLoad}
           className="mx-auto"
         />
-        {!loadingPage && (
+        {isListLoaded && (
           <div
             className="w-full text-center font-light text-slate-400"
             ref={intersectionObserverRef}
@@ -59,6 +62,10 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
       </div>
     </>
   )
+}
+
+Home.getLayout = function getLayout(page: ReactNode) {
+  return <AppShellControlledScroll>{page}</AppShellControlledScroll>
 }
 
 export async function getStaticProps() {

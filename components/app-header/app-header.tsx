@@ -1,7 +1,7 @@
 import { animated, useTransition } from "@react-spring/web"
 import PokemonLogo from "assets/img/pokemon-logo.png"
 import { AppBreadcrumb, Badge, ThemeSwitcher } from "components"
-import { usePokemonView } from "contexts"
+import { usePokemon } from "contexts"
 import {
   POKEDEX_LINK_ELEMENT_ID,
   POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
@@ -17,7 +17,7 @@ const actionButtonClassName =
   "w-8 h-8 flex items-center justify-center rounded-full app-header-text"
 
 function HeaderActionButtons() {
-  const [{ pokedex }] = usePokemonView()
+  const [{ pokedex }] = usePokemon()
 
   const transition = useTransition(pokedex.length, {
     config: {
@@ -45,7 +45,7 @@ function HeaderActionButtons() {
       <Link
         id={POKEDEX_LINK_ELEMENT_ID}
         href="/pokedex"
-        className={twJoin(actionButtonClassName, "relative focus-highlight")}
+        className={twJoin(actionButtonClassName, "relative focus-default")}
       >
         {transition(
           (styles, count) =>
@@ -66,7 +66,7 @@ function HeaderActionButtons() {
         <HiOutlineDevicePhoneMobile size={20} />
       </Link>
       <ThemeSwitcher
-        buttonClassName={twJoin(actionButtonClassName, "focus-highlight")}
+        buttonClassName={twJoin(actionButtonClassName, "focus-default")}
       />
     </div>
   )
@@ -86,7 +86,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
       ref={ref}
     >
       <div className="flex items-center">
-        <Link href="/" className="focus-highlight rounded">
+        <Link href="/" className="focus-default rounded">
           <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
         </Link>
         <AppBreadcrumb className="ml-4" />

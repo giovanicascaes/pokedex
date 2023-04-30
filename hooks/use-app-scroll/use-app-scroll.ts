@@ -1,71 +1,59 @@
 import { useIsoMorphicEffect, usePrevious, useScrollTop } from "hooks"
 import { useRouter } from "next/router"
 import { UIEvent, useCallback, useEffect, useState } from "react"
-import useAppScrollPath from "./use-app-scroll-path"
+import usePreviousScroll from "./use-previous-scroll"
 
 export default function useAppScroll(
-  loadingPage: string | null,
-  disableScrollRestore: boolean = false
+  isEnabled: boolean,
+  isContentLoaded: boolean,
+  isPageTransitionRunning: boolean
 ) {
   const { pathname: currentPath } = useRouter()
   const prevPath = usePrevious(currentPath)
-  const [scrollContainer, scrollContainerRef] = useState<Element | null>(null)
-  const [isScrollReady, setIsScrollReady] = useState(true)
+  const [scrollContainer, scrollContainerRef] = useState<HTMLElement | null>(
+    null
+  )
+  const [isScrollSettled, setIsScrollSettled] = useState(true)
   const [isScrollTrackEnabled, setIsScrollTrackEnabled] = useState(true)
-  const [scrollTop, setScrollTop] = useAppScrollPath()
   const [currentScrollTop, { onScroll }] = useScrollTop(!isScrollTrackEnabled)
+  const previousScrollTop = usePreviousScroll(currentScrollTop)
 
-  const isScrollDirty = scrollTop > 0
+  const isScrollDirty = previousScrollTop > 0
 
   const handleOnScroll = useCallback(
     (event: UIEvent) => {
       const { scrollTop: nextScrollTop } = event.currentTarget
 
-      requestAnimationFrame(() => {
-        if (!isScrollReady && nextScrollTop === scrollTop) {
-          setIsScrollReady(true)
-        }
-      })
+      if (!isScrollSettled && nextScrollTop === previousScrollTop) {
+        setIsScrollSettled(true)
+      }
 
       onScroll(event)
     },
-    [onScroll, isScrollReady, scrollTop]
+    [onScroll, isScrollSettled, previousScrollTop]
   )
 
   useEffect(() => {
-    if (isScrollReady && isScrollTrackEnabled && prevPath === currentPath) {
-      setScrollTop(currentScrollTop)
-    }
-  }, [
-    currentPath,
-    currentScrollTop,
-    isScrollReady,
-    isScrollTrackEnabled,
-    prevPath,
-    setScrollTop,
-  ])
-
-  useEffect(() => {
-    if (prevPath && prevPath !== currentPath) {
+    if (prevPath) {
       setIsScrollTrackEnabled(false)
-      setIsScrollReady(false)
+      setIsScrollSettled(false)
     }
   }, [currentPath, prevPath])
 
   useIsoMorphicEffect(() => {
-    if (disableScrollRestore || isScrollReady) {
+    if (isPageTransitionRunning || isScrollSettled) {
       return
     }
 
-    if (currentPath === "/") {
-      if (loadingPage) return
+    if (currentPath === "/" || currentPath === "/pokedex") {
+      if (!isContentLoaded) return
 
-      scrollContainer!.scrollTo({
-        top: scrollTop,
-      })
-
-      if (scrollTop === currentScrollTop) {
-        setIsScrollReady(true)
+      if (previousScrollTop === scrollContainer!.scrollTop) {
+        setIsScrollSettled(true)
+      } else {
+        scrollContainer!.scrollTo({
+          top: previousScrollTop,
+        })
       }
 
       setIsScrollTrackEnabled(true)
@@ -73,23 +61,23 @@ export default function useAppScroll(
       scrollContainer!.scrollTo({
         top: 0,
       })
-      setIsScrollReady(true)
+      setIsScrollSettled(true)
     }
   }, [
     currentPath,
     currentScrollTop,
-    disableScrollRestore,
-    isScrollReady,
+    isPageTransitionRunning,
+    isScrollSettled,
     isScrollTrackEnabled,
-    loadingPage,
+    isContentLoaded,
     scrollContainer,
-    scrollTop,
+    previousScrollTop,
   ])
 
   return {
     ref: scrollContainerRef,
     onScroll: handleOnScroll,
-    isScrollReady,
+    isScrollSettled,
     isScrollDirty,
   }
 }

@@ -50,7 +50,7 @@ export default function PokemonListSimpleView({
   skipInitialAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
-  onReady,
+  onLoad,
   className,
   style,
   ...other
@@ -62,7 +62,7 @@ export default function PokemonListSimpleView({
       onAddToPokedex,
       onRemoveFromPokedex,
       pokemons,
-      onReady,
+      onLoad,
       skipInitialAnimation,
       animationProperties: ITEM_ANIMATION_PROPERTIES,
     })

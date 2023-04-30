@@ -8,8 +8,8 @@ import useChildrenRect from "./use-children-rect"
 function ClientSideComponent({
   state = "idle",
   onAnimationFinish: onFinishAnimation,
-  className,
   children,
+  className,
   ...other
 }: PokemonCatchReleaseAnimationProps) {
   const animate = state !== "idle"

@@ -126,7 +126,7 @@ export default function PokemonStatsMeter({
       <Tooltip content={value}>
         <div
           className={twMerge(
-            "flex flex-col w-full h-full space-y-1.5 rounded focus-highlight",
+            "flex flex-col w-full h-full space-y-1.5 rounded focus-default",
             barContainerClassName
           )}
           tabIndex={0}

@@ -53,7 +53,7 @@ export default function PokemonListGridView({
   skipInitialAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
-  onReady,
+  onLoad,
   columns,
   ...other
 }: PokemonListGridViewProps) {
@@ -66,7 +66,7 @@ export default function PokemonListGridView({
       onAddToPokedex,
       onRemoveFromPokedex,
       pokemons,
-      onReady,
+      onLoad,
       skipInitialAnimation,
       animationProperties: CARD_ANIMATION_PROPERTIES,
     })

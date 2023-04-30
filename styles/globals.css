@@ -25,15 +25,19 @@
 }
 
 @layer utilities {
-  .focus-highlight-b {
+  .focus-default-b {
     @apply focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 dark:focus-visible:border-red-400 focus-visible:border-opacity-50;
   }
 
-  .focus-highlight-b-none {
+  .focus-default-b-none {
     @apply focus-visible:border-b-0;
   }
 
-  .focus-highlight {
-    @apply focus-highlight-b-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
+  .focus-default {
+    @apply focus-default-b-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
+  }
+
+  .rotate-yz-scale {
+    @apply [transform:rotateY(2deg)_rotateZ(2deg)_scale(1.03)];
   }
 }

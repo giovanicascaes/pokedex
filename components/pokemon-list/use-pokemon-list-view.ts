@@ -7,7 +7,7 @@ export default function usePokemonListView({
   onAddToPokedex,
   onRemoveFromPokedex,
   pokemons,
-  onReady,
+  onLoad,
   skipInitialAnimation = false,
   animationProperties,
 }: UsePokemonListViewArgs) {
@@ -61,8 +61,8 @@ export default function usePokemonListView({
       setIsInitialAnimationDone(true)
     }
 
-    onReady?.()
-  }, [isInitialAnimationDone, onReady])
+    onLoad?.()
+  }, [isInitialAnimationDone, onLoad])
 
   useEffect(
     () => () => {

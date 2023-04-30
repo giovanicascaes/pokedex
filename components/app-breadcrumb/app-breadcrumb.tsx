@@ -1,13 +1,13 @@
 import { animated, easings, useTransition } from "@react-spring/web"
 import { Breadcrumb } from "components"
-import { usePages } from "contexts"
+import { usePage } from "contexts"
 import { useMemo } from "react"
 import { AppBreadcrumbProps } from "./app-breadcrumb.types"
 
 const BREADCRUMB_TRANSITION_DURATION = 150
 
 export default function AppBreadcrumb(props: AppBreadcrumbProps) {
-  const [{ breadcrumb }] = usePages()
+  const [{ breadcrumb }] = usePage()
   const breadcrumbId = breadcrumb.map(({ label }) => label).join(" / ")
 
   const breadcrumbData = useMemo(
