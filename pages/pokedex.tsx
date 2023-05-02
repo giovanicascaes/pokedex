@@ -1,21 +1,16 @@
-import { PokemonList } from "components"
-import AppShellControlledScroll from "components/app-shell-controlled-scroll/app-shell-controlled-scroll"
+import { AppShellControlledScroll, PokemonList } from "components"
 import { usePage, usePokemon, useScrollControl } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
 import { ReactNode, useEffect } from "react"
 
 export default function Pokedex() {
   const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
-  const [{ history }, { setUpBreadcrumb }] = usePage()
-  const [{ isScrollDirty }, { onPageLoadComplete }] = useScrollControl()
+  const [, { setUpBreadcrumb }] = usePage()
+  const [{ isScrollVisited }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
   }, [setUpBreadcrumb])
-
-  useEffect(() => {
-    console.log("history:", history)
-  }, [history])
 
   useEffect(() => {
     if (!pokedex.length) {
@@ -28,7 +23,7 @@ export default function Pokedex() {
       <div className="px-14 pt-4 h-full pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipInitialAnimation={isScrollDirty}
+          skipInitialAnimation={isScrollVisited}
           onRemoveFromPokedex={removePokemonFromPokedex}
           onLoad={onPageLoadComplete}
           className="mx-auto"
@@ -47,7 +42,11 @@ export default function Pokedex() {
 }
 
 Pokedex.getLayout = function getLayout(page: ReactNode) {
-  return <AppShellControlledScroll>{page}</AppShellControlledScroll>
+  return (
+    <AppShellControlledScroll preserveScroll={["/pokemon/[key]"]}>
+      {page}
+    </AppShellControlledScroll>
+  )
 }
 
 export async function getServerSideProps() {

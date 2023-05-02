@@ -1,8 +1,7 @@
 import { ReactNode } from "react"
 
 export interface ScrollControlContextData {
-  isPageLoaded: boolean
-  isScrollDirty: boolean
+  isScrollVisited: boolean
 }
 
 export interface ScrollControlContextActions {

@@ -1,5 +1,4 @@
-import { PokemonList } from "components"
-import AppShellControlledScroll from "components/app-shell-controlled-scroll/app-shell-controlled-scroll"
+import { AppShellControlledScroll, PokemonList } from "components"
 import { POKEMONS_PER_PAGE, usePokemon, useScrollControl } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
@@ -16,8 +15,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
     { visiblePokemons, preloadPokemons, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
-  const [{ isScrollDirty }, { onPageLoadComplete }] = useScrollControl()
-
+  const [{ isScrollVisited }, { onPageLoadComplete }] = useScrollControl()
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -45,7 +43,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <PokemonList
           pokemons={visiblePokemons}
           preloadPokemons={preloadPokemons}
-          skipInitialAnimation={isScrollDirty}
+          skipInitialAnimation={isScrollVisited}
           onAddToPokedex={addPokemonToPokedex}
           onRemoveFromPokedex={removePokemonFromPokedex}
           onLoad={onListLoad}
@@ -65,7 +63,11 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
 }
 
 Home.getLayout = function getLayout(page: ReactNode) {
-  return <AppShellControlledScroll>{page}</AppShellControlledScroll>
+  return (
+    <AppShellControlledScroll preserveScroll={["/pokemon/[key]"]}>
+      {page}
+    </AppShellControlledScroll>
+  )
 }
 
 export async function getStaticProps() {

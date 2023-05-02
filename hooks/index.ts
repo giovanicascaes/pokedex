@@ -1,4 +1,3 @@
-export { default as useAppScroll } from "./use-app-scroll/use-app-scroll"
 export { default as useDocumentEvent } from "./use-document-event"
 export { default as useEvent } from "./use-event"
 export { default as useHistory } from "./use-history"

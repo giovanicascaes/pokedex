@@ -1,5 +1,8 @@
-import { FadeOnChange, PokemonDetails } from "components"
-import AppShellControlledScroll from "components/app-shell-controlled-scroll/app-shell-controlled-scroll"
+import {
+  AppShellControlledScroll,
+  FadeOnChange,
+  PokemonDetails,
+} from "components"
 import { usePage, usePokemon } from "contexts"
 import { useIsoMorphicEffect, useLastList } from "hooks"
 import { getPokemon } from "lib"

@@ -77,21 +77,16 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   ref
 ) {
   return (
-    <header
-      {...other}
-      className={twMerge(
-        "relative w-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-lg border-b border-slate-600/10 dark:border-slate-300/10 px-6 h-[70px] flex items-center justify-between",
-        className
-      )}
-      ref={ref}
-    >
-      <div className="flex items-center">
-        <Link href="/" className="focus-default rounded">
-          <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
-        </Link>
-        <AppBreadcrumb className="ml-4" />
+    <header {...other} className={twMerge("p-2", className)} ref={ref}>
+      <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg px-6 flex items-center justify-between">
+        <div className="flex items-center">
+          <Link href="/" className="focus-default rounded">
+            <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
+          </Link>
+          <AppBreadcrumb className="ml-4" />
+        </div>
+        <HeaderActionButtons />
       </div>
-      <HeaderActionButtons />
     </header>
   )
 })

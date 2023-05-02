@@ -6,7 +6,11 @@ export interface PageTransitionProps
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     HTMLDivElement
   > {
-  keepHiddenOnNextTransition?: boolean
+  imperativeFadeIn?: boolean
   onTransitionStart?: () => void
   onTransitionComplete?: () => void
+}
+
+export interface PageTransitionElement {
+  resumeFade: () => void
 }

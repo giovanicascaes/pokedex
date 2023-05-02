@@ -1,52 +1,95 @@
-import { AppLayout, AppScroll, PageTransition } from "components"
+import {
+  AppLayout,
+  AppScroll,
+  PageTransition,
+  PageTransitionElement,
+} from "components"
 import {
   ScrollControlContextActions,
   ScrollControlContextData,
   ScrollControlProvider,
 } from "contexts"
-import { useCallback, useEffect, useState } from "react"
+import { useRouterEvent } from "hooks"
+import { useRouter } from "next/router"
+import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
 import { AppShellControlledScrollProps } from "./app-shell-controlled-scroll.types"
-import useControlledScroll from "./use-controlled-scroll"
+import ScrollController from "./scroll-controller"
 
 export default function AppShellControlledScroll({
   enableScrollControl = true,
+  preserveScroll = [],
   children,
 }: AppShellControlledScrollProps) {
-  const [isTransitionRunning, setIsTransitionRunning] = useState(false)
-  const [isPageLoaded, setIsPageLoaded] = useState(false)
-
-  const {
-    onScroll,
-    ref: scrollRef,
-    isScrollSettled,
-    isScrollDirty,
-  } = useControlledScroll(
-    enableScrollControl,
-    isPageLoaded,
-    isTransitionRunning
+  const [isScrollVisited, setIsScrollVisited] = useState(false)
+  const pageTransitionRef = useRef<PageTransitionElement>(null)
+  const { pathname: currentPath } = useRouter()
+  const scrollControllerRef = useRef(
+    new ScrollController(currentPath, preserveScroll)
   )
+
+  const scrollRef = useCallback((scrollEl: HTMLElement | null) => {
+    if (scrollEl) scrollControllerRef.current.scrollEl = scrollEl
+  }, [])
+
+  const handleOnScroll = useCallback((event: UIEvent) => {
+    const { scrollTop: nextScrollTop } = event.currentTarget
+
+    scrollControllerRef.current.scrollTop = nextScrollTop
+  }, [])
+
+  useRouterEvent("beforeHistoryChange", () => {
+    scrollControllerRef.current.pushHistoryEntry(currentPath)
+  })
+
+  useRouterEvent("routeChangeStart", () => {
+    scrollControllerRef.current.saveCurrentPathState()
+  })
+
+  useEffect(() => {
+    scrollControllerRef.current.currentPath = currentPath
+    setIsScrollVisited(scrollControllerRef.current.isVisited)
+  }, [currentPath])
 
   useEffect(() => {
     if (enableScrollControl) {
-      setIsPageLoaded(false)
+      scrollControllerRef.current.enable()
+    } else {
+      scrollControllerRef.current.disable()
     }
-  }, [children, enableScrollControl])
+  }, [enableScrollControl])
+
+  useEffect(() => {
+    scrollControllerRef.current.preserveScroll = preserveScroll
+  }, [preserveScroll])
+
+  useEffect(() => {
+    return () => {
+      // Not a React node
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      scrollControllerRef.current.removeAllListeners()
+    }
+  }, [])
 
   const onPageTransitionStart = useCallback(() => {
-    setIsTransitionRunning(true)
+    scrollControllerRef.current.addScrollListener("rest", () => {
+      pageTransitionRef.current!.resumeFade()
+    })
+    scrollControllerRef.current.addScrollListener("reset", () => {
+      setIsScrollVisited(false)
+    })
+    scrollControllerRef.current.isSwitchingPage = true
   }, [])
 
   const onPageTransitionComplete = useCallback(() => {
-    setIsTransitionRunning(false)
+    scrollControllerRef.current.isSwitchingPage = false
   }, [])
 
   const data: ScrollControlContextData = {
-    isPageLoaded,
-    isScrollDirty,
+    isScrollVisited,
   }
 
   const onPageLoadComplete = useCallback(() => {
-    setIsPageLoaded(true)
+    scrollControllerRef.current.isLoadingPage = false
   }, [])
 
   const actions: ScrollControlContextActions = {
@@ -54,13 +97,14 @@ export default function AppShellControlledScroll({
   }
 
   return (
-    <AppScroll onScroll={onScroll} ref={scrollRef}>
+    <AppScroll onScroll={handleOnScroll} ref={scrollRef}>
       <AppLayout>
         <ScrollControlProvider value={[data, actions]}>
           <PageTransition
             onTransitionStart={onPageTransitionStart}
             onTransitionComplete={onPageTransitionComplete}
-            keepHiddenOnNextTransition={!isScrollSettled}
+            imperativeFadeIn
+            ref={pageTransitionRef}
           >
             {children}
           </PageTransition>

@@ -38,7 +38,7 @@ export default function AppShell_Old({
     onScroll,
     ref: scrollRef,
     isScrollSettled,
-    isScrollDirty,
+    isScrollVisited,
   } = useAppScroll(enableScrollControl, isContentLoaded, isTransitionRunning)
   const history = useHistory()
 
@@ -48,7 +48,7 @@ export default function AppShell_Old({
 
   const data: PageContextData = {
     isContentLoaded,
-    isScrollDirty,
+    isScrollVisited,
     breadcrumb,
     history,
   }

@@ -1,7 +1,7 @@
 import { PokemonSpeciesPokedex } from "contexts"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { UsePokemonListViewArgs } from "./pokemon-list.types"
-import PokemonListItemAnimationController from "./PokemonListItemAnimationController"
+import PokemonListItemAnimationController from "./pokemon-list-item-animation-controller"
 
 export default function usePokemonListView({
   onAddToPokedex,
@@ -11,7 +11,7 @@ export default function usePokemonListView({
   skipInitialAnimation = false,
   animationProperties,
 }: UsePokemonListViewArgs) {
-  const animationController = useRef(
+  const animationControllerRef = useRef(
     new PokemonListItemAnimationController(animationProperties)
   )
   const [isInitialAnimationDone, setIsInitialAnimationDone] = useState(
@@ -23,7 +23,7 @@ export default function usePokemonListView({
       if (pokemon.isOnPokedex) {
         const { id } = pokemon
 
-        animationController.current.leave(id).then(() => {
+        animationControllerRef.current.leave(id).then(() => {
           onRemoveFromPokedex(id)
         })
       } else {
@@ -38,26 +38,26 @@ export default function usePokemonListView({
       if (!isInitialAnimationDone) return
 
       if (isIntersecting) {
-        animationController.current.queue(id)
+        animationControllerRef.current.queue(id)
       } else {
-        animationController.current.skip(id)
+        animationControllerRef.current.skip(id)
       }
     },
     [isInitialAnimationDone]
   )
 
   const getStyles = useCallback(
-    (id: number) => animationController.current.getStyles(id),
+    (id: number) => animationControllerRef.current.getStyles(id),
     []
   )
 
   useEffect(() => {
-    animationController.current.setPokemons(pokemons)
+    animationControllerRef.current.setPokemons(pokemons)
   }, [pokemons])
 
   useEffect(() => {
     if (!isInitialAnimationDone) {
-      animationController.current.skipAll()
+      animationControllerRef.current.skipAll()
       setIsInitialAnimationDone(true)
     }
 
@@ -66,7 +66,7 @@ export default function usePokemonListView({
 
   useEffect(
     () => () => {
-      animationController.current.cancel()
+      animationControllerRef.current.cancel()
     },
     []
   )

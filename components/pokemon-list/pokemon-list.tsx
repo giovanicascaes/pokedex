@@ -15,6 +15,8 @@ import {
 
 const CONTAINER_TRANSITION_DURATION = 300
 
+const LIST_VIEW_TRANSITION_DURATION = 150
+
 const { sm, md, lg } = theme!.screens as { [k: string]: string }
 
 const xsQuery = `(min-width: 0px)`
@@ -74,7 +76,10 @@ export default function PokemonList({
       className={twMerge("flex flex-col", className)}
       style={{ ...containerStyles }}
     >
-      <FadeOnChange watch={columns === 1}>
+      <FadeOnChange
+        watch={columns === 1}
+        transitionDuration={LIST_VIEW_TRANSITION_DURATION}
+      >
         {(isList) => (
           <PokemonListProvider value={[data, actions]}>
             {isList ? (
