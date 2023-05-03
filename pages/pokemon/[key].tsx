@@ -1,14 +1,10 @@
-import {
-  AppShellControlledScroll,
-  FadeOnChange,
-  PokemonDetails,
-} from "components"
+import { FadeOnChange, PokemonDetails } from "components"
 import { usePage, usePokemon } from "contexts"
 import { useIsoMorphicEffect, useLastList } from "hooks"
 import { getPokemon } from "lib"
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import Head from "next/head"
-import { ReactNode, useEffect } from "react"
+import { useEffect } from "react"
 
 type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>
 
@@ -50,13 +46,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
   )
 }
 
-Pokemon.getLayout = function getLayout(page: ReactNode) {
-  return (
-    <AppShellControlledScroll enableScrollControl={false}>
-      {page}
-    </AppShellControlledScroll>
-  )
-}
+Pokemon.enableScrollControl = false
 
 export async function getServerSideProps({
   params,

@@ -1,7 +1,7 @@
-import { AppShellControlledScroll, PokemonList } from "components"
+import { PokemonList } from "components"
 import { usePage, usePokemon, useScrollControl } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
-import { ReactNode, useEffect } from "react"
+import { useEffect } from "react"
 
 export default function Pokedex() {
   const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
@@ -41,13 +41,7 @@ export default function Pokedex() {
   )
 }
 
-Pokedex.getLayout = function getLayout(page: ReactNode) {
-  return (
-    <AppShellControlledScroll preserveScroll={["/pokemon/[key]"]}>
-      {page}
-    </AppShellControlledScroll>
-  )
-}
+Pokedex.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
 
 export async function getServerSideProps() {
   return {

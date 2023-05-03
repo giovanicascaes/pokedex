@@ -1,13 +1,9 @@
 import { uniqueSequential } from "utils"
-
-interface ScrollHistoryEntry {
-  visited: boolean
-  scrollTop: number
-}
-
-type ScrollPositionStatus = "resolving" | "resting"
-
-type ScrollEvent = "reset" | "rest"
+import {
+  AppShellScrollEvent,
+  AppShellScrollHistoryEntry,
+  AppShellScrollPositionStatus,
+} from "./app-shell.types"
 
 const DEFAULT_SCROLL_HISTORY_PATH_VALUE = {
   scrollTop: 0,
@@ -15,25 +11,28 @@ const DEFAULT_SCROLL_HISTORY_PATH_VALUE = {
 }
 
 export default class ScrollController {
-  private readonly _scrollHistory: Map<string, ScrollHistoryEntry> = new Map()
-  private status: ScrollPositionStatus = "resting"
+  private readonly _scrollHistory: Map<string, AppShellScrollHistoryEntry> =
+    new Map()
+  private status: AppShellScrollPositionStatus = "resting"
   private enabled: boolean = true
   private _isSwitchingPage: boolean = false
   private _isLoadingPage: boolean = false
   private _scrollTop: number = 0
   private readonly pageHistory: string[] = []
   private _scrollEl: HTMLElement | null = null
-  private readonly scrollListeners: Map<ScrollEvent, Array<() => void>> =
-    new Map([
-      ["reset", []],
-      ["rest", []],
-    ])
+  private readonly scrollListeners: Map<
+    AppShellScrollEvent,
+    Array<() => void>
+  > = new Map([
+    ["reset", []],
+    ["rest", []],
+  ])
   private _currentPath: string
-  private _preserveScroll: string[]
+  private _restoreScrollOnNavigatingFrom: string[]
 
-  constructor(currentPath: string, preserveScroll: string[]) {
+  constructor(currentPath: string, restoreScrollOnNavigatingFrom: string[]) {
     this._currentPath = currentPath
-    this._preserveScroll = preserveScroll
+    this._restoreScrollOnNavigatingFrom = restoreScrollOnNavigatingFrom
   }
 
   scrollTo(top: number) {
@@ -66,7 +65,7 @@ export default class ScrollController {
     })
   }
 
-  addScrollListener(event: ScrollEvent, cb: () => void) {
+  addScrollListener(event: AppShellScrollEvent, cb: () => void) {
     this.scrollListeners.get(event)!.push(cb)
   }
 
@@ -96,7 +95,7 @@ export default class ScrollController {
     this.consumeListeners("reset")
   }
 
-  private consumeListeners(event: ScrollEvent) {
+  private consumeListeners(event: AppShellScrollEvent) {
     const listeners = this.scrollListeners.get(event)!
 
     while (listeners.length) {
@@ -116,7 +115,7 @@ export default class ScrollController {
     )
 
     return (
-      !this._preserveScroll.includes(prevPath) ||
+      !this._restoreScrollOnNavigatingFrom.includes(prevPath) ||
       pathBeforePrevPath !== this._currentPath
     )
   }
@@ -170,7 +169,7 @@ export default class ScrollController {
     }
   }
 
-  set preserveScroll(preserveScroll: string[]) {
-    this._preserveScroll = preserveScroll
+  set restoreScrollOnNavigatingFrom(restoreScrollOnNavigatingFrom: string[]) {
+    this._restoreScrollOnNavigatingFrom = restoreScrollOnNavigatingFrom
   }
 }

@@ -1,4 +1,4 @@
-import { AppShellControlledScroll, PokemonList } from "components"
+import { PokemonList } from "components"
 import { POKEMONS_PER_PAGE, usePokemon, useScrollControl } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
@@ -62,13 +62,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
   )
 }
 
-Home.getLayout = function getLayout(page: ReactNode) {
-  return (
-    <AppShellControlledScroll preserveScroll={["/pokemon/[key]"]}>
-      {page}
-    </AppShellControlledScroll>
-  )
-}
+Home.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
 
 export async function getStaticProps() {
   return {

@@ -1,18 +1,17 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react"
 import { WithNonLegacyRef } from "types"
 
-export interface PageTransitionProps
+export interface PageTransition2Props
   extends WithNonLegacyRef<
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     HTMLDivElement
   > {
   imperativeFadeIn?: boolean
-  onTransitionStart?: () => void
   onTransitionComplete?: () => void
 }
 
-export interface PageTransitionElement {
-  resumeFade: () => void
+export interface PageTransition2Element {
+  start: () => void
 }
 
-export type PageTransitionStatus = "idle" | "fading-out" | "fading-in"
+export type PageTransition2Status = "idle" | "fading-out" | "fading-in"

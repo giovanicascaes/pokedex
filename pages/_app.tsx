@@ -11,7 +11,7 @@ import { twMerge } from "tailwind-merge"
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactNode) => ReactNode
   enableScrollControl?: boolean
-  restoreScrollForPages?: string[]
+  restoreScrollOnNavigatingFrom?: string[]
 }
 
 type AppPropsWithLayout = AppProps & {
@@ -21,8 +21,7 @@ type AppPropsWithLayout = AppProps & {
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout =
-    Component.getLayout ?? ((page) => <AppShell>{page}</AppShell>)
+  const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
     <div
@@ -33,7 +32,16 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       )}
     >
       <ThemeModeProvider>
-        <PageProvider>{getLayout(<Component {...pageProps} />)}</PageProvider>
+        <PageProvider>
+          <AppShell
+            enableScrollControl={Component.enableScrollControl}
+            restoreScrollOnNavigatingFrom={
+              Component.restoreScrollOnNavigatingFrom
+            }
+          >
+            {getLayout(<Component {...pageProps} />)}
+          </AppShell>
+        </PageProvider>
       </ThemeModeProvider>
     </div>
   )

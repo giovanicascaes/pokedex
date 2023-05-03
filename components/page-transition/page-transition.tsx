@@ -9,9 +9,8 @@ import { twMerge } from "tailwind-merge"
 import {
   PageTransitionElement,
   PageTransitionProps,
+  PageTransitionStatus,
 } from "./page-transition.types"
-
-type TransitionStatus = "idle" | "fading-out" | "fading-in"
 
 const PAGE_TRANSITION_DURATION = 150
 
@@ -28,7 +27,7 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
     },
     ref
   ) {
-    const transitionStatus = useRef<TransitionStatus>("idle")
+    const transitionStatus = useRef<PageTransitionStatus>("idle")
     const transitionRef = useSpringRef()
     const transition = useTransition(children, {
       key: children,
@@ -76,7 +75,14 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
       () => ({
         resumeFade() {
           transitionRef.start({
-            opacity: 1,
+            from: {
+              y: 30,
+              opacity: 0,
+            },
+            to: {
+              y: 0,
+              opacity: 1,
+            },
           })
         },
       }),
