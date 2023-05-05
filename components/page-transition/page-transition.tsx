@@ -1,15 +1,21 @@
 import {
   animated,
   easings,
+  useSpring,
   useSpringRef,
   useTransition,
 } from "@react-spring/web"
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react"
 import { twMerge } from "tailwind-merge"
 import {
   PageTransitionElement,
   PageTransitionProps,
-  PageTransitionStatus,
 } from "./page-transition.types"
 
 const PAGE_TRANSITION_DURATION = 150
@@ -17,7 +23,6 @@ const PAGE_TRANSITION_DURATION = 150
 export default forwardRef<PageTransitionElement, PageTransitionProps>(
   function PageTransition(
     {
-      imperativeFadeIn = false,
       onTransitionStart,
       onTransitionComplete,
       children,
@@ -27,75 +32,96 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
     },
     ref
   ) {
-    const transitionStatus = useRef<PageTransitionStatus>("idle")
-    const transitionRef = useSpringRef()
-    const transition = useTransition(children, {
+    const isFirstTransitionRef = useRef(true)
+    const isChangingPageRef = useRef(false)
+    const [isFadingIn, setIsFadingIn] = useState(true)
+    const fadeOutRef = useSpringRef()
+    const fadeOutTransition = useTransition(children, {
       key: children,
-      ref: transitionRef,
+      ref: fadeOutRef,
       config: {
         easing: easings.linear,
         duration: PAGE_TRANSITION_DURATION,
       },
       from: {
-        y: 30,
+        y: -30,
         opacity: 0,
       },
       enter: {
         y: 0,
-        opacity: imperativeFadeIn ? 0 : 1,
+        opacity: 1,
       },
       leave: {
-        y: 30,
+        y: -30,
         opacity: 0,
       },
+      initial: {
+        y: 0,
+        opacity: 1,
+      },
       onStart() {
-        if (transitionStatus.current === "idle") {
-          transitionStatus.current = "fading-out"
+        if (!isChangingPageRef.current) {
+          isChangingPageRef.current = true
           onTransitionStart?.()
-        } else {
-          transitionStatus.current = "fading-in"
         }
       },
       onRest() {
-        if (transitionStatus.current === "fading-out") {
+        if (isChangingPageRef.current) {
+          isChangingPageRef.current = false
           onTransitionComplete?.()
-        } else {
-          transitionStatus.current = "idle"
         }
       },
       exitBeforeEnter: true,
     })
+    const [fadeInStyle, fadeInApi] = useSpring(() => ({
+      config: {
+        easing: easings.linear,
+        duration: PAGE_TRANSITION_DURATION,
+      },
+      from: {
+        y: -30,
+        opacity: 0,
+      },
+      to: {
+        y: 0,
+        opacity: 1,
+      },
+      onStart() {
+        setIsFadingIn(true)
+      },
+      onRest() {
+        isFirstTransitionRef.current = false
+        setIsFadingIn(false)
+      },
+    }))
 
     useEffect(() => {
-      transitionRef.start()
-    }, [children, transitionRef])
+      if (isChangingPageRef.current) return
+
+      if (isFirstTransitionRef.current) {
+        fadeInApi.start()
+      } else {
+        fadeOutRef.start()
+      }
+    }, [children, fadeInApi, fadeOutRef, isChangingPageRef])
 
     useImperativeHandle(
       ref,
       () => ({
-        resumeFade() {
-          transitionRef.start({
-            from: {
-              y: 30,
-              opacity: 0,
-            },
-            to: {
-              y: 0,
-              opacity: 1,
-            },
-          })
+        resume() {
+          fadeInApi.start()
         },
       }),
-      [transitionRef]
+      [fadeInApi]
     )
 
-    return transition((transitionStyle, page) => (
+    return fadeOutTransition((fadeOutStyle, page) => (
       <animated.div
         {...other}
         className={twMerge("flex-1", className)}
         style={{
           ...style,
-          ...transitionStyle,
+          ...(isFadingIn ? fadeInStyle : fadeOutStyle),
         }}
       >
         {page}

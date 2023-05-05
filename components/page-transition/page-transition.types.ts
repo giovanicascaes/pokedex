@@ -6,13 +6,12 @@ export interface PageTransitionProps
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     HTMLDivElement
   > {
-  imperativeFadeIn?: boolean
   onTransitionStart?: () => void
   onTransitionComplete?: () => void
 }
 
 export interface PageTransitionElement {
-  resumeFade: () => void
+  resume: () => void
 }
 
 export type PageTransitionStatus = "idle" | "fading-out" | "fading-in"

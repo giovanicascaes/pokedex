@@ -1,21 +1,21 @@
 import { PokemonSpeciesPokedex } from "contexts"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { UsePokemonListViewArgs } from "./pokemon-list.types"
 import PokemonListItemAnimationController from "./pokemon-list-item-animation-controller"
+import { UsePokemonListViewArgs } from "./pokemon-list.types"
 
 export default function usePokemonListView({
   onAddToPokedex,
   onRemoveFromPokedex,
   pokemons,
   onLoad,
-  skipInitialAnimation = false,
+  skipFirstPokemonsAnimation = false,
   animationProperties,
 }: UsePokemonListViewArgs) {
   const animationControllerRef = useRef(
     new PokemonListItemAnimationController(animationProperties)
   )
-  const [isInitialAnimationDone, setIsInitialAnimationDone] = useState(
-    !skipInitialAnimation
+  const [shouldAnimateFirstPokemons, setShouldAnimateFirstPokemons] = useState(
+    !skipFirstPokemonsAnimation
   )
 
   const handleOnCatchReleaseFinish = useCallback(
@@ -35,7 +35,7 @@ export default function usePokemonListView({
 
   const handleOnIntersectionChange = useCallback(
     (id: number, isIntersecting: boolean) => {
-      if (!isInitialAnimationDone) return
+      if (!shouldAnimateFirstPokemons) return
 
       if (isIntersecting) {
         animationControllerRef.current.queue(id)
@@ -43,7 +43,7 @@ export default function usePokemonListView({
         animationControllerRef.current.skip(id)
       }
     },
-    [isInitialAnimationDone]
+    [shouldAnimateFirstPokemons]
   )
 
   const getStyles = useCallback(
@@ -56,13 +56,13 @@ export default function usePokemonListView({
   }, [pokemons])
 
   useEffect(() => {
-    if (!isInitialAnimationDone) {
+    if (!shouldAnimateFirstPokemons) {
       animationControllerRef.current.skipAll()
-      setIsInitialAnimationDone(true)
+      setShouldAnimateFirstPokemons(true)
     }
 
     onLoad?.()
-  }, [isInitialAnimationDone, onLoad])
+  }, [shouldAnimateFirstPokemons, onLoad])
 
   useEffect(
     () => () => {

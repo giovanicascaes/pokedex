@@ -49,6 +49,7 @@ export default forwardRef<HTMLDivElement, PokemonListItemCardProps>(
           <Link
             className="relative flex px-4 py-10 shadow-md dark:shadow-black/50 rounded-lg bg-white dark:bg-slate-700 hover:rotate-yz-scale peer-hover:rotate-yz-scale hover:shadow-2xl peer-hover:shadow-2xl hover:dark:shadow-black/50 peer-hover:dark:shadow-black/50 transition-all focus-default"
             href={`/pokemon/${resourceName}`}
+            scroll={false}
           >
             <PokemonCatchReleaseAnimation
               state={catchReleaseState}

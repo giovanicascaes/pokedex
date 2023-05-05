@@ -43,7 +43,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <PokemonList
           pokemons={visiblePokemons}
           preloadPokemons={preloadPokemons}
-          skipInitialAnimation={isScrollVisited}
+          skipFirstPokemonsAnimation={isScrollVisited}
           onAddToPokedex={addPokemonToPokedex}
           onRemoveFromPokedex={removePokemonFromPokedex}
           onLoad={onListLoad}

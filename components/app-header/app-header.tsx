@@ -78,7 +78,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
 ) {
   return (
     <header {...other} className={twMerge("p-2", className)} ref={ref}>
-      <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg px-6 flex items-center justify-between">
+      <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="focus-default rounded">
             <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />

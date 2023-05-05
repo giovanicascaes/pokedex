@@ -3,7 +3,10 @@ import { DetailedHTMLProps, HTMLAttributes } from "react"
 import { PokemonListViewProps } from "../pokemon-list.types"
 
 export interface PokemonListGridViewProps
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  extends Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      "onLoad"
+    >,
     PokemonListViewProps {
   columns: number
 }

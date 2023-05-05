@@ -2,7 +2,6 @@ import { uniqueSequential } from "utils"
 import {
   AppShellScrollEvent,
   AppShellScrollHistoryEntry,
-  AppShellScrollPositionStatus,
 } from "./app-shell.types"
 
 const DEFAULT_SCROLL_HISTORY_PATH_VALUE = {
@@ -13,20 +12,19 @@ const DEFAULT_SCROLL_HISTORY_PATH_VALUE = {
 export default class ScrollController {
   private readonly _scrollHistory: Map<string, AppShellScrollHistoryEntry> =
     new Map()
-  private status: AppShellScrollPositionStatus = "resting"
-  private enabled: boolean = true
-  private _isSwitchingPage: boolean = false
+  private isResolving: boolean = false
+  private _isEnabled: boolean = true
+  private _isChangingPage: boolean = false
   private _isLoadingPage: boolean = false
   private _scrollTop: number = 0
   private readonly pageHistory: string[] = []
   private _scrollEl: HTMLElement | null = null
-  private readonly scrollListeners: Map<
-    AppShellScrollEvent,
-    Array<() => void>
-  > = new Map([
-    ["reset", []],
-    ["rest", []],
-  ])
+  private readonly listeners: Map<AppShellScrollEvent, Array<() => void>> =
+    new Map([
+      ["scrollResolve", []],
+      ["pageLoadComplete", []],
+      ["pageTransitionComplete", []],
+    ])
   private _currentPath: string
   private _restoreScrollOnNavigatingFrom: string[]
 
@@ -35,23 +33,81 @@ export default class ScrollController {
     this._restoreScrollOnNavigatingFrom = restoreScrollOnNavigatingFrom
   }
 
-  scrollTo(top: number) {
-    this._scrollEl!.scrollTo({
-      top,
+  *resolve() {
+    this.isResolving = true
+
+    if (this._isEnabled) {
+      this.isLoadingPage = true
+    }
+
+    this.resetScrollIfNeeded()
+
+    yield this.isVisited
+
+    yield new Promise<void>((resolve) => {
+      if (!this._isEnabled) {
+        resolve()
+
+        return
+      }
+
+      const onPageLoadComplete = () => {
+        resolve()
+      }
+
+      this.addListener("pageLoadComplete", onPageLoadComplete)
+
+      if (!this._isLoadingPage) {
+        resolve()
+      }
     })
-    this.onScrollRest()
+
+    yield new Promise<void>((resolve) => {
+      const onPageTransitionComplete = () => {
+        resolve()
+      }
+
+      this.addListener("pageTransitionComplete", onPageTransitionComplete)
+
+      if (!this._isChangingPage) {
+        resolve()
+      }
+    })
+
+    if (this._isEnabled) {
+      this.scrollToPreviousPosition()
+    } else {
+      this.scrollTo(0)
+    }
+
+    yield new Promise<void>((resolve) => {
+      const onScrollRest = () => {
+        resolve()
+      }
+
+      this.addListener("scrollResolve", onScrollRest)
+
+      if (!this.isResolving) {
+        resolve()
+      }
+    })
+
+    this.onScrollResolved()
+    this.removeAllListeners()
+  }
+
+  scrollTo(top: number) {
+    if (top === this._scrollTop) {
+      this.onScrollResolved()
+    } else {
+      this._scrollEl!.scrollTo({
+        top,
+      })
+    }
   }
 
   scrollToPreviousPosition() {
     this.scrollTo(this.scrollHistory.scrollTop)
-  }
-
-  disable() {
-    this.enabled = false
-  }
-
-  enable() {
-    this.enabled = true
   }
 
   pushHistoryEntry(entry: string) {
@@ -65,48 +121,39 @@ export default class ScrollController {
     })
   }
 
-  addScrollListener(event: AppShellScrollEvent, cb: () => void) {
-    this.scrollListeners.get(event)!.push(cb)
+  addListener(event: AppShellScrollEvent, cb: () => void) {
+    this.listeners.get(event)!.push(cb)
   }
 
   removeAllListeners() {
-    Array.from(this.scrollListeners.keys()).forEach((event) => {
-      this.scrollListeners.set(event, [])
+    Array.from(this.listeners.keys()).forEach((event) => {
+      this.listeners.set(event, [])
     })
   }
 
   private resetScrollIfNeeded() {
-    if (this.enabled && this.shouldResetScroll) {
+    if (this._isEnabled && this.shouldResetScroll) {
       this.resetScroll()
     }
   }
 
   private resetScroll() {
     this._scrollHistory.delete(this._currentPath)
-    this.onScrollReset()
   }
 
-  private onScrollRest() {
-    this.status = "resting"
-    this.consumeListeners("rest")
-  }
-
-  private onScrollReset() {
-    this.consumeListeners("reset")
+  private onScrollResolved() {
+    this.isResolving = false
+    this.consumeListeners("scrollResolve")
   }
 
   private consumeListeners(event: AppShellScrollEvent) {
-    const listeners = this.scrollListeners.get(event)!
+    const listeners = this.listeners.get(event)!
 
     while (listeners.length) {
       const listener = listeners.shift()!
 
       listener()
     }
-  }
-
-  private get isResolving() {
-    return this.status === "resolving"
   }
 
   private get shouldResetScroll() {
@@ -131,41 +178,43 @@ export default class ScrollController {
     return this.scrollHistory.visited
   }
 
+  get isChangingPage() {
+    return this._isChangingPage
+  }
+
+  set isEnabled(enabled: boolean) {
+    this._isEnabled = enabled
+  }
+
   set scrollEl(scrollEl: HTMLElement) {
     this._scrollEl = scrollEl
   }
 
   set currentPath(path: string) {
     this._currentPath = path
-
-    this.resetScrollIfNeeded()
   }
 
   set scrollTop(scrollTop: number) {
     this._scrollTop = scrollTop
 
     if (this._scrollTop === this.scrollHistory.scrollTop && this.isResolving) {
-      this.onScrollRest()
+      this.onScrollResolved()
     }
   }
 
-  set isSwitchingPage(isSwitchingPage: boolean) {
-    this._isSwitchingPage = isSwitchingPage
+  set isChangingPage(isChangingPage: boolean) {
+    this._isChangingPage = isChangingPage
 
-    if (this._isSwitchingPage) {
-      this.status = "resolving"
-    } else if (!this.enabled) {
-      this.scrollTo(0)
-    } else if (!this._isLoadingPage) {
-      this.scrollToPreviousPosition()
+    if (!this._isChangingPage) {
+      this.consumeListeners("pageTransitionComplete")
     }
   }
 
   set isLoadingPage(isLoadingPage: boolean) {
     this._isLoadingPage = isLoadingPage
 
-    if (!this._isLoadingPage && !this._isSwitchingPage && this.enabled) {
-      this.scrollToPreviousPosition()
+    if (!this._isLoadingPage) {
+      this.consumeListeners("pageLoadComplete")
     }
   }
 

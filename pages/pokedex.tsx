@@ -23,7 +23,7 @@ export default function Pokedex() {
       <div className="px-14 pt-4 h-full pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipInitialAnimation={isScrollVisited}
+          skipFirstPokemonsAnimation={isScrollVisited}
           onRemoveFromPokedex={removePokemonFromPokedex}
           onLoad={onPageLoadComplete}
           className="mx-auto"

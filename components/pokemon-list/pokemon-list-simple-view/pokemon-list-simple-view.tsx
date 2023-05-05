@@ -47,7 +47,7 @@ const ITEM_ANIMATION_PROPERTIES = {
 export default function PokemonListSimpleView({
   pokemons,
   preloadPokemons,
-  skipInitialAnimation = false,
+  skipFirstPokemonsAnimation = false,
   onAddToPokedex,
   onRemoveFromPokedex,
   onLoad,
@@ -63,7 +63,7 @@ export default function PokemonListSimpleView({
       onRemoveFromPokedex,
       pokemons,
       onLoad,
-      skipInitialAnimation,
+      skipFirstPokemonsAnimation,
       animationProperties: ITEM_ANIMATION_PROPERTIES,
     })
 

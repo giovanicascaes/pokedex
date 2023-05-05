@@ -43,6 +43,7 @@ export default function AppShell({
 
   useRouterEvent("routeChangeStart", () => {
     scrollControllerRef.current.saveCurrentPathState()
+    scrollControllerRef.current.isChangingPage = true
   })
 
   useEffect(() => {
@@ -51,11 +52,7 @@ export default function AppShell({
   }, [currentPath])
 
   useEffect(() => {
-    if (enableScrollControl) {
-      scrollControllerRef.current.enable()
-    } else {
-      scrollControllerRef.current.disable()
-    }
+    scrollControllerRef.current.isEnabled = enableScrollControl
   }, [enableScrollControl])
 
   useEffect(() => {
@@ -71,18 +68,33 @@ export default function AppShell({
     }
   }, [])
 
-  const onPageTransitionStart = useCallback(() => {
-    scrollControllerRef.current.addScrollListener("rest", () => {
-      pageTransitionRef.current!.resumeFade()
-    })
-    scrollControllerRef.current.addScrollListener("reset", () => {
-      setIsScrollVisited(false)
-    })
-    scrollControllerRef.current.isSwitchingPage = true
+  const onPageTransitionStart = useCallback(async () => {
+    if (!scrollControllerRef.current.isChangingPage) {
+      return
+    }
+
+    const resolveGen = scrollControllerRef.current.resolve()
+    const isVisited = (await resolveGen.next().value) as boolean
+
+    setIsScrollVisited(isVisited)
+
+    const resolve = () => {
+      const { value, done } = resolveGen.next()
+
+      if (done) {
+        pageTransitionRef.current?.resume()
+      } else {
+        const promise = value as Promise<void>
+
+        promise.then(resolve)
+      }
+    }
+
+    resolve()
   }, [])
 
   const onPageTransitionComplete = useCallback(() => {
-    scrollControllerRef.current.isSwitchingPage = false
+    scrollControllerRef.current.isChangingPage = false
   }, [])
 
   const data: ScrollControlContextData = {
@@ -104,7 +116,6 @@ export default function AppShell({
           <PageTransition
             onTransitionStart={onPageTransitionStart}
             onTransitionComplete={onPageTransitionComplete}
-            imperativeFadeIn
             ref={pageTransitionRef}
           >
             {children}

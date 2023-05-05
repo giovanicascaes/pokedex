@@ -8,17 +8,17 @@ const BREADCRUMB_TRANSITION_DURATION = 150
 
 export default function AppBreadcrumb(props: AppBreadcrumbProps) {
   const [{ breadcrumb }] = usePage()
-  const breadcrumbId = breadcrumb.map(({ label }) => label).join(" / ")
+  const breadcrumbId = useMemo(
+    () => breadcrumb.map(({ label }) => label).join(" / "),
+    [breadcrumb]
+  )
 
   const breadcrumbData = useMemo(
     () => ({
       breadcrumbId,
       breadcrumb,
     }),
-    // Required to smooth transitions between breadcrumbs and correctly render "/"s
-    // between items
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [breadcrumbId]
+    [breadcrumb, breadcrumbId]
   )
 
   const transition = useTransition(breadcrumbData, {
