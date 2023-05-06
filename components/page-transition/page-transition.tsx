@@ -118,7 +118,7 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
     return fadeOutTransition((fadeOutStyle, page) => (
       <animated.div
         {...other}
-        className={twMerge("flex-1", className)}
+        className={twMerge("h-full", className)}
         style={{
           ...style,
           ...(isFadingIn ? fadeInStyle : fadeOutStyle),

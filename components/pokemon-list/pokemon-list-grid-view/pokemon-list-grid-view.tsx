@@ -50,9 +50,10 @@ const CARD_ANIMATION_PROPERTIES = {
 export default function PokemonListGridView({
   pokemons,
   preloadPokemons,
-  skipFirstPokemonsAnimation = false,
-  onAddToPokedex,
-  onRemoveFromPokedex,
+  skipFirstPageAnimations = false,
+  removeOnRelease = false,
+  onCatch,
+  onRelease,
   onLoad,
   columns,
   ...other
@@ -63,11 +64,12 @@ export default function PokemonListGridView({
   const prevContainerRect = usePrevious(containerRect)
   const { handleOnCatchReleaseFinish, handleOnIntersectionChange, getStyles } =
     usePokemonListView({
-      onAddToPokedex,
-      onRemoveFromPokedex,
+      onCatch,
+      onRelease,
       pokemons,
       onLoad,
-      skipFirstPokemonsAnimation,
+      skipFirstPageAnimations,
+      removeOnRelease,
       animationProperties: CARD_ANIMATION_PROPERTIES,
     })
 

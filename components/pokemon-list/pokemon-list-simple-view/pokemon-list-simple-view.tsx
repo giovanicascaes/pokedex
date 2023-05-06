@@ -47,9 +47,10 @@ const ITEM_ANIMATION_PROPERTIES = {
 export default function PokemonListSimpleView({
   pokemons,
   preloadPokemons,
-  skipFirstPokemonsAnimation = false,
-  onAddToPokedex,
-  onRemoveFromPokedex,
+  skipFirstPageAnimations = false,
+  removeOnRelease = false,
+  onCatch,
+  onRelease,
   onLoad,
   className,
   style,
@@ -59,11 +60,12 @@ export default function PokemonListSimpleView({
   const itemDimensionsRef = useRef<HTMLDivElement | null>(null)
   const { handleOnCatchReleaseFinish, handleOnIntersectionChange, getStyles } =
     usePokemonListView({
-      onAddToPokedex,
-      onRemoveFromPokedex,
+      onCatch,
+      onRelease,
       pokemons,
       onLoad,
-      skipFirstPokemonsAnimation,
+      skipFirstPageAnimations,
+      removeOnRelease,
       animationProperties: ITEM_ANIMATION_PROPERTIES,
     })
 

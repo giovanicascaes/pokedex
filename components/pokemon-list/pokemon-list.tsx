@@ -27,9 +27,10 @@ const lgQuery = `(min-width: ${lg})`
 export default function PokemonList({
   pokemons,
   preloadPokemons = [],
-  skipFirstPokemonsAnimation = false,
-  onAddToPokedex,
-  onRemoveFromPokedex,
+  skipFirstPageAnimations = false,
+  removeOnRelease = false,
+  onCatch,
+  onRelease,
   onLoad,
   className,
   ...otherProps
@@ -52,21 +53,22 @@ export default function PokemonList({
   const data: PokemonListContextData = {
     pokemons,
     preloadPokemons,
-    skipFirstPokemonsAnimation,
+    skipFirstPageAnimations,
   }
 
   const actions: PokemonListContextActions = {
-    onAddToPokedex,
-    onRemoveFromPokedex,
+    onCatch,
+    onRelease,
     onLoad,
   }
 
   const commonListViewProps = {
     pokemons,
     preloadPokemons,
-    skipFirstPokemonsAnimation,
-    onAddToPokedex,
-    onRemoveFromPokedex,
+    skipFirstPageAnimations,
+    removeOnRelease,
+    onCatch,
+    onRelease,
     onLoad,
   }
 

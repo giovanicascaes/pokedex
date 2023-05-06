@@ -37,7 +37,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-6 sm:px-16 md:px-32 pb-12 pt-8 h-full overflow-x-hidden">
+      <div className="flex flex-col px-6 sm:px-16 md:px-32 pb-12 pt-8">
         <FadeOnChange watch={pokemon}>
           {(pokemon) => <PokemonDetails pokemon={pokemon} />}
         </FadeOnChange>

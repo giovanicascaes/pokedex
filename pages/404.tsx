@@ -4,7 +4,7 @@ import Image from "next/image"
 
 export default function Custom404() {
   return (
-    <div className="flex flex-col items-center p-10 min-h-full">
+    <div className="flex flex-col items-center p-10">
       <span className="text-9xl font-medium text-slate-600 dark:text-slate-300 mb-4">
         404
       </span>

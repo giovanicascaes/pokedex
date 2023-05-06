@@ -39,13 +39,13 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <meta name="description" content="A Pokédex" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="px-14 pt-4 h-full pb-8">
+      <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={visiblePokemons}
           preloadPokemons={preloadPokemons}
-          skipFirstPokemonsAnimation={isScrollVisited}
-          onAddToPokedex={addPokemonToPokedex}
-          onRemoveFromPokedex={removePokemonFromPokedex}
+          skipFirstPageAnimations={isScrollVisited}
+          onCatch={addPokemonToPokedex}
+          onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}
           className="mx-auto"
         />

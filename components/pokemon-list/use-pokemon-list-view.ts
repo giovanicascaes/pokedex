@@ -4,33 +4,36 @@ import PokemonListItemAnimationController from "./pokemon-list-item-animation-co
 import { UsePokemonListViewArgs } from "./pokemon-list.types"
 
 export default function usePokemonListView({
-  onAddToPokedex,
-  onRemoveFromPokedex,
   pokemons,
-  onLoad,
-  skipFirstPokemonsAnimation = false,
+  skipFirstPageAnimations = false,
+  removeOnRelease = false,
   animationProperties,
+  onCatch,
+  onRelease,
+  onLoad,
 }: UsePokemonListViewArgs) {
   const animationControllerRef = useRef(
     new PokemonListItemAnimationController(animationProperties)
   )
   const [shouldAnimateFirstPokemons, setShouldAnimateFirstPokemons] = useState(
-    !skipFirstPokemonsAnimation
+    !skipFirstPageAnimations
   )
 
   const handleOnCatchReleaseFinish = useCallback(
-    (pokemon: PokemonSpeciesPokedex) => {
+    async (pokemon: PokemonSpeciesPokedex) => {
       if (pokemon.isOnPokedex) {
         const { id } = pokemon
 
-        animationControllerRef.current.leave(id).then(() => {
-          onRemoveFromPokedex(id)
-        })
+        if (removeOnRelease) {
+          await animationControllerRef.current.leave(id)
+        }
+
+        onRelease(id)
       } else {
-        onAddToPokedex?.(pokemon)
+        onCatch?.(pokemon)
       }
     },
-    [onAddToPokedex, onRemoveFromPokedex]
+    [onCatch, onRelease, removeOnRelease]
   )
 
   const handleOnIntersectionChange = useCallback(
