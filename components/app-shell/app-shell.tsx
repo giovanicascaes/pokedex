@@ -20,7 +20,7 @@ export default function AppShell({
   restoreScrollOnNavigatingFrom = [],
   children,
 }: AppShellProps) {
-  const [isScrollVisited, setIsScrollVisited] = useState(false)
+  const [isPreviousScrollSaved, setIsPreviousScrollSaved] = useState(false)
   const pageTransitionRef = useRef<PageTransitionElement>(null)
   const { pathname: currentPath } = useRouter()
   const scrollControllerRef = useRef(
@@ -48,7 +48,7 @@ export default function AppShell({
 
   useEffect(() => {
     scrollControllerRef.current.currentPath = currentPath
-    setIsScrollVisited(scrollControllerRef.current.isVisited)
+    setIsPreviousScrollSaved(scrollControllerRef.current.isPreviousScrollSaved)
   }, [currentPath])
 
   useEffect(() => {
@@ -73,13 +73,13 @@ export default function AppShell({
       return
     }
 
-    const resolveGen = scrollControllerRef.current.resolve()
-    const isVisited = (await resolveGen.next().value) as boolean
+    const resolveGenerator = scrollControllerRef.current.resolve()
+    const saved = (await resolveGenerator.next().value) as boolean
 
-    setIsScrollVisited(isVisited)
+    setIsPreviousScrollSaved(saved)
 
     const resolve = () => {
-      const { value, done } = resolveGen.next()
+      const { value, done } = resolveGenerator.next()
 
       if (done) {
         pageTransitionRef.current?.resume()
@@ -98,7 +98,7 @@ export default function AppShell({
   }, [])
 
   const data: ScrollControlContextData = {
-    isScrollVisited,
+    isPreviousScrollSaved,
   }
 
   const onPageLoadComplete = useCallback(() => {

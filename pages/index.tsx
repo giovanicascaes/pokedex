@@ -4,18 +4,18 @@ import { useIntersectionObserver } from "hooks"
 import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import { InferGetStaticPropsType } from "next"
 import Head from "next/head"
-import { ReactNode, useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { env } from "utils"
 
-type HomeProps = InferGetStaticPropsType<typeof getStaticProps>
+type PokemonsProps = InferGetStaticPropsType<typeof getStaticProps>
 
-export default function Home({ serverLoadedPokemons }: HomeProps) {
+export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
   const [isListLoaded, setIsListLoaded] = useState(false)
   const [
     { visiblePokemons, preloadPokemons, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
-  const [{ isScrollVisited }, { onPageLoadComplete }] = useScrollControl()
+  const [{ isPreviousScrollSaved }, { onPageLoadComplete }] = useScrollControl()
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -43,7 +43,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
         <PokemonList
           pokemons={visiblePokemons}
           preloadPokemons={preloadPokemons}
-          skipFirstPageAnimations={isScrollVisited}
+          skipFirstPageAnimations={isPreviousScrollSaved}
           onCatch={addPokemonToPokedex}
           onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}
@@ -62,7 +62,7 @@ export default function Home({ serverLoadedPokemons }: HomeProps) {
   )
 }
 
-Home.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
+Pokemons.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
 
 export async function getStaticProps() {
   return {

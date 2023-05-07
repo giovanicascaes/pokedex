@@ -42,7 +42,7 @@ export default class ScrollController {
 
     this.resetScrollIfNeeded()
 
-    yield this.isVisited
+    yield this.isPreviousScrollSaved
 
     yield new Promise<void>((resolve) => {
       if (!this._isEnabled) {
@@ -174,7 +174,7 @@ export default class ScrollController {
     )
   }
 
-  get isVisited() {
+  get isPreviousScrollSaved() {
     return this.scrollHistory.visited
   }
 

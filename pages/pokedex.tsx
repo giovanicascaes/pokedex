@@ -6,7 +6,7 @@ import { useEffect } from "react"
 export default function Pokedex() {
   const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
   const [, { setUpBreadcrumb }] = usePage()
-  const [{ isScrollVisited }, { onPageLoadComplete }] = useScrollControl()
+  const [{ isPreviousScrollSaved }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
@@ -23,7 +23,7 @@ export default function Pokedex() {
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipFirstPageAnimations={isScrollVisited}
+          skipFirstPageAnimations={isPreviousScrollSaved}
           removeOnRelease
           onRelease={removePokemonFromPokedex}
           onLoad={onPageLoadComplete}

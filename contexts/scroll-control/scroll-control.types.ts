@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 
 export interface ScrollControlContextData {
-  isScrollVisited: boolean
+  isPreviousScrollSaved: boolean
 }
 
 export interface ScrollControlContextActions {

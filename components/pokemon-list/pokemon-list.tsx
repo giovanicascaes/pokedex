@@ -36,7 +36,7 @@ export default function PokemonList({
   ...otherProps
 }: PokemonListProps) {
   const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery], {
-    fallback: [true, false, false, false],
+    fallback: [false, false, false, false],
   })
   const columns = useMemo(
     () => mediaMatches.lastIndexOf(true) + 1,
@@ -78,23 +78,25 @@ export default function PokemonList({
       className={twMerge("flex flex-col", className)}
       style={{ ...containerStyles }}
     >
-      <FadeOnChange
-        watch={columns === 1}
-        transitionDuration={LIST_VIEW_TRANSITION_DURATION}
-      >
-        {(isList) => (
-          <PokemonListProvider value={[data, actions]}>
-            {isList ? (
-              <PokemonListSimpleView {...commonListViewProps} />
-            ) : (
-              <PokemonListGridView
-                {...commonListViewProps}
-                columns={Math.max(columns, 2)}
-              />
-            )}
-          </PokemonListProvider>
-        )}
-      </FadeOnChange>
+      {columns > 0 && (
+        <FadeOnChange
+          watch={columns === 1}
+          transitionDuration={LIST_VIEW_TRANSITION_DURATION}
+        >
+          {(isList) => (
+            <PokemonListProvider value={[data, actions]}>
+              {isList ? (
+                <PokemonListSimpleView {...commonListViewProps} />
+              ) : (
+                <PokemonListGridView
+                  {...commonListViewProps}
+                  columns={Math.max(columns, 2)}
+                />
+              )}
+            </PokemonListProvider>
+          )}
+        </FadeOnChange>
+      )}
     </animated.div>
   )
 }
