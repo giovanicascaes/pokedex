@@ -10,8 +10,9 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
     name,
     width,
     height,
-    fill = false,
     animate = true,
+    fill = false,
+    sizes,
     className,
     artClassName,
     ...other
@@ -65,6 +66,7 @@ export default forwardRef<HTMLDivElement, PokemonArtProps>(function PokemonArt(
             width={computedWidth}
             height={computedHeight}
             fill={fill}
+            sizes={sizes}
             onLoadingComplete={() => setIsLoaded(true)}
             onError={() => setIsError(true)}
             priority

@@ -165,7 +165,6 @@ export default function PokemonListGridView({
           style={{
             width: containerWidth,
             height: containerHeight,
-            opacity: containerRect ? 1 : 0,
             ...containerStyles,
           }}
         >
@@ -191,6 +190,7 @@ export default function PokemonListGridView({
                   onIntersectionChange={(isIntersecting: boolean) =>
                     handleOnIntersectionChange(id, isIntersecting)
                   }
+                  animateArt={!skipFirstPageAnimations}
                 />
               </animated.li>
             )

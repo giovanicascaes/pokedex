@@ -19,10 +19,9 @@ import {
   PokemonDetailsProps,
 } from "./pokemon-details.types"
 
-const { md, lg } = theme!.screens as { [k: string]: string }
+const { sm, md, lg } = theme!.screens as { [k: string]: string }
 
 const lgQuery = `(min-width: ${lg})`
-const mdQuery = `(min-width: ${md})`
 
 function BadgesContainer({
   children,
@@ -140,6 +139,10 @@ export default function PokemonDetails({
                     width={450}
                     height={450}
                     fill={!isLgScreen}
+                    sizes={`
+                      (max-width: ${sm}) 100vw,
+                      (max-width: ${md}) 50vw,
+                      33vw`}
                     name={displayedFormName}
                     className="rounded-md bg-white/75 dark:bg-slate-400/70 outline outline-1 -outline-offset-1 outline-black/[0.14] dark:outline-white/[0.28]"
                   />

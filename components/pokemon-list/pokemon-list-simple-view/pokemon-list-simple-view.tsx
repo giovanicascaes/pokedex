@@ -178,8 +178,9 @@ export default function PokemonListSimpleView({
       {preloadPokemons?.map(({ id, ...other }) => (
         <li key={id} className="hidden">
           <IntersectionObserverPokemonListItemSimple
-            identifier={id}
             {...other}
+            identifier={id}
+            animateArt={!skipFirstPageAnimations}
           />
         </li>
       ))}
