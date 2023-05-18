@@ -36,8 +36,8 @@ export type PokemonActions =
 
 export interface PokemonContextData {
   currentPage: number
-  visiblePokemons: PokemonSpeciesPokedex[]
-  preloadPokemons: PokemonSpeciesPokedex[]
+  visible: PokemonSpeciesPokedex[]
+  preload: PokemonSpeciesPokedex[]
   pokedex: PokemonSpeciesPokedex[]
   viewingPokemon: PokemonSpeciesDetailed | null
   hasFetchedAll: boolean

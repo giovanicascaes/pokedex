@@ -1,4 +1,4 @@
-import { FadeOnChange, PokemonDetails } from "components"
+import { Transition, PokemonDetails } from "components"
 import { usePage, usePokemon } from "contexts"
 import { useIsoMorphicEffect, useLastList } from "hooks"
 import { getPokemon } from "lib"
@@ -38,9 +38,9 @@ export default function Pokemon({ pokemon }: PokemonProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-col px-6 sm:px-16 md:px-32 pb-12 pt-8">
-        <FadeOnChange watch={pokemon}>
+        <Transition watch={pokemon}>
           {(pokemon) => <PokemonDetails pokemon={pokemon} />}
-        </FadeOnChange>
+        </Transition>
       </div>
     </>
   )

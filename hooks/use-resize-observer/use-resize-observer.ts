@@ -7,6 +7,7 @@ import {
 
 export default function useResizeObserver({
   wait = 0,
+  computeInitialRect = false,
 }: UseResizeObserverArgs = {}): UseResizeObserverReturn {
   const observerRef = useRef<ResizeObserver>()
   const [el, ref] = useState<Element | null>(null)
@@ -20,11 +21,18 @@ export default function useResizeObserver({
 
       setRect(contentRect)
     }
+
     observerRef.current = new ResizeObserver(debounce(observerCallback, wait))
     observerRef.current.observe(el)
 
-    return () => observerRef.current!.disconnect()
-  }, [el, wait])
+    if (computeInitialRect) {
+      setRect(el.getBoundingClientRect())
+    }
+
+    return () => {
+      observerRef.current!.disconnect()
+    }
+  }, [computeInitialRect, el, wait])
 
   return [ref, rect]
 }

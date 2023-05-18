@@ -1,35 +1,42 @@
-import { Children, useCallback } from "react"
+import { useEvent } from "hooks"
+import { Children, useCallback, useMemo, useState } from "react"
 import { env } from "utils"
+import {
+  PokemonCatchReleaseAnimationProvider,
+  usePokemonCatchReleaseAnimation,
+} from "./context"
 import { PokemonCatchAnimation } from "./pokemon-catch-animation"
-import { PokemonCatchReleaseAnimationProps } from "./pokemon-catch-release-animation.types"
+import {
+  PokemonCatchReleaseAnimationContextActions,
+  PokemonCatchReleaseAnimationContextData,
+  PokemonCatchReleaseAnimationProps,
+  PokemonCatchReleaseAnimationState,
+  PokemonCatchReleaseAnimationWrapperProps,
+} from "./pokemon-catch-release-animation.types"
 import { PokemonReleaseAnimation } from "./pokemon-release-animation"
 import useChildrenRect from "./use-children-rect"
 
-function ClientSideComponent({
-  state = "idle",
-  onAnimationFinish: onFinishAnimation,
+function PokemonCatchReleaseAnimationWrapper({
   children,
   className,
   ...other
-}: PokemonCatchReleaseAnimationProps) {
-  const animate = state !== "idle"
+}: PokemonCatchReleaseAnimationWrapperProps) {
+  const [{ state }, { onAnimationFinish }] = usePokemonCatchReleaseAnimation()
+  const isAnimating = state !== "idle"
   const { trackedChildren, childrenRect } = useChildrenRect(
     Children.only(children),
-    animate
+    isAnimating && env.isClient
   )
-  const handleOnFinishAnimation = useCallback(() => {
-    onFinishAnimation?.()
-  }, [onFinishAnimation])
 
   const AnimationComponent =
     state === "catching" ? PokemonCatchAnimation : PokemonReleaseAnimation
 
   return (
     <>
-      {animate && (
+      {isAnimating && (
         <AnimationComponent
           {...other}
-          onAnimationFinish={handleOnFinishAnimation}
+          onAnimationFinish={onAnimationFinish}
           pokemonRect={childrenRect}
           className="absolute top-0 left-0 z-40 w-full h-full pointer-events-none"
         >
@@ -41,13 +48,49 @@ function ClientSideComponent({
   )
 }
 
-export default function PokemonCatchReleaseAnimation({
+function PokemonCatchReleaseAnimation({
+  isOnPokedex = false,
+  onAnimationFinish,
   children,
-  ...other
 }: PokemonCatchReleaseAnimationProps) {
-  if (env.isServer) {
-    return children
+  const [isAnimating, setIsAnimating] = useState(false)
+  const animationFinishHandlerCb = useEvent(onAnimationFinish)
+
+  const runAnimation = useCallback(() => {
+    setIsAnimating(true)
+  }, [])
+
+  const handleAnimationFinish = useCallback(() => {
+    setIsAnimating(false)
+    animationFinishHandlerCb?.()
+  }, [animationFinishHandlerCb])
+
+  const state = useMemo<PokemonCatchReleaseAnimationState>(() => {
+    if (!isAnimating) return "idle"
+
+    if (isOnPokedex) return "releasing"
+
+    return "catching"
+  }, [isAnimating, isOnPokedex])
+
+  const data: PokemonCatchReleaseAnimationContextData = {
+    state,
   }
 
-  return <ClientSideComponent {...other}>{children}</ClientSideComponent>
+  const actions: PokemonCatchReleaseAnimationContextActions = {
+    onAnimationFinish: handleAnimationFinish,
+  }
+
+  return (
+    <PokemonCatchReleaseAnimationProvider value={[data, actions]}>
+      {children({
+        runAnimation,
+        isAnimating,
+      })}
+    </PokemonCatchReleaseAnimationProvider>
+  )
 }
+
+export default Object.assign(PokemonCatchReleaseAnimation, {
+  Wrapper: PokemonCatchReleaseAnimationWrapper,
+})

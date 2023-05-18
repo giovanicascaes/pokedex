@@ -12,6 +12,7 @@ export default function useIntersectionObserver({
   freezeOnceVisible = false,
   disconnectOnceVisible = false,
   disconnectOnceNoLongerVisible = false,
+  enabled = true,
 }: UseIntersectionObserverArgs = {}): UseIntersectionObserverReturn {
   const observerRef = useRef<IntersectionObserver>()
   const [el, ref] = useState<Element | null>(null)
@@ -19,7 +20,7 @@ export default function useIntersectionObserver({
   const prevIsIntersecting = usePrevious(isIntersecting)
 
   useIsoMorphicEffect(() => {
-    if (!el) return
+    if (!el || !enabled) return
 
     const observerCallback = ([entry]: IntersectionObserverEntry[]): void => {
       const { isIntersecting } = entry
@@ -36,7 +37,9 @@ export default function useIntersectionObserver({
     )
     observerRef.current.observe(el)
 
-    return () => observerRef.current!.disconnect()
+    return () => {
+      observerRef.current!.disconnect()
+    }
     // Disable rule to not trigger rerender when `threshold` is an array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [root, rootMargin, el, threshold.toString(), freezeOnceVisible])

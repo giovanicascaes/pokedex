@@ -11,7 +11,4 @@ export interface AppShellScrollHistoryEntry {
   scrollTop: number
 }
 
-export type AppShellScrollEvent =
-  | "scrollResolve"
-  | "pageTransitionComplete"
-  | "pageLoadComplete"
+export type AppShellScrollEvent = "pageTransitionComplete" | "pageLoadComplete"

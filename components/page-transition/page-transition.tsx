@@ -5,20 +5,33 @@ import {
   useSpringRef,
   useTransition,
 } from "@react-spring/web"
+import { useIsoMorphicEffect } from "hooks"
 import {
   forwardRef,
-  useEffect,
+  useCallback,
   useImperativeHandle,
   useRef,
   useState,
 } from "react"
 import { twMerge } from "tailwind-merge"
+import { match } from "utils"
 import {
   PageTransitionElement,
   PageTransitionProps,
+  PageTransitionState,
 } from "./page-transition.types"
 
 const PAGE_TRANSITION_DURATION = 150
+
+const PAGE_TRANSITION_HIDDEN_STYLE = {
+  opacity: 0,
+  y: -30,
+}
+
+const PAGE_TRANSITION_FINAL_STYLE = {
+  opacity: 1,
+  y: 0,
+}
 
 export default forwardRef<PageTransitionElement, PageTransitionProps>(
   function PageTransition(
@@ -32,9 +45,8 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
     },
     ref
   ) {
-    const isFirstTransitionRef = useRef(true)
-    const isChangingPageRef = useRef(false)
-    const [isFadingIn, setIsFadingIn] = useState(true)
+    const [state, setState] = useState<PageTransitionState>("fading-in")
+    const isRunningRef = useRef(true)
     const fadeOutRef = useSpringRef()
     const fadeOutTransition = useTransition(children, {
       key: children,
@@ -43,76 +55,71 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
         easing: easings.linear,
         duration: PAGE_TRANSITION_DURATION,
       },
-      from: {
-        y: -30,
-        opacity: 0,
-      },
-      enter: {
-        y: 0,
-        opacity: 1,
-      },
-      leave: {
-        y: -30,
-        opacity: 0,
-      },
-      initial: {
-        y: 0,
-        opacity: 1,
-      },
+      from: PAGE_TRANSITION_FINAL_STYLE,
+      leave: PAGE_TRANSITION_HIDDEN_STYLE,
       onStart() {
-        if (!isChangingPageRef.current) {
-          isChangingPageRef.current = true
-          onTransitionStart?.()
-        }
+        setState("fading-out")
       },
       onRest() {
-        if (isChangingPageRef.current) {
-          isChangingPageRef.current = false
-          onTransitionComplete?.()
-        }
+        setState("paused")
       },
       exitBeforeEnter: true,
     })
     const [fadeInStyle, fadeInApi] = useSpring(() => ({
+      from: PAGE_TRANSITION_HIDDEN_STYLE,
       config: {
         easing: easings.linear,
         duration: PAGE_TRANSITION_DURATION,
       },
-      from: {
-        y: -30,
-        opacity: 0,
-      },
-      to: {
-        y: 0,
-        opacity: 1,
-      },
       onStart() {
-        setIsFadingIn(true)
+        fadeOutRef.set(PAGE_TRANSITION_FINAL_STYLE)
       },
       onRest() {
-        isFirstTransitionRef.current = false
-        setIsFadingIn(false)
+        isRunningRef.current = false
+        setState("idle")
       },
     }))
 
-    useEffect(() => {
-      if (isChangingPageRef.current) return
+    const fadeInTransition = useCallback(() => {
+      fadeInApi.start({
+        from: PAGE_TRANSITION_HIDDEN_STYLE,
+        to: PAGE_TRANSITION_FINAL_STYLE,
+      })
+    }, [fadeInApi])
 
-      if (isFirstTransitionRef.current) {
-        fadeInApi.start()
-      } else {
+    useIsoMorphicEffect(() => {
+      if (!isRunningRef.current) {
+        isRunningRef.current = true
         fadeOutRef.start()
       }
-    }, [children, fadeInApi, fadeOutRef, isChangingPageRef])
+    }, [children, fadeOutRef])
+
+    useIsoMorphicEffect(() => {
+      if (state === "fading-out") {
+        onTransitionStart?.()
+      }
+    }, [onTransitionStart, state])
+
+    useIsoMorphicEffect(() => {
+      if (state === "paused") {
+        onTransitionComplete?.()
+      }
+    }, [onTransitionComplete, state])
+
+    useIsoMorphicEffect(() => {
+      if (state === "fading-in") {
+        fadeInTransition()
+      }
+    }, [fadeInTransition, state])
 
     useImperativeHandle(
       ref,
       () => ({
         resume() {
-          fadeInApi.start()
+          setState("fading-in")
         },
       }),
-      [fadeInApi]
+      []
     )
 
     return fadeOutTransition((fadeOutStyle, page) => (
@@ -121,7 +128,15 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
         className={twMerge("h-full", className)}
         style={{
           ...style,
-          ...(isFadingIn ? fadeInStyle : fadeOutStyle),
+          ...match(
+            {
+              idle: fadeOutStyle,
+              "fading-in": fadeInStyle,
+              "fading-out": fadeOutStyle,
+              paused: PAGE_TRANSITION_HIDDEN_STYLE,
+            },
+            state
+          ),
         }}
       >
         {page}

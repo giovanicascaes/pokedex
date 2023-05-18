@@ -1,6 +1,6 @@
 import {
   Badge,
-  FadeOnChange,
+  Transition,
   PokemonArt,
   PokemonEvolutionChain,
   PokemonNavigation,
@@ -123,7 +123,7 @@ export default function PokemonDetails({
             </Select.Options>
           </Select>
         )}
-        <FadeOnChange
+        <Transition
           watch={selectedForm}
           className="w-full relative flex justify-center"
         >
@@ -175,7 +175,7 @@ export default function PokemonDetails({
               </div>
             </div>
           )}
-        </FadeOnChange>
+        </Transition>
         <div className="w-full">
           <PokemonSection label="Evolution Chain" className="mt-12">
             <PokemonEvolutionChain evolutionChain={evolutionChain} />

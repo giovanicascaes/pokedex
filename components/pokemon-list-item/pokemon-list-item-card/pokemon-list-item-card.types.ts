@@ -1,8 +1,10 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react"
-import { PokemonListItemProps } from "../pokemon-list-item.types"
+import { PokemonListItemViewProps } from "../pokemon-list-item.types"
 
-export type PokemonListItemCardProps = DetailedHTMLProps<
-  HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
-> &
-  PokemonListItemProps
+export type PokemonListItemCardElement = HTMLDivElement
+
+export type PokemonListItemCardProps = PokemonListItemViewProps &
+  DetailedHTMLProps<
+    HTMLAttributes<PokemonListItemCardElement>,
+    PokemonListItemCardElement
+  >

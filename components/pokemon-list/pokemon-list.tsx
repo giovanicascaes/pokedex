@@ -1,21 +1,36 @@
-import { animated, easings, useSpring } from "@react-spring/web"
-import { FadeOnChange } from "components"
+import {
+  AnimatedGrid,
+  Transition,
+  PokemonListItemCard,
+  PokemonListItemSimple,
+} from "components"
 import { useMedia } from "hooks"
 import { useMemo } from "react"
 import theme from "styles/theme"
-import { twMerge } from "tailwind-merge"
-import { PokemonListProvider } from "./context"
-import { PokemonListGridView } from "./pokemon-list-grid-view"
-import { PokemonListSimpleView } from "./pokemon-list-simple-view"
-import {
-  PokemonListContextActions,
-  PokemonListContextData,
-  PokemonListProps,
-} from "./pokemon-list.types"
+import { omit } from "utils"
+import { PokemonListProps } from "./pokemon-list.types"
 
-const CONTAINER_TRANSITION_DURATION = 300
+const LIST_VIEW_GRID_GAP = 10
 
-const LIST_VIEW_TRANSITION_DURATION = 150
+const LIST_VIEW_ANIMATION_TRAIL = 100
+
+const LIST_VIEW_ANIMATION_TRANSITION_DURATION = 300
+
+const LIST_VIEW_ANIMATION_CONFIG = {
+  trail: LIST_VIEW_ANIMATION_TRAIL,
+  duration: LIST_VIEW_ANIMATION_TRANSITION_DURATION,
+  from: {
+    opacity: 0,
+    scale: 0.5,
+  },
+  enter: {
+    opacity: 1,
+    scale: 1,
+  },
+  leave: {
+    opacity: 0,
+  },
+}
 
 const { sm, md, lg } = theme!.screens as { [k: string]: string }
 
@@ -26,77 +41,71 @@ const lgQuery = `(min-width: ${lg})`
 
 export default function PokemonList({
   pokemons,
-  preloadPokemons = [],
-  skipFirstPageAnimations = false,
-  removeOnRelease = false,
+  preload = [],
+  skipFirstItemsAnimation = false,
+  hideBeforeRelease = false,
   onCatch,
   onRelease,
   onLoad,
   className,
-  ...otherProps
+  ...other
 }: PokemonListProps) {
-  const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery], {
-    fallback: [false, false, false, false],
-  })
+  const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery])
   const columns = useMemo(
     () => mediaMatches.lastIndexOf(true) + 1,
     [mediaMatches]
   )
 
-  const containerStyles = useSpring({
-    config: {
-      duration: CONTAINER_TRANSITION_DURATION,
-      easing: easings.linear,
-    },
-  })
+  if (columns === 0) return null
 
-  const data: PokemonListContextData = {
-    pokemons,
-    preloadPokemons,
-    skipFirstPageAnimations,
-  }
-
-  const actions: PokemonListContextActions = {
-    onCatch,
-    onRelease,
-    onLoad,
-  }
-
-  const commonListViewProps = {
-    pokemons,
-    preloadPokemons,
-    skipFirstPageAnimations,
-    removeOnRelease,
-    onCatch,
-    onRelease,
-    onLoad,
-  }
+  const isOneColumn = columns === 1
 
   return (
-    <animated.div
-      {...otherProps}
-      className={twMerge("flex flex-col", className)}
-      style={{ ...containerStyles }}
-    >
-      {columns > 0 && (
-        <FadeOnChange
-          watch={columns === 1}
-          transitionDuration={LIST_VIEW_TRANSITION_DURATION}
+    <Transition {...other} watch={isOneColumn}>
+      {(isList) => (
+        <AnimatedGrid
+          items={pokemons}
+          columns={isList ? 1 : Math.max(columns, 2)}
+          columnsConfig={{
+            1: {
+              gapX: LIST_VIEW_GRID_GAP,
+              gapY: LIST_VIEW_GRID_GAP,
+              fillColumnWidth: true,
+              animationConfig: LIST_VIEW_ANIMATION_CONFIG,
+            },
+          }}
+          skipFirstItemsAnimation={skipFirstItemsAnimation}
+          onLoad={onLoad}
         >
-          {(isList) => (
-            <PokemonListProvider value={[data, actions]}>
-              {isList ? (
-                <PokemonListSimpleView {...commonListViewProps} />
-              ) : (
-                <PokemonListGridView
-                  {...commonListViewProps}
-                  columns={Math.max(columns, 2)}
-                />
-              )}
-            </PokemonListProvider>
-          )}
-        </FadeOnChange>
+          {({ item: pokemon, hide }) => {
+            const { id } = pokemon
+
+            const handleOnAnimationFinish = async () => {
+              if (pokemon.isOnPokedex) {
+                if (hideBeforeRelease) {
+                  await hide(id)
+                }
+
+                onRelease(id)
+              } else {
+                onCatch?.(pokemon)
+              }
+            }
+
+            const props = {
+              ...omit(pokemon, "id"),
+              pokemonId: id,
+              onAnimationFinish: handleOnAnimationFinish,
+            }
+
+            return isList ? (
+              <PokemonListItemSimple {...props} />
+            ) : (
+              <PokemonListItemCard {...props} />
+            )
+          }}
+        </AnimatedGrid>
       )}
-    </animated.div>
+    </Transition>
   )
 }

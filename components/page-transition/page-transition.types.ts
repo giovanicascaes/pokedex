@@ -14,4 +14,4 @@ export interface PageTransitionElement {
   resume: () => void
 }
 
-export type PageTransitionStatus = "idle" | "fading-out" | "fading-in"
+export type PageTransitionState = "idle" | "fading-out" | "paused" | "fading-in"

@@ -1,4 +1,4 @@
-import { PokemonTypeBadge } from "components/pokemon-type-badge"
+import { PokemonTypeBadge } from "components"
 import { PokemonTypeGroupProps } from "./pokemon-types.types"
 
 export default function PokemonTypeGroup({ types }: PokemonTypeGroupProps) {

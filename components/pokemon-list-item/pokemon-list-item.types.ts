@@ -1,14 +1,29 @@
-import { DetailedHTMLProps, HTMLAttributes } from "react"
+import { DetailedHTMLProps, HTMLAttributes, ReactElement } from "react"
 import { WithNonLegacyRef } from "types"
 
+export type PokemonListItemAnimationState = "catching" | "releasing" | "idle"
+
+export interface PokemonListItemChildrenFnProps {
+  isAnimating: boolean
+  animationState: PokemonListItemAnimationState
+  onAnimationStart: () => void
+  onAnimationFinish: () => void
+}
+
 export interface PokemonListItemProps {
-  identifier: number
+  isOnPokedex?: boolean
+  onAnimationFinish?: () => void
+  children: (props: PokemonListItemChildrenFnProps) => ReactElement
+}
+
+export interface PokemonListItemViewProps {
+  pokemonId: number
   resourceName: string
   name: string
   artSrc: string | null
   animateArt?: boolean
   isOnPokedex?: boolean
-  onCatchReleaseFinish?: () => void
+  onAnimationFinish: () => void
 }
 
 export interface PokemonCaughtBadgeProps
@@ -18,8 +33,3 @@ export interface PokemonCaughtBadgeProps
   > {
   isCaught: boolean
 }
-
-export type UsePokemonListItemArgs = Pick<
-  PokemonListItemProps,
-  "onCatchReleaseFinish" | "isOnPokedex"
->

@@ -12,7 +12,7 @@ type PokemonsProps = InferGetStaticPropsType<typeof getStaticProps>
 export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
   const [isListLoaded, setIsListLoaded] = useState(false)
   const [
-    { visiblePokemons, preloadPokemons, hasFetchedAll },
+    { visible, preload, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
   const [{ isPreviousScrollSaved }, { onPageLoadComplete }] = useScrollControl()
@@ -41,9 +41,9 @@ export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
       </Head>
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
-          pokemons={visiblePokemons}
-          preloadPokemons={preloadPokemons}
-          skipFirstPageAnimations={isPreviousScrollSaved}
+          pokemons={visible}
+          preload={preload}
+          skipFirstItemsAnimation={isPreviousScrollSaved}
           onCatch={addPokemonToPokedex}
           onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}
@@ -51,7 +51,7 @@ export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
         />
         {isListLoaded && (
           <div
-            className="w-full text-center font-light text-slate-400"
+            className="w-full text-center font-light text-slate-400 mt-10"
             ref={intersectionObserverRef}
           >
             {hasFetchedAll ? "These are all the Pokémons" : "Loading..."}

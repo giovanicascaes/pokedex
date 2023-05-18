@@ -1,5 +1,5 @@
 import { animated, useTransition } from "@react-spring/web"
-import { Tooltip } from "components/tooltip"
+import { Tooltip } from "components"
 import { POKEMON_CAUGHT_BADGE_TRANSITION_DURATION } from "lib"
 import { MdCatchingPokemon } from "react-icons/md"
 import { PokemonCaughtBadgeProps } from "./pokemon-list-item.types"

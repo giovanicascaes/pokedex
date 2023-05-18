@@ -1,9 +1,9 @@
 import { Controller, easings } from "@react-spring/web"
-import { PokemonSpeciesPokedex } from "contexts"
 import {
-  PokemonListItemAnimationProperties,
-  PokemonListItemAnimationRunToken,
-} from "./pokemon-list.types"
+  AnimatedGridItem,
+  AnimatedGridItemAnimationConfig,
+  AnimatedGridItemAnimationRunToken,
+} from "./animated-grid.types"
 
 const DEFAULT_ANIMATION_CONFIG = {
   mass: 5,
@@ -12,26 +12,17 @@ const DEFAULT_ANIMATION_CONFIG = {
   easing: easings.easeOutCirc,
 }
 
-class PokemonListItemAnimation {
-  private readonly _pokemon: PokemonSpeciesPokedex
-  private readonly _properties: PokemonListItemAnimationProperties
+class AnimatedGridItemAnimation {
+  private readonly _config: AnimatedGridItemAnimationConfig
   private readonly animation: Controller
-  private readonly runToken: PokemonListItemAnimationRunToken
+  private readonly runToken: AnimatedGridItemAnimationRunToken
   private _isRunning: boolean = false
-  private _isIdle: boolean = false
+  private _isDone: boolean = false
 
-  constructor(
-    pokemon: PokemonSpeciesPokedex,
-    properties: PokemonListItemAnimationProperties
-  ) {
-    this._pokemon = pokemon
-    this._properties = properties
+  constructor(config: AnimatedGridItemAnimationConfig) {
+    this._config = config
 
-    const {
-      duration,
-      trail,
-      values: { from },
-    } = this._properties
+    const { duration, trail, from } = this._config
 
     this.animation = new Controller({
       config: {
@@ -48,16 +39,13 @@ class PokemonListItemAnimation {
   }
 
   async start(noDelay: boolean = false) {
-    if (this._isRunning || this._isIdle) return
+    if (this._isRunning || this._isDone) return
 
     return new Promise<void>((resolve) => {
       this._isRunning = true
       this.runToken.cancel = resolve
 
-      const {
-        trail,
-        values: { to },
-      } = this._properties
+      const { trail, enter: to } = this._config
 
       this.animation.start({
         to,
@@ -69,11 +57,9 @@ class PokemonListItemAnimation {
     })
   }
 
-  async leave() {
+  async hide() {
     return new Promise<void>((resolve) => {
-      const {
-        values: { leave: to },
-      } = this._properties
+      const { leave: to } = this._config
 
       this.animation.start({
         to,
@@ -86,12 +72,12 @@ class PokemonListItemAnimation {
 
   skip() {
     this.runToken.cancel?.()
-    this.animation.set(this._properties.values.to)
+    this.animation.set(this._config.enter)
     this.finish()
   }
 
   finish() {
-    this._isIdle = true
+    this._isDone = true
     this._isRunning = false
     delete this.runToken.cancel
   }
@@ -100,16 +86,12 @@ class PokemonListItemAnimation {
     this.animation.stop(true)
   }
 
-  get isIdle() {
-    return this._isIdle
+  get isDone() {
+    return this._isDone
   }
 
   get isRunning() {
     return this._isRunning
-  }
-
-  get pokemon() {
-    return this._pokemon
   }
 
   get styles() {
@@ -117,23 +99,20 @@ class PokemonListItemAnimation {
   }
 }
 
-export default class PokemonListItemAnimationController {
-  private readonly _properties: PokemonListItemAnimationProperties
-  private indexes = new Map<number, PokemonListItemAnimation>()
+export default class AnimatedGridItemAnimationController {
+  private readonly _config: AnimatedGridItemAnimationConfig
+  private indexes = new Map<number, AnimatedGridItemAnimation>()
   private _queue: number[] = []
   private _isAnimating: boolean = false
 
-  constructor(properties: PokemonListItemAnimationProperties) {
-    this._properties = properties
+  constructor(config: AnimatedGridItemAnimationConfig) {
+    this._config = config
   }
 
-  setPokemons(pokemons: PokemonSpeciesPokedex[]) {
-    pokemons.forEach((pokemon) => {
-      if (!this.indexes.has(pokemon.id)) {
-        this.indexes.set(
-          pokemon.id,
-          new PokemonListItemAnimation(pokemon, this._properties)
-        )
+  setItems(items: AnimatedGridItem[]) {
+    items.forEach((item) => {
+      if (!this.indexes.has(item.id)) {
+        this.indexes.set(item.id, new AnimatedGridItemAnimation(this._config))
       }
     })
   }
@@ -158,8 +137,8 @@ export default class PokemonListItemAnimationController {
     this.startNext(true)
   }
 
-  async leave(id: number) {
-    await this.get(id)?.leave()
+  async hide(id: number) {
+    await this.get(id)?.hide()
   }
 
   cancel() {
@@ -170,8 +149,8 @@ export default class PokemonListItemAnimationController {
     })
   }
 
-  isIdle(id: number) {
-    return this.get(id)?.isIdle
+  isDone(id: number) {
+    return this.get(id)?.isDone
   }
 
   getStyles(id: number) {
@@ -184,7 +163,7 @@ export default class PokemonListItemAnimationController {
     if (next) {
       const animation = this.get(next)!
 
-      if (!animation.isIdle) {
+      if (!animation.isDone) {
         await animation.start(noDelay)
         this.skipPrevious(next)
       }
@@ -200,7 +179,7 @@ export default class PokemonListItemAnimationController {
     const currentIndex = indexesAsList.findIndex(([id]) => id === current)
 
     indexesAsList.slice(0, currentIndex).forEach(([, animation]) => {
-      if (!animation.isIdle) {
+      if (!animation.isDone) {
         animation.skip()
       }
     })

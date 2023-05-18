@@ -36,9 +36,9 @@ export function usePokemon(serverLoadedPokemons: PokemonSpeciesSimple[] = []) {
     () => [
       {
         ...data,
-        visiblePokemons: [
+        visible: [
           ...addPokedexState(serverLoadedPokemons, data.pokedex),
-          ...data.visiblePokemons,
+          ...data.visible,
         ],
       },
       actions,
@@ -93,7 +93,7 @@ export function PokemonProvider({ children }: PokemonProviderProps) {
   const [state, dispatch] = useReducer(matchReducer, INITIAL_STATE)
   const {
     currentPage,
-    pokemons: [visiblePokemons, preloadPokemons],
+    pokemons: [visible, preload],
     hasFetchedAll,
     error,
     loadNext: loadMore,
@@ -103,11 +103,11 @@ export function PokemonProvider({ children }: PokemonProviderProps) {
     () => ({
       ...state,
       currentPage,
-      visiblePokemons: addPokedexState(visiblePokemons, state.pokedex),
-      preloadPokemons: addPokedexState(preloadPokemons, state.pokedex),
+      visible: addPokedexState(visible, state.pokedex),
+      preload: addPokedexState(preload, state.pokedex),
       hasFetchedAll,
     }),
-    [currentPage, hasFetchedAll, preloadPokemons, state, visiblePokemons]
+    [currentPage, hasFetchedAll, preload, state, visible]
   )
 
   const actions: PokemonContextActions = useMemo(

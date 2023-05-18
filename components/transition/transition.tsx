@@ -1,14 +1,14 @@
 import { animated, easings, useTransition } from "@react-spring/web"
-import { FadeOnChangeProps } from "./fade-on-change.types"
+import { TransitionProps } from "./transition.types"
 
 const DEFAULT_TRANSITION_DURATION = 200
 
-export default function FadeOnChange<T>({
+export default function Transition<T>({
   watch,
   children,
   transitionDuration = DEFAULT_TRANSITION_DURATION,
   ...other
-}: FadeOnChangeProps<T>) {
+}: TransitionProps<T>) {
   const transition = useTransition(watch, {
     key: watch,
     from: { opacity: 0 },
