@@ -6,24 +6,23 @@ import { useState } from "react"
 import { createPortal } from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
 import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
-import { PokemonReleaseAnimationPhase } from "./pokemon-release-animation.types"
+import { PokemonReleaseAnimationStep } from "./pokemon-release-animation.types"
 import useReleaseStyles from "./use-release-styles"
 
 export default function PokemonReleaseAnimation({
   onAnimationFinish,
-  pokemonRect,
+  animatingElementRect,
   children,
   style,
   ...other
 }: PokemonCatchReleaseAnimationStateProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
-  const { backgroundColor, currentAnimationPhase, ...styles } =
-    useReleaseStyles(
-      pokemonRect,
-      backgroundEl?.getBoundingClientRect(),
-      onAnimationFinish
-    )
+  const { backgroundColor, currentAnimationStep, ...styles } = useReleaseStyles(
+    animatingElementRect,
+    backgroundEl?.getBoundingClientRect(),
+    onAnimationFinish
+  )
 
   return createPortal(
     <animated.div
@@ -32,7 +31,7 @@ export default function PokemonReleaseAnimation({
       ref={backgroundRef}
     >
       <animated.div className="absolute origin-center" style={{ ...styles }}>
-        {currentAnimationPhase === PokemonReleaseAnimationPhase.Fleeing ? (
+        {currentAnimationStep === PokemonReleaseAnimationStep.Fleeing ? (
           children
         ) : (
           <Image

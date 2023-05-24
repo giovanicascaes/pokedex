@@ -50,7 +50,7 @@ export default forwardRef<PokemonListItemCardElement, PokemonListItemCardProps>(
                 href={`/pokemon/${resourceName}`}
                 scroll={false}
               >
-                <PokemonCatchReleaseAnimation.Wrapper>
+                <PokemonCatchReleaseAnimation.Animate>
                   <PokemonArt
                     artSrc={artSrc}
                     name={name}
@@ -58,7 +58,7 @@ export default forwardRef<PokemonListItemCardElement, PokemonListItemCardProps>(
                     height={220}
                     animate={animateArt}
                   />
-                </PokemonCatchReleaseAnimation.Wrapper>
+                </PokemonCatchReleaseAnimation.Animate>
               </Link>
             </div>
             <span className="text-slate-400 dark:text-slate-100 text-sm mt-2">

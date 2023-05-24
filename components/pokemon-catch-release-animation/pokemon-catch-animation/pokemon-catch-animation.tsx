@@ -6,20 +6,20 @@ import { useState } from "react"
 import { createPortal } from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
 import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
-import { PokemonCatchAnimationPhase } from "./pokemon-catch-animation.types"
+import { PokemonCatchAnimationStep } from "./pokemon-catch-animation.types"
 import useCatchStyles from "./use-catch-styles"
 
 export default function PokemonCatchAnimation({
   onAnimationFinish,
-  pokemonRect,
+  animatingElementRect,
   children,
   style,
   ...other
 }: PokemonCatchReleaseAnimationStateProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
-  const { backgroundColor, currentAnimationPhase, ...styles } = useCatchStyles(
-    pokemonRect,
+  const { backgroundColor, currentAnimationStep, ...styles } = useCatchStyles(
+    animatingElementRect,
     backgroundEl?.getBoundingClientRect(),
     onAnimationFinish
   )
@@ -31,8 +31,7 @@ export default function PokemonCatchAnimation({
       ref={backgroundRef}
     >
       <animated.div className="absolute origin-center" style={{ ...styles }}>
-        {currentAnimationPhase ===
-        PokemonCatchAnimationPhase.MovingToPokedex ? (
+        {currentAnimationStep === PokemonCatchAnimationStep.MovingToPokedex ? (
           <Image
             src={Pokeball}
             alt="Pokéball"

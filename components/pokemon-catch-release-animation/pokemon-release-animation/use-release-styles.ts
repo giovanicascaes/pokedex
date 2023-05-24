@@ -5,7 +5,7 @@ import {
   POKEBALL_SIZE_AT_CENTER,
   POKEMON_SIZE_AT_CENTER,
 } from "../constants"
-import { PokemonReleaseAnimationPhase } from "./pokemon-release-animation.types"
+import { PokemonReleaseAnimationStep } from "./pokemon-release-animation.types"
 
 const MOVE_POKEBALL_TO_CENTER_ANIMATION_DURATION = 500
 
@@ -14,14 +14,14 @@ const RELEASE_POKEMON_ANIMATION_DURATION = 250
 const POKEMON_FLEE_ANIMATION_DURATION = 700
 
 export default function useReleaseStyles(
-  pokemonRect: DOMRect,
+  animatingElementRect: DOMRect,
   backgroundRect?: DOMRect,
   onAnimationFinish?: () => void
 ) {
-  const { left, top, width, height } = pokemonRect
+  const { left, top, width, height } = animatingElementRect
 
-  const [currentAnimationPhase, setCurrentAnimationPhase] = useState(
-    PokemonReleaseAnimationPhase.MovingToCenter
+  const [currentAnimationStep, setCurrentAnimationStep] = useState(
+    PokemonReleaseAnimationStep.MovingToCenter
   )
 
   const moveToCenterSpring = useSpring({
@@ -38,7 +38,7 @@ export default function useReleaseStyles(
       x: 1,
     },
     onRest: () => {
-      setCurrentAnimationPhase(PokemonReleaseAnimationPhase.Releasing)
+      setCurrentAnimationStep(PokemonReleaseAnimationStep.Releasing)
     },
   })
   const releaseSpring = useSpring({
@@ -51,13 +51,10 @@ export default function useReleaseStyles(
       x: 0,
     },
     to: {
-      x:
-        currentAnimationPhase === PokemonReleaseAnimationPhase.Releasing
-          ? 1
-          : 0,
+      x: currentAnimationStep === PokemonReleaseAnimationStep.Releasing ? 1 : 0,
     },
     onRest: () => {
-      setCurrentAnimationPhase(PokemonReleaseAnimationPhase.Fleeing)
+      setCurrentAnimationStep(PokemonReleaseAnimationStep.Fleeing)
     },
   })
   const fleeingSpring = useSpring({
@@ -68,7 +65,7 @@ export default function useReleaseStyles(
       x: 0,
     },
     to: {
-      x: currentAnimationPhase === PokemonReleaseAnimationPhase.Fleeing ? 1 : 0,
+      x: currentAnimationStep === PokemonReleaseAnimationStep.Fleeing ? 1 : 0,
     },
     delay: 100,
     onRest: () => {
@@ -114,8 +111,8 @@ export default function useReleaseStyles(
   }, [backgroundRect, height, left, top, width])
 
   const styles = useMemo(() => {
-    switch (currentAnimationPhase) {
-      case PokemonReleaseAnimationPhase.MovingToCenter: {
+    switch (currentAnimationStep) {
+      case PokemonReleaseAnimationStep.MovingToCenter: {
         return {
           backgroundColor: undefined,
           opacity: moveToCenterSpring.x,
@@ -130,7 +127,7 @@ export default function useReleaseStyles(
           ),
         }
       }
-      case PokemonReleaseAnimationPhase.Releasing: {
+      case PokemonReleaseAnimationStep.Releasing: {
         return {
           backgroundColor: releaseSpring.x
             .to([0, 1], [0, 1])
@@ -170,7 +167,7 @@ export default function useReleaseStyles(
       }
     }
   }, [
-    currentAnimationPhase,
+    currentAnimationStep,
     fleeingSpring.x,
     moveToCenterSpring.x,
     pokeballEndLeft,
@@ -186,6 +183,6 @@ export default function useReleaseStyles(
 
   return {
     ...styles,
-    currentAnimationPhase,
+    currentAnimationStep,
   }
 }

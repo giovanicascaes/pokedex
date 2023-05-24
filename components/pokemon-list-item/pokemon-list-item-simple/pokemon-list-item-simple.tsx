@@ -42,7 +42,7 @@ export default forwardRef<
       >
         {({ isAnimating, runAnimation }) => (
           <>
-            <PokemonCatchReleaseAnimation.Wrapper>
+            <PokemonCatchReleaseAnimation.Animate>
               <PokemonArt
                 artSrc={artSrc}
                 name={name}
@@ -50,7 +50,7 @@ export default forwardRef<
                 height={80}
                 animate={animateArt}
               />
-            </PokemonCatchReleaseAnimation.Wrapper>
+            </PokemonCatchReleaseAnimation.Animate>
             <div className="flex flex-col my-auto">
               <span className="text-slate-400 group-hover/list-item:text-black dark:text-slate-100 dark:group-hover/list-item:text-white text-xs transition-colors">
                 #{pokemonId}

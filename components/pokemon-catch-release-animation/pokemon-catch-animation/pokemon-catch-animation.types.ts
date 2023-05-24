@@ -1,4 +1,4 @@
-export enum PokemonCatchAnimationPhase {
+export enum PokemonCatchAnimationStep {
   MovingToCenter,
   Catching,
   MovingToPokedex,

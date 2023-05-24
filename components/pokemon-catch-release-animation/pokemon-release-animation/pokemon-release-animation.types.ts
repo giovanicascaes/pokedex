@@ -1,4 +1,4 @@
-export enum PokemonReleaseAnimationPhase {
+export enum PokemonReleaseAnimationStep {
   MovingToCenter,
   Releasing,
   Fleeing,

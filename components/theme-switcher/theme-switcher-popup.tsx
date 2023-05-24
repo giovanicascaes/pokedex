@@ -26,7 +26,7 @@ export default function ThemeSwitcherPopup({
     (styles, show) =>
       show && (
         <animated.ul
-          className="absolute z-10 w-40 origin-top-right bg-white dark:bg-slate-700 flex flex-col right-6 top-[calc(100%-4px)] py-2.5 rounded-xl ring-1 ring-slate-900/10 dark:ring-slate-600 shadow-lg"
+          className="absolute z-10 w-40 origin-top-right bg-white dark:bg-slate-700 flex flex-col right-6 top-[calc(100%-4px)] py-2.5 rounded-xl ring-1 ring-slate-500/10 dark:ring-slate-600/75 shadow-lg"
           style={{
             ...styles,
           }}

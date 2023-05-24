@@ -5,7 +5,7 @@ export type PokemonCatchReleaseAnimationState =
   | "releasing"
   | "idle"
 
-export interface PokemonCatchReleaseAnimationWrapperProps
+export interface PokemonCatchReleaseAnimationAnimateProps
   extends Omit<
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     "children" | "ref"
@@ -15,8 +15,8 @@ export interface PokemonCatchReleaseAnimationWrapperProps
 }
 
 export interface PokemonCatchReleaseAnimationStateProps
-  extends Omit<PokemonCatchReleaseAnimationWrapperProps, "state"> {
-  pokemonRect: DOMRect
+  extends Omit<PokemonCatchReleaseAnimationAnimateProps, "state"> {
+  animatingElementRect: DOMRect
 }
 
 export interface PokemonCatchReleaseAnimationChildrenFnProps {

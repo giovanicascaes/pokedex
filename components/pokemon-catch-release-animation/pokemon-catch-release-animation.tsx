@@ -1,49 +1,46 @@
 import { useEvent } from "hooks"
 import { Children, useCallback, useMemo, useState } from "react"
-import { env } from "utils"
 import {
   PokemonCatchReleaseAnimationProvider,
   usePokemonCatchReleaseAnimation,
 } from "./context"
 import { PokemonCatchAnimation } from "./pokemon-catch-animation"
 import {
+  PokemonCatchReleaseAnimationAnimateProps,
   PokemonCatchReleaseAnimationContextActions,
   PokemonCatchReleaseAnimationContextData,
   PokemonCatchReleaseAnimationProps,
   PokemonCatchReleaseAnimationState,
-  PokemonCatchReleaseAnimationWrapperProps,
 } from "./pokemon-catch-release-animation.types"
 import { PokemonReleaseAnimation } from "./pokemon-release-animation"
-import useChildrenRect from "./use-children-rect"
+import useElementRect from "./use-element-rect"
 
-function PokemonCatchReleaseAnimationWrapper({
+function PokemonCatchReleaseAnimationAnimate({
   children,
   className,
   ...other
-}: PokemonCatchReleaseAnimationWrapperProps) {
+}: PokemonCatchReleaseAnimationAnimateProps) {
   const [{ state }, { onAnimationFinish }] = usePokemonCatchReleaseAnimation()
   const isAnimating = state !== "idle"
-  const { trackedChildren, childrenRect } = useChildrenRect(
-    Children.only(children),
-    isAnimating && env.isClient
-  )
+  const { elementObserved: childrenObserved, elementRect: childrenRect } =
+    useElementRect(Children.only(children), isAnimating)
 
   const AnimationComponent =
     state === "catching" ? PokemonCatchAnimation : PokemonReleaseAnimation
 
   return (
     <>
+      {childrenObserved}
       {isAnimating && (
         <AnimationComponent
           {...other}
           onAnimationFinish={onAnimationFinish}
-          pokemonRect={childrenRect}
+          animatingElementRect={childrenRect}
           className="absolute top-0 left-0 z-40 w-full h-full pointer-events-none"
         >
           {children}
         </AnimationComponent>
       )}
-      {trackedChildren}
     </>
   )
 }
@@ -92,5 +89,5 @@ function PokemonCatchReleaseAnimation({
 }
 
 export default Object.assign(PokemonCatchReleaseAnimation, {
-  Wrapper: PokemonCatchReleaseAnimationWrapper,
+  Animate: PokemonCatchReleaseAnimationAnimate,
 })
