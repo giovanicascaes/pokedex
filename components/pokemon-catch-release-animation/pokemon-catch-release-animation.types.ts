@@ -1,22 +1,17 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactElement } from "react"
 
-export type PokemonCatchReleaseAnimationState =
-  | "catching"
-  | "releasing"
-  | "idle"
-
 export interface PokemonCatchReleaseAnimationAnimateProps
   extends Omit<
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     "children" | "ref"
   > {
-  onAnimationFinish?: () => void
   children: ReactElement
 }
 
-export interface PokemonCatchReleaseAnimationStateProps
-  extends Omit<PokemonCatchReleaseAnimationAnimateProps, "state"> {
-  animatingElementRect: DOMRect
+export interface PokemonCatchReleaseAnimationImplProps
+  extends PokemonCatchReleaseAnimationAnimateProps {
+  pokemonRect: DOMRect
+  onAnimationFinish?: () => void
 }
 
 export interface PokemonCatchReleaseAnimationChildrenFnProps {
@@ -31,7 +26,8 @@ export interface PokemonCatchReleaseAnimationProps {
 }
 
 export interface PokemonCatchReleaseAnimationContextData {
-  state: PokemonCatchReleaseAnimationState
+  isAnimating: boolean
+  isOnPokedex: boolean
 }
 
 export interface PokemonCatchReleaseAnimationContextActions {

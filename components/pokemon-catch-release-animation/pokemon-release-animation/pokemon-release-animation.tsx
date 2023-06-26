@@ -5,21 +5,21 @@ import Image from "next/image"
 import { useState } from "react"
 import { createPortal } from "react-dom"
 import { POKEBALL_SIZE_AT_CENTER } from "../constants"
-import { PokemonCatchReleaseAnimationStateProps } from "../pokemon-catch-release-animation.types"
+import { PokemonCatchReleaseAnimationImplProps } from "../pokemon-catch-release-animation.types"
 import { PokemonReleaseAnimationStep } from "./pokemon-release-animation.types"
 import useReleaseStyles from "./use-release-styles"
 
 export default function PokemonReleaseAnimation({
+  pokemonRect,
   onAnimationFinish,
-  animatingElementRect,
   children,
   style,
   ...other
-}: PokemonCatchReleaseAnimationStateProps) {
+}: PokemonCatchReleaseAnimationImplProps) {
   const [backgroundEl, backgroundRef] = useState<HTMLDivElement | null>(null)
 
   const { backgroundColor, currentAnimationStep, ...styles } = useReleaseStyles(
-    animatingElementRect,
+    pokemonRect,
     backgroundEl?.getBoundingClientRect(),
     onAnimationFinish
   )

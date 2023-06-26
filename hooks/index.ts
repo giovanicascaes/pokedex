@@ -1,4 +1,5 @@
 export { default as useDocumentEvent } from "./use-document-event"
+export { default as useElementRect } from "./use-element-rect"
 export { default as useEvent } from "./use-event"
 export { default as useHistory } from "./use-history"
 export * from "./use-intersection-observer"

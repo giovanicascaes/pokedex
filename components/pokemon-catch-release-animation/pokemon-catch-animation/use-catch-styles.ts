@@ -11,11 +11,11 @@ const CATCH_POKEMON_ANIMATION_DURATION = 250
 const MOVE_POKEBALL_TO_POKEDEX_ANIMATION_DURATION = 1200
 
 export default function useCatchStyles(
-  animatingElementRect: DOMRect,
+  pokemonRect: DOMRect,
   backgroundRect?: DOMRect,
   onAnimationFinish?: () => void
 ) {
-  const { left, top, width, height } = animatingElementRect
+  const { left, top, width, height } = pokemonRect
 
   const [currentAnimationStep, setCurrentAnimationStep] = useState(
     PokemonCatchAnimationStep.MovingToCenter

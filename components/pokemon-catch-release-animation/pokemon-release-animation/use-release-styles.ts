@@ -14,11 +14,11 @@ const RELEASE_POKEMON_ANIMATION_DURATION = 250
 const POKEMON_FLEE_ANIMATION_DURATION = 700
 
 export default function useReleaseStyles(
-  animatingElementRect: DOMRect,
+  pokemonRect: DOMRect,
   backgroundRect?: DOMRect,
   onAnimationFinish?: () => void
 ) {
-  const { left, top, width, height } = animatingElementRect
+  const { left, top, width, height } = pokemonRect
 
   const [currentAnimationStep, setCurrentAnimationStep] = useState(
     PokemonReleaseAnimationStep.MovingToCenter

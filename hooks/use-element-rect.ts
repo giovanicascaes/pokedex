@@ -3,7 +3,7 @@ import { env, mergeRefs } from "utils"
 
 export default function useElementRect(
   element: ReactElement,
-  computeRect: boolean = false
+  shouldComputeRect: boolean = false
 ) {
   const [ourElement, elementRef] = useState<HTMLElement | null>(null)
   const [elementRect, setElementRect] = useState(DOMRect.fromRect())
@@ -14,13 +14,10 @@ export default function useElementRect(
   })
 
   useLayoutEffect(() => {
-    if (ourElement && computeRect && env.isClient) {
+    if (ourElement && env.isClient && shouldComputeRect) {
       setElementRect(ourElement.getBoundingClientRect().toJSON())
     }
-  }, [ourElement, computeRect])
+  }, [ourElement, shouldComputeRect])
 
-  return {
-    elementObserved,
-    elementRect,
-  }
+  return [elementObserved, elementRect] as const
 }
