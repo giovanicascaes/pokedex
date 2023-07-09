@@ -4,7 +4,6 @@ import { AppBreadcrumb, Badge, ThemeSwitcher } from "components"
 import { usePokemon } from "contexts"
 import {
   POKEDEX_LINK_ELEMENT_ID,
-  POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
 } from "lib"
 import Image from "next/image"
 import Link from "next/link"
@@ -12,6 +11,8 @@ import { forwardRef } from "react"
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2"
 import { twJoin, twMerge } from "tailwind-merge"
 import { AppHeaderProps } from "./app-header.types"
+
+const POKEDEX_COUNT_BADGE_TRANSITION_DURATION = 130
 
 const actionButtonClassName =
   "w-8 h-8 flex items-center justify-center rounded-full app-header-text"
@@ -21,7 +22,7 @@ function HeaderActionButtons() {
 
   const transition = useTransition(pokedex.length, {
     config: {
-      duration: POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
+      duration: POKEDEX_COUNT_BADGE_TRANSITION_DURATION,
     },
     from: {
       scale: 0,

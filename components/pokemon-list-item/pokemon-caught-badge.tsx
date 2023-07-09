@@ -1,6 +1,4 @@
-import { animated, useTransition } from "@react-spring/web"
 import { Tooltip } from "components"
-import { POKEMON_CAUGHT_BADGE_TRANSITION_DURATION } from "lib"
 import { MdCatchingPokemon } from "react-icons/md"
 import { PokemonCaughtBadgeProps } from "./pokemon-list-item.types"
 
@@ -9,52 +7,20 @@ export default function PokemonCaughtBadge({
   style,
   ...other
 }: PokemonCaughtBadgeProps) {
-  const transition = useTransition(isCaught, {
-    config: {
-      duration: POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
-    },
-    from: {
-      scale: 0,
-    },
-    enter: [
-      {
-        scale: 1.3,
-      },
-      {
-        scale: 1,
-      },
-    ],
-    leave: {
-      scale: 0,
-    },
-    exitBeforeEnter: true,
-    initial: false,
-  })
-
   return (
-    <>
-      {transition(
-        (transitionStyles, show) =>
-          show && (
-            <animated.div
-              {...other}
-              style={{ ...style, ...transitionStyles }}
-              onClick={(e) => e.preventDefault()}
-            >
-              <Tooltip content="In Pokédex">
-                <div
-                  className="cursor-help rounded-full relative bg-white w-[18px] h-[18px] focus-default"
-                  tabIndex={0}
-                >
-                  <MdCatchingPokemon
-                    size={22}
-                    className="-top-[2px] -left-[2px] text-red-500 dark:text-red-500/90 absolute"
-                  />
-                </div>
-              </Tooltip>
-            </animated.div>
-          )
-      )}
-    </>
+    <Tooltip content="In Pokédex">
+      <div
+        {...other}
+        className="relative p-0.5 w-full h-full"
+        onClick={(e) => e.preventDefault()}
+      >
+        <div
+          className="cursor-help rounded-full w-full h-full bg-white focus-default"
+          tabIndex={0}
+        >
+          <MdCatchingPokemon className="w-full h-full top-0 left-0 text-red-500 dark:text-red-500/90 absolute" />
+        </div>
+      </div>
+    </Tooltip>
   )
 }

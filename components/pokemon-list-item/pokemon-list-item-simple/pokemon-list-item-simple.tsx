@@ -1,8 +1,10 @@
+import { animated, useTransition } from "@react-spring/web"
 import { PokemonArt, PokemonCatchReleaseAnimation } from "components"
 import Link from "next/link"
 import { forwardRef } from "react"
 import { MdCatchingPokemon } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
+import { POKEMON_CAUGHT_BADGE_TRANSITION_DURATION } from "../constants"
 import PokemonCaughtBadge from "../pokemon-caught-badge"
 import {
   PokemonListItemSimpleElement,
@@ -26,6 +28,28 @@ export default forwardRef<
   },
   ref
 ) {
+  const badgeTransition = useTransition(isOnPokedex, {
+    config: {
+      duration: POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
+    },
+    from: {
+      scale: 0,
+    },
+    enter: [
+      {
+        scale: 1.3,
+      },
+      {
+        scale: 1,
+      },
+    ],
+    leave: {
+      scale: 0,
+    },
+    exitBeforeEnter: true,
+    initial: false,
+  })
+
   return (
     <Link
       {...other}
@@ -55,11 +79,18 @@ export default forwardRef<
               <span className="text-slate-400 group-hover/list-item:text-black dark:text-slate-100 dark:group-hover/list-item:text-white text-xs transition-colors">
                 #{pokemonId}
               </span>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1.5">
                 <span className="text-slate-600 group-hover/list-item:text-black dark:text-slate-400 dark:group-hover/list-item:text-white text-xl font-light truncate transition-colors">
                   {name}
                 </span>
-                <PokemonCaughtBadge isCaught={isOnPokedex} />
+                {badgeTransition(
+                  (style, show) =>
+                    show && (
+                      <animated.div className="w-[22px] h-[22px]" style={style}>
+                        <PokemonCaughtBadge isCaught={isOnPokedex} />
+                      </animated.div>
+                    )
+                )}
               </div>
             </div>
             {!isAnimating && (

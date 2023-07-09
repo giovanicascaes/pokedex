@@ -1,8 +1,10 @@
+import { animated, useTransition } from "@react-spring/web"
 import { PokemonArt, PokemonCatchReleaseAnimation } from "components"
 import Link from "next/link"
 import { forwardRef } from "react"
 import { MdCatchingPokemon } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
+import { POKEMON_CAUGHT_BADGE_TRANSITION_DURATION } from "../constants"
 import PokemonCaughtBadge from "../pokemon-caught-badge"
 import {
   PokemonListItemCardElement,
@@ -24,6 +26,35 @@ export default forwardRef<PokemonListItemCardElement, PokemonListItemCardProps>(
     },
     ref
   ) {
+    const badgeTransition = useTransition(isOnPokedex, {
+      config: {
+        duration: POKEMON_CAUGHT_BADGE_TRANSITION_DURATION,
+      },
+      from: {
+        scale: 1,
+        width: 0,
+        height: 0,
+      },
+      enter: [
+        {
+          scale: 1.3,
+          width: 22,
+          height: 22,
+        },
+        {
+          scale: 1,
+          width: 22,
+          height: 22,
+        },
+      ],
+      leave: {
+        width: 0,
+        height: 0,
+      },
+      exitBeforeEnter: true,
+      initial: false,
+    })
+
     return (
       <PokemonCatchReleaseAnimation
         isOnPokedex={isOnPokedex}
@@ -64,11 +95,18 @@ export default forwardRef<PokemonListItemCardElement, PokemonListItemCardProps>(
             <span className="text-slate-400 dark:text-slate-100 text-sm mt-2">
               #{pokemonId}
             </span>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5">
               <span className="text-slate-600 dark:text-slate-400 text-2xl font-light truncate">
                 {name}
               </span>
-              <PokemonCaughtBadge isCaught={isOnPokedex} />
+              {badgeTransition(
+                (style, show) =>
+                  show && (
+                    <animated.div style={style}>
+                      <PokemonCaughtBadge isCaught={isOnPokedex} />
+                    </animated.div>
+                  )
+              )}
             </div>
           </div>
         )}
