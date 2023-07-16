@@ -1,14 +1,9 @@
 import { ReactNode } from "react"
+import { PageScrollControlConfig } from "types"
 
 export interface AppShellProps {
   children: ReactNode
-  enableScrollControl?: boolean
-  restoreScrollOnNavigatingFrom?: string[]
+  enableScrollControl?: PageScrollControlConfig
 }
 
-export interface AppShellScrollHistoryEntry {
-  visited: boolean
-  scrollTop: number
-}
-
-export type AppShellScrollEvent = "pageTransitionComplete" | "pageLoadComplete"
+export type PageRenderingEvent = "pageTransitionComplete" | "pageLoadComplete"

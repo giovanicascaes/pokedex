@@ -2,25 +2,18 @@ import { Inter } from "@next/font/google"
 import { AppShell } from "components"
 import { PageProvider, ThemeModeProvider } from "contexts"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
-import { NextPage } from "next"
 import type { AppProps } from "next/app"
-import { ReactNode } from "react"
 import "styles/globals.css"
 import { twMerge } from "tailwind-merge"
+import { NextPageWithConfig } from "types"
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactNode) => ReactNode
-  enableScrollControl?: boolean
-  restoreScrollOnNavigatingFrom?: string[]
-}
-
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
+type AppPropsWithConfig = AppProps & {
+  Component: NextPageWithConfig
 }
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+export default function App({ Component, pageProps }: AppPropsWithConfig) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
@@ -33,12 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     >
       <ThemeModeProvider>
         <PageProvider>
-          <AppShell
-            enableScrollControl={Component.enableScrollControl}
-            restoreScrollOnNavigatingFrom={
-              Component.restoreScrollOnNavigatingFrom
-            }
-          >
+          <AppShell enableScrollControl={Component.enableScrollControl}>
             {getLayout(<Component {...pageProps} />)}
           </AppShell>
         </PageProvider>

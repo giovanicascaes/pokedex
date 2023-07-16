@@ -14,11 +14,11 @@ const LIST_VIEW_GRID_GAP = 10
 
 const LIST_VIEW_ANIMATION_TRAIL = 100
 
-const LIST_VIEW_ANIMATION_TRANSITION_DURATION = 300
+const LIST_VIEW_ANIMATION_DURATION = 300
 
-const LIST_VIEW_ANIMATION_CONFIG = {
+const listViewAnimationConfig = {
   trail: LIST_VIEW_ANIMATION_TRAIL,
-  duration: LIST_VIEW_ANIMATION_TRANSITION_DURATION,
+  duration: LIST_VIEW_ANIMATION_DURATION,
   from: {
     opacity: 0,
     scale: 0.5,
@@ -71,7 +71,7 @@ export default function PokemonList({
               gapX: LIST_VIEW_GRID_GAP,
               gapY: LIST_VIEW_GRID_GAP,
               fillColumnWidth: true,
-              animationConfig: LIST_VIEW_ANIMATION_CONFIG,
+              animationConfig: listViewAnimationConfig,
             },
           }}
           skipFirstItemsAnimation={skipFirstItemsAnimation}

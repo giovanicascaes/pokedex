@@ -1,8 +1,9 @@
 import ConfusedPokemon from "assets/img/confused.png"
 import { Link } from "components"
 import Image from "next/image"
+import { NextPageWithConfig } from "types"
 
-export default function Custom404() {
+const Custom404: NextPageWithConfig = () => {
   return (
     <div className="flex flex-col items-center p-10">
       <span className="text-9xl font-medium text-slate-600 dark:text-slate-300 mb-4">
@@ -23,3 +24,5 @@ export default function Custom404() {
     </div>
   )
 }
+
+export default Custom404

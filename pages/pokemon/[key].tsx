@@ -1,14 +1,17 @@
-import { Transition, PokemonDetails } from "components"
+import { PokemonDetails, Transition } from "components"
 import { usePage, usePokemon } from "contexts"
 import { useIsoMorphicEffect, useLastList } from "hooks"
 import { getPokemon } from "lib"
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import Head from "next/head"
 import { useEffect } from "react"
+import { NextPageWithConfig } from "types"
 
 type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>
 
-export default function Pokemon({ pokemon }: PokemonProps) {
+const Pokemon: NextPageWithConfig<PokemonProps> = ({
+  pokemon,
+}: PokemonProps) => {
   const [, { setViewingPokemon, clearViewingPokemon }] = usePokemon()
   const [, { setUpBreadcrumb }] = usePage()
   const lastList = useLastList()
@@ -46,7 +49,9 @@ export default function Pokemon({ pokemon }: PokemonProps) {
   )
 }
 
-Pokemon.enableScrollControl = false
+Pokemon.enableScrollControl = {
+  enabled: false,
+}
 
 export async function getServerSideProps({
   params,
@@ -75,3 +80,5 @@ export async function getServerSideProps({
     },
   }
 }
+
+export default Pokemon

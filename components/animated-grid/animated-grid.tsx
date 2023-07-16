@@ -19,7 +19,7 @@ const DEFAULT_GAP_Y = 40
 
 const DEFAULT_ITEM_TRANSITION_DURATION = 300
 
-const DEFAULT_ANIMATION_CONFIG = {
+const defaultAnimationConfig = {
   trail: 100,
   duration: 300,
   from: {
@@ -50,7 +50,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
     gapX = DEFAULT_GAP_X,
     gapY = DEFAULT_GAP_Y,
     fillColumnWidth = false,
-    animationConfig = DEFAULT_ANIMATION_CONFIG,
+    animationConfig = defaultAnimationConfig,
   } = columnsConfig[columns] ?? {}
 
   const [itemDimensions, setItemDimensions] = useState<DOMRect | null>(null)

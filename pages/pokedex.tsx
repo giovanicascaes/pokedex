@@ -2,11 +2,12 @@ import { PokemonList } from "components"
 import { usePage, usePokemon, useScrollControl } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
 import { useEffect } from "react"
+import { NextPageWithConfig } from "types"
 
-export default function Pokedex() {
+const Pokedex: NextPageWithConfig = () => {
   const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
   const [, { setUpBreadcrumb }] = usePage()
-  const [{ isPreviousScrollSaved }, { onPageLoadComplete }] = useScrollControl()
+  const [{ shouldRestoreScroll }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
@@ -23,7 +24,7 @@ export default function Pokedex() {
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipFirstItemsAnimation={isPreviousScrollSaved}
+          skipFirstItemsAnimation={shouldRestoreScroll}
           hideBeforeRelease
           onRelease={removePokemonFromPokedex}
           onLoad={onPageLoadComplete}
@@ -42,10 +43,16 @@ export default function Pokedex() {
   )
 }
 
-Pokedex.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
+Pokedex.enableScrollControl = {
+  enabled: true,
+  childrenPaths: ["/pokemon/[key]"],
+  waitForPageToLoad: true,
+}
 
 export async function getServerSideProps() {
   return {
     props: {},
   }
 }
+
+export default Pokedex

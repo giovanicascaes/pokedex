@@ -6,21 +6,9 @@ import { IntersectionObserverProps } from "./intersection-observer.types"
 export default function IntersectionObserver({
   onIntersectionChange,
   children,
-  hidden = false,
   ...options
 }: IntersectionObserverProps) {
   const intersectionChangeHandlerCb = useEvent(onIntersectionChange)
-
-  useEffect(() => {
-    if (hidden) {
-      console.log("mounted")
-
-      return () => {
-        console.log("unmounted")
-      }
-    }
-  }, [hidden])
-
   const [intersectionObserverRef, isIntersecting] =
     useIntersectionObserver(options)
   const prevIsIntersecting = usePrevious(isIntersecting)

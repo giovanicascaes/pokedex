@@ -1,21 +1,24 @@
 import { PokemonList } from "components"
 import { POKEMONS_PER_PAGE, usePokemon, useScrollControl } from "contexts"
 import { useIntersectionObserver } from "hooks"
-import { getPokemons, SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
+import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID, getPokemons } from "lib"
 import { InferGetStaticPropsType } from "next"
 import Head from "next/head"
 import { useCallback, useEffect, useState } from "react"
+import { NextPageWithConfig } from "types"
 import { env } from "utils"
 
 type PokemonsProps = InferGetStaticPropsType<typeof getStaticProps>
 
-export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
+const Pokemons: NextPageWithConfig<PokemonsProps> = ({
+  serverLoadedPokemons,
+}) => {
   const [isListLoaded, setIsListLoaded] = useState(false)
   const [
     { visible, preload, hasFetchedAll },
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
-  const [{ isPreviousScrollSaved }, { onPageLoadComplete }] = useScrollControl()
+  const [{ shouldRestoreScroll }, { onPageLoadComplete }] = useScrollControl()
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -43,7 +46,7 @@ export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
         <PokemonList
           pokemons={visible}
           preload={preload}
-          skipFirstItemsAnimation={isPreviousScrollSaved}
+          skipFirstItemsAnimation={shouldRestoreScroll}
           onCatch={addPokemonToPokedex}
           onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}
@@ -62,7 +65,11 @@ export default function Pokemons({ serverLoadedPokemons }: PokemonsProps) {
   )
 }
 
-Pokemons.restoreScrollOnNavigatingFrom = ["/pokemon/[key]"]
+Pokemons.enableScrollControl = {
+  enabled: true,
+  childrenPaths: ["/pokemon/[key]"],
+  waitForPageToLoad: true,
+}
 
 export async function getStaticProps() {
   return {
@@ -71,3 +78,5 @@ export async function getStaticProps() {
     },
   }
 }
+
+export default Pokemons

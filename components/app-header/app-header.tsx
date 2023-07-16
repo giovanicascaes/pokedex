@@ -2,9 +2,7 @@ import { animated, useTransition } from "@react-spring/web"
 import PokemonLogo from "assets/img/pokemon-logo.png"
 import { AppBreadcrumb, Badge, ThemeSwitcher } from "components"
 import { usePokemon } from "contexts"
-import {
-  POKEDEX_LINK_ELEMENT_ID,
-} from "lib"
+import { POKEDEX_LINK_ELEMENT_ID } from "lib"
 import Image from "next/image"
 import Link from "next/link"
 import { forwardRef } from "react"
@@ -57,7 +55,7 @@ function HeaderActionButtons() {
               >
                 <Badge
                   variant="rounded"
-                  className="min-w-[1.25rem] min-h-[1.25rem]"
+                  className="min-w-[1.25rem] min-h-[1.25rem] backdrop-blur-lg"
                 >
                   {count}
                 </Badge>
