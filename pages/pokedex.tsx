@@ -24,8 +24,7 @@ const Pokedex: NextPageWithConfig = () => {
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={pokedex}
-          skipFirstItemsAnimation={shouldRestoreScroll}
-          hideBeforeRelease
+          skipInitialAnimation={shouldRestoreScroll}
           onRelease={removePokemonFromPokedex}
           onLoad={onPageLoadComplete}
           className="mx-auto"

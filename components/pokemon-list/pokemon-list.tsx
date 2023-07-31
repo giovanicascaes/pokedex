@@ -1,11 +1,11 @@
 import {
   AnimatedGrid,
-  Transition,
   PokemonListItemCard,
   PokemonListItemSimple,
+  Transition,
 } from "components"
 import { useMedia } from "hooks"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import theme from "styles/theme"
 import { omit } from "utils"
 import { PokemonListProps } from "./pokemon-list.types"
@@ -41,20 +41,26 @@ const lgQuery = `(min-width: ${lg})`
 
 export default function PokemonList({
   pokemons,
-  preload = [],
-  skipFirstItemsAnimation = false,
-  hideBeforeRelease = false,
+  skipInitialAnimation = false,
   onCatch,
   onRelease,
   onLoad,
   className,
   ...other
 }: PokemonListProps) {
+  const [shouldAnimatePokemonsAppearance, setShouldAnimatePokemonsAppearance] =
+    useState(!skipInitialAnimation)
   const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery])
   const columns = useMemo(
     () => mediaMatches.lastIndexOf(true) + 1,
     [mediaMatches]
   )
+
+  useEffect(() => {
+    if (skipInitialAnimation) {
+      setShouldAnimatePokemonsAppearance(true)
+    }
+  }, [skipInitialAnimation])
 
   if (columns === 0) return null
 
@@ -62,50 +68,46 @@ export default function PokemonList({
 
   return (
     <Transition {...other} watch={isOneColumn}>
-      {(isList) => (
-        <AnimatedGrid
-          items={pokemons}
-          columns={isList ? 1 : Math.max(columns, 2)}
-          columnsConfig={{
-            1: {
-              gapX: LIST_VIEW_GRID_GAP,
-              gapY: LIST_VIEW_GRID_GAP,
-              fillColumnWidth: true,
-              animationConfig: listViewAnimationConfig,
-            },
-          }}
-          skipFirstItemsAnimation={skipFirstItemsAnimation}
-          onLoad={onLoad}
-        >
-          {({ item: pokemon, hide }) => {
-            const { id } = pokemon
+      {(isList) => {
+        const columnsInTransition = isList ? 1 : Math.max(columns, 2)
 
-            const handleOnAnimationFinish = async () => {
-              if (pokemon.isOnPokedex) {
-                if (hideBeforeRelease) {
-                  await hide(id)
+        return (
+          <AnimatedGrid
+            items={pokemons}
+            columns={columnsInTransition}
+            gapY={isList ? LIST_VIEW_GRID_GAP : undefined}
+            animationConfig={isList ? listViewAnimationConfig : undefined}
+            fillColumnWidth={isList}
+            animateItemsAppearance={shouldAnimatePokemonsAppearance}
+            onLoad={onLoad}
+          >
+            {({ item: pokemon, onRemove }) => {
+              const { id } = pokemon
+
+              const handleOnAnimationFinish = async () => {
+                if (pokemon.isOnPokedex) {
+                  await onRemove()
+                  onRelease(id)
+                } else {
+                  onCatch?.(pokemon)
                 }
-
-                onRelease(id)
-              } else {
-                onCatch?.(pokemon)
               }
-            }
 
-            const props = {
-              ...omit(pokemon, "id"),
-              pokemonId: id,
-              onAnimationFinish: handleOnAnimationFinish,
-            }
+              const PokemonListItem = isList
+                ? PokemonListItemSimple
+                : PokemonListItemCard
 
-            return isList ? (
-              <PokemonListItemSimple {...props} />
-            ) : (
-              <PokemonListItemCard {...props} />
-            )
-          }}
-        </AnimatedGrid>
-      )}
+              return (
+                <PokemonListItem
+                  {...omit(pokemon, "id")}
+                  pokemonId={id}
+                  onAnimationFinish={handleOnAnimationFinish}
+                />
+              )
+            }}
+          </AnimatedGrid>
+        )
+      }}
     </Transition>
   )
 }

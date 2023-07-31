@@ -13,15 +13,15 @@ import {
 } from "./animated-grid.types"
 import useAnimationController from "./use-animation-controller"
 
+const ITEM_GRID_POSITION_TRANSITION_DURATION = 300
+
+const CONTAINER_TRANSITION_DURATION = 300
+
 const DEFAULT_GAP_X = 20
 
 const DEFAULT_GAP_Y = 40
 
-const DEFAULT_ITEM_TRANSITION_DURATION = 300
-
-const defaultAnimationConfig = {
-  trail: 100,
-  duration: 300,
+const DEFAULT_ANIMATION_CONFIG = {
   from: {
     opacity: 0,
     transform: "translateY(-50px)",
@@ -35,35 +35,27 @@ const defaultAnimationConfig = {
   },
 }
 
-const CONTAINER_TRANSITION_DURATION = 300
-
 export default function AnimatedGrid<T extends AnimatedGridItem>({
   items = [],
   columns = 1,
-  columnsConfig = {},
-  itemTransitionDuration = DEFAULT_ITEM_TRANSITION_DURATION,
-  skipFirstItemsAnimation = false,
+  gapX = DEFAULT_GAP_X,
+  gapY = DEFAULT_GAP_Y,
+  fillColumnWidth = false,
+  animationConfig = DEFAULT_ANIMATION_CONFIG,
+  animateItemsAppearance = true,
   onLoad,
   children,
 }: AnimatedGridProps<T>) {
-  const {
-    gapX = DEFAULT_GAP_X,
-    gapY = DEFAULT_GAP_Y,
-    fillColumnWidth = false,
-    animationConfig = defaultAnimationConfig,
-  } = columnsConfig[columns] ?? {}
-
   const [itemDimensions, setItemDimensions] = useState<DOMRect | null>(null)
   const itemDimensionsRef = useRef<HTMLDivElement | null>(null)
   const [resizeObserverRef, containerRect] = useResizeObserver({
     computeInitialRect: true,
   })
-  const { getStyles, handleOnIntersectionChange, hide } =
+  const { getStyles, handleOnIntersectionChange, hideItem } =
     useAnimationController({
       items,
       animationConfig,
-      onLoad,
-      skipFirstItemsAnimation,
+      animateItemsAppearance,
     })
 
   useIsoMorphicEffect(() => {
@@ -141,7 +133,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
       mass: 5,
       tension: 500,
       friction: 100,
-      duration: itemTransitionDuration,
+      duration: ITEM_GRID_POSITION_TRANSITION_DURATION,
       easing: easings.easeOutSine,
     },
   })
@@ -205,7 +197,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
                 >
                   {children({
                     item: omit(item, "x", "y") as unknown as T,
-                    hide,
+                    onRemove: () => hideItem(item.id),
                   })}
                 </IntersectionObserver>
               </animated.li>
@@ -218,7 +210,10 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
             ref={itemDimensionsRef}
             className={join(!fillColumnWidth && "w-min")}
           >
-            {children({ item: items[0], hide })}
+            {children({
+              item: items[0],
+              onRemove: () => hideItem(items[0].id),
+            })}
           </div>,
           document.getElementById(SHELL_LAYOUT_CONTAINER_ELEMENT_ID)!
         )

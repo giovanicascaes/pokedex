@@ -9,37 +9,26 @@ export interface AnimatedGridItem {
 
 export interface AnimatedGridChildrenFnProps<T> {
   item: T
-  hide: (id: AnimatedGridItemId) => Promise<void>
+  onRemove: () => Promise<void>
 }
 
-interface AnimatedGridItemAnimationValuesLookup<T = any> {
+interface AnimationValuesLookup<T = any> {
   [key: string]: T
 }
 
-export type AnimatedGridItemAnimationValues = Record<
+export type AnimatedGridItemAnimationConfig = Record<
   "from" | "enter" | "leave",
-  AnimatedGridItemAnimationValuesLookup
+  AnimationValuesLookup
 >
-
-export interface AnimatedGridItemAnimationConfig
-  extends AnimatedGridItemAnimationValues {
-  trail: number
-  duration: number
-}
-
-export interface AnimatedGridColumnConfig {
-  gapX?: number
-  gapY?: number
-  fillColumnWidth?: boolean
-  animationConfig?: AnimatedGridItemAnimationConfig
-}
 
 export interface AnimatedGridProps<T> {
   items?: T[]
   columns?: number
-  columnsConfig?: Record<number, AnimatedGridColumnConfig>
-  itemTransitionDuration?: number
-  skipFirstItemsAnimation?: boolean
+  gapX?: number
+  gapY?: number
+  fillColumnWidth?: boolean
+  animationConfig?: AnimatedGridItemAnimationConfig
+  animateItemsAppearance?: boolean
   onLoad?: () => void
   children: (props: AnimatedGridChildrenFnProps<T>) => ReactElement
 }
@@ -66,8 +55,8 @@ export interface AnimatedGridItemAnimationRunToken {
   cancel?: () => void
 }
 
-export type UseAnimatedGridArgs<T> = Pick<
+export type UseAnimationControllerArgs<T> = Pick<
   AnimatedGridProps<T>,
-  "items" | "skipFirstItemsAnimation" | "onLoad"
+  "items" | "animateItemsAppearance"
 > &
-  WithRequired<AnimatedGridColumnConfig, "animationConfig">
+  Required<Pick<AnimatedGridProps<T>, "animationConfig">>

@@ -5,12 +5,9 @@ import {
   AnimatedGridItemAnimationRunToken,
 } from "./animated-grid.types"
 
-const DEFAULT_ANIMATION_CONFIG = {
-  mass: 5,
-  tension: 500,
-  friction: 100,
-  easing: easings.easeOutCirc,
-}
+const ANIMATION_DURATION = 300
+
+const ANIMATION_TRAIL = 100
 
 class AnimatedGridItemAnimation {
   private readonly _config: AnimatedGridItemAnimationConfig
@@ -22,15 +19,18 @@ class AnimatedGridItemAnimation {
   constructor(config: AnimatedGridItemAnimationConfig) {
     this._config = config
 
-    const { duration, trail, from } = this._config
+    const { from } = this._config
 
     this.animation = new Controller({
       config: {
-        ...DEFAULT_ANIMATION_CONFIG,
-        duration,
+        duration: ANIMATION_DURATION,
+        mass: 5,
+        tension: 500,
+        friction: 100,
+        easing: easings.easeOutCirc,
       },
       from,
-      trail,
+      trail: ANIMATION_TRAIL,
       onRest: () => {
         this.finish()
       },
@@ -45,11 +45,11 @@ class AnimatedGridItemAnimation {
       this._isRunning = true
       this.runToken.cancel = resolve
 
-      const { trail, enter: to } = this._config
+      const { enter: to } = this._config
 
       this.animation.start({
         to,
-        delay: noDelay ? 0 : trail,
+        delay: noDelay ? 0 : ANIMATION_TRAIL,
         onStart: () => {
           resolve()
         },
@@ -137,7 +137,7 @@ export default class AnimatedGridItemAnimationController {
     this.startNext(true)
   }
 
-  async hide(id: number) {
+  async hideItem(id: number) {
     await this.get(id)?.hide()
   }
 

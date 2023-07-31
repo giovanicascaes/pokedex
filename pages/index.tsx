@@ -45,8 +45,7 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={visible}
-          preload={preload}
-          skipFirstItemsAnimation={shouldRestoreScroll}
+          skipInitialAnimation={shouldRestoreScroll}
           onCatch={addPokemonToPokedex}
           onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}

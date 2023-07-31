@@ -1,23 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import AnimatedGridItemAnimationController from "./animated-grid-item-animation-controller"
-import { AnimatedGridItem, UseAnimatedGridArgs } from "./animated-grid.types"
+import {
+  AnimatedGridItem,
+  UseAnimationControllerArgs,
+} from "./animated-grid.types"
 
 export default function useAnimationController<T extends AnimatedGridItem>({
   items = [],
-  skipFirstItemsAnimation = false,
+  animateItemsAppearance = true,
   animationConfig,
-  onLoad,
-}: UseAnimatedGridArgs<T>) {
+}: UseAnimationControllerArgs<T>) {
   const animationControllerRef = useRef(
     new AnimatedGridItemAnimationController(animationConfig)
   )
-  const [shouldAnimateFirstItems, setShouldAnimateFirstItems] = useState(
-    !skipFirstItemsAnimation
-  )
-
   const onIntersectionChange = useCallback(
     (id: number, isIntersecting: boolean) => {
-      if (!shouldAnimateFirstItems) return
+      if (!animateItemsAppearance) return
 
       if (isIntersecting) {
         animationControllerRef.current.queue(id)
@@ -25,7 +23,7 @@ export default function useAnimationController<T extends AnimatedGridItem>({
         animationControllerRef.current.skip(id)
       }
     },
-    [shouldAnimateFirstItems]
+    [animateItemsAppearance]
   )
 
   const getStyles = useCallback(
@@ -33,8 +31,8 @@ export default function useAnimationController<T extends AnimatedGridItem>({
     []
   )
 
-  const hide = useCallback(async (id: number) => {
-    await animationControllerRef.current.hide(id)
+  const hideItem = useCallback(async (id: number) => {
+    await animationControllerRef.current.hideItem(id)
   }, [])
 
   useEffect(() => {
@@ -42,11 +40,10 @@ export default function useAnimationController<T extends AnimatedGridItem>({
   }, [items])
 
   useEffect(() => {
-    if (!shouldAnimateFirstItems) {
+    if (!animateItemsAppearance) {
       animationControllerRef.current.skipAll()
-      setShouldAnimateFirstItems(true)
     }
-  }, [shouldAnimateFirstItems, onLoad])
+  }, [animateItemsAppearance])
 
   useEffect(() => {
     return () => {
@@ -59,6 +56,6 @@ export default function useAnimationController<T extends AnimatedGridItem>({
   return {
     handleOnIntersectionChange: onIntersectionChange,
     getStyles,
-    hide,
+    hideItem,
   }
 }
