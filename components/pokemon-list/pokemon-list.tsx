@@ -1,13 +1,14 @@
 import {
   AnimatedGrid,
+  Measure,
   PokemonListItemCard,
   PokemonListItemSimple,
   Transition,
 } from "components"
 import { useMedia } from "hooks"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import theme from "styles/theme"
-import { omit } from "utils"
+import { join, omit } from "utils"
 import { PokemonListProps } from "./pokemon-list.types"
 
 const LIST_VIEW_GRID_GAP = 10
@@ -41,26 +42,18 @@ const lgQuery = `(min-width: ${lg})`
 
 export default function PokemonList({
   pokemons,
-  skipInitialAnimation = false,
+  immediateAnimations = false,
   onCatch,
   onRelease,
   onLoad,
   className,
   ...other
 }: PokemonListProps) {
-  const [shouldAnimatePokemonsAppearance, setShouldAnimatePokemonsAppearance] =
-    useState(!skipInitialAnimation)
   const mediaMatches = useMedia([xsQuery, smQuery, mdQuery, lgQuery])
   const columns = useMemo(
     () => mediaMatches.lastIndexOf(true) + 1,
     [mediaMatches]
   )
-
-  useEffect(() => {
-    if (skipInitialAnimation) {
-      setShouldAnimatePokemonsAppearance(true)
-    }
-  }, [skipInitialAnimation])
 
   if (columns === 0) return null
 
@@ -70,42 +63,62 @@ export default function PokemonList({
     <Transition {...other} watch={isOneColumn}>
       {(isList) => {
         const columnsInTransition = isList ? 1 : Math.max(columns, 2)
+        const PokemonListItem = isList
+          ? PokemonListItemSimple
+          : PokemonListItemCard
+        const firstPokemon = pokemons[0]
 
         return (
-          <AnimatedGrid
-            items={pokemons}
-            columns={columnsInTransition}
-            gapY={isList ? LIST_VIEW_GRID_GAP : undefined}
-            animationConfig={isList ? listViewAnimationConfig : undefined}
-            fillColumnWidth={isList}
-            animateItemsAppearance={shouldAnimatePokemonsAppearance}
-            onLoad={onLoad}
-          >
-            {({ item: pokemon, onRemove }) => {
-              const { id } = pokemon
+          <Measure>
+            <Measure.From>
+              <PokemonListItem
+                {...omit(firstPokemon, "id")}
+                pokemonId={firstPokemon.id}
+                className={join(!isList && "w-min")}
+              />
+            </Measure.From>
+            <Measure.Value>
+              {(rect) =>
+                rect && (
+                  <AnimatedGrid
+                    items={pokemons}
+                    columns={columnsInTransition}
+                    itemWidth={rect.width}
+                    itemHeight={rect.height}
+                    gapY={isList ? LIST_VIEW_GRID_GAP : undefined}
+                    animationConfig={
+                      isList ? listViewAnimationConfig : undefined
+                    }
+                    fillColumnWidth={isList}
+                    immediateAnimations={immediateAnimations}
+                    onLoad={onLoad}
+                  >
+                    {({ item: pokemon, onRemove }) => {
+                      const { id } = pokemon
 
-              const handleOnAnimationFinish = async () => {
-                if (pokemon.isOnPokedex) {
-                  await onRemove()
-                  onRelease(id)
-                } else {
-                  onCatch?.(pokemon)
-                }
+                      const handleOnAnimationFinish = async () => {
+                        if (pokemon.isOnPokedex) {
+                          await onRemove()
+                          onRelease(id)
+                        } else {
+                          onCatch?.(pokemon)
+                        }
+                      }
+
+                      return (
+                        <PokemonListItem
+                          {...omit(pokemon, "id")}
+                          pokemonId={id}
+                          onAnimationFinish={handleOnAnimationFinish}
+                          className={join(!isList && "w-min")}
+                        />
+                      )
+                    }}
+                  </AnimatedGrid>
+                )
               }
-
-              const PokemonListItem = isList
-                ? PokemonListItemSimple
-                : PokemonListItemCard
-
-              return (
-                <PokemonListItem
-                  {...omit(pokemon, "id")}
-                  pokemonId={id}
-                  onAnimationFinish={handleOnAnimationFinish}
-                />
-              )
-            }}
-          </AnimatedGrid>
+            </Measure.Value>
+          </Measure>
         )
       }}
     </Transition>

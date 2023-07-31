@@ -19,6 +19,10 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
     { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
   const [{ shouldRestoreScroll }, { onPageLoadComplete }] = useScrollControl()
+  console.log(
+    "🚀 ~ file: index.tsx:22 ~ shouldRestoreScroll:",
+    shouldRestoreScroll
+  )
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -45,7 +49,7 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={visible}
-          skipInitialAnimation={shouldRestoreScroll}
+          immediateAnimations={shouldRestoreScroll}
           onCatch={addPokemonToPokedex}
           onRelease={removePokemonFromPokedex}
           onLoad={onListLoad}

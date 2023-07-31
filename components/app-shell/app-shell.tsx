@@ -77,6 +77,7 @@ export default function AppShell({
     )
     await scrollControllerRef.current.placeScroll()
     await pageTransitionRef.current?.resume()
+    setShouldRestoreScroll(false)
   }, [])
 
   const onPageTransitionComplete = useCallback(() => {

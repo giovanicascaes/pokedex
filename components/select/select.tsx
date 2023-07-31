@@ -9,7 +9,7 @@ import {
 } from "react"
 import { twMerge } from "tailwind-merge"
 import { SelectButton } from "./button"
-import { SelectProvider } from "./context"
+import { SelectProvider } from "./select-context"
 import { SelectOption } from "./option"
 import { SelectOptions } from "./options"
 import {

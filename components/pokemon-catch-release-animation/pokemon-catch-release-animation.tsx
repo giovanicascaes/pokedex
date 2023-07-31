@@ -4,7 +4,7 @@ import { Children, useCallback, useState } from "react"
 import {
   PokemonCatchReleaseAnimationProvider,
   usePokemonCatchReleaseAnimation,
-} from "./context"
+} from "./pokemon-catch-release-animation-context"
 import { PokemonCatchAnimation } from "./pokemon-catch-animation"
 import {
   PokemonCatchReleaseAnimationAnimateProps,

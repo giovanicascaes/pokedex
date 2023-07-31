@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from "react"
 import { MdDone } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
 import { setTimeout } from "timers"
-import { useSelect } from "../context"
+import { useSelect } from "../select-context"
 import { SelectPopupState } from "../select.types"
 import { SelectOptionProps } from "./option.types"
 

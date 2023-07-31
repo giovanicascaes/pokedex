@@ -1,6 +1,6 @@
 import { animated, useTransition } from "@react-spring/web"
 import { twMerge } from "tailwind-merge"
-import { useSelect } from "../context"
+import { useSelect } from "../select-context"
 import { SelectPopupState } from "../select.types"
 import { SelectOptionsProps } from "./options.types"
 

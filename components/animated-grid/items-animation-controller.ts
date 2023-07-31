@@ -1,22 +1,22 @@
 import { Controller, easings } from "@react-spring/web"
 import {
   AnimatedGridItem,
-  AnimatedGridItemAnimationConfig,
-  AnimatedGridItemAnimationRunToken,
+  ItemAnimationRunToken,
+  GridItemsAnimationConfig as ItemsAnimationConfig,
 } from "./animated-grid.types"
 
 const ANIMATION_DURATION = 300
 
 const ANIMATION_TRAIL = 100
 
-class AnimatedGridItemAnimation {
-  private readonly _config: AnimatedGridItemAnimationConfig
+class ItemAnimation {
+  private readonly _config: ItemsAnimationConfig
   private readonly animation: Controller
-  private readonly runToken: AnimatedGridItemAnimationRunToken
+  private readonly runToken: ItemAnimationRunToken
   private _isRunning: boolean = false
   private _isDone: boolean = false
 
-  constructor(config: AnimatedGridItemAnimationConfig) {
+  constructor(config: ItemsAnimationConfig) {
     this._config = config
 
     const { from } = this._config
@@ -99,42 +99,58 @@ class AnimatedGridItemAnimation {
   }
 }
 
-export default class AnimatedGridItemAnimationController {
-  private readonly _config: AnimatedGridItemAnimationConfig
-  private indexes = new Map<number, AnimatedGridItemAnimation>()
-  private _queue: number[] = []
+export default class ItemsAnimationController {
+  private readonly _config: ItemsAnimationConfig
+  private animations = new Map<number, ItemAnimation>()
+  private waitingItems: number[] = []
+  private animatingItems: number[] = []
   private _isAnimating: boolean = false
+  private _immediate: boolean = false
+  private onExhaustQueueListener?: () => void
 
-  constructor(config: AnimatedGridItemAnimationConfig) {
+  constructor(config: ItemsAnimationConfig, onExhaustQueue?: () => void) {
     this._config = config
+    this.onExhaustQueueListener = onExhaustQueue
   }
 
   setItems(items: AnimatedGridItem[]) {
     items.forEach((item) => {
-      if (!this.indexes.has(item.id)) {
-        this.indexes.set(item.id, new AnimatedGridItemAnimation(this._config))
+      if (!this.animations.has(item.id)) {
+        this.animations.set(item.id, new ItemAnimation(this._config))
+        this.waitingItems.push(item.id)
       }
     })
   }
 
   queue(id: number) {
-    this._queue.push(id)
+    console.log(
+      "🚀 ~ file: items-animation-controller.ts:126 ~ ItemsAnimationController ~ queue ~ id:",
+      id
+    )
+    this.animatingItems.push(id)
     this.start()
   }
 
   skip(id: number) {
     this.get(id)?.skip()
+    this.markAsAnimated(id)
   }
 
-  skipAll() {
-    Array.from(this.indexes.keys()).forEach(this.skip.bind(this))
+  skipPrevious(from: number) {
+    const currentIndex = this.waitingItems.findIndex((id) => id === from)
+
+    this.waitingItems.slice(0, currentIndex).forEach((id) => {
+      if (!this.isDone(id)) {
+        this.skip(id)
+      }
+    })
   }
 
   start() {
     if (this._isAnimating) return
 
     this._isAnimating = true
-    this.startNext(true)
+    this.startNext()
   }
 
   async hideItem(id: number) {
@@ -142,7 +158,9 @@ export default class AnimatedGridItemAnimationController {
   }
 
   cancel() {
-    Array.from(this.indexes.values()).forEach((animation) => {
+    this.waitingItems.forEach((id) => {
+      const animation = this.get(id)!
+
       if (animation.isRunning) {
         animation.cancel()
       }
@@ -157,14 +175,26 @@ export default class AnimatedGridItemAnimationController {
     return this.get(id)?.styles
   }
 
-  private async startNext(noDelay: boolean = false) {
-    const next = this._queue.shift()
+  private async run(id: number) {
+    const animation = this.get(id)!
+
+    await animation.start(id === this.animatingItems[0])
+    this.markAsAnimated(id)
+  }
+
+  private async startNext() {
+    const next = this.animatingItems.shift()
 
     if (next) {
       const animation = this.get(next)!
 
       if (!animation.isDone) {
-        await animation.start(noDelay)
+        if (this._immediate) {
+          this.skip(next)
+        } else {
+          await this.run(next)
+        }
+
         this.skipPrevious(next)
       }
 
@@ -174,22 +204,23 @@ export default class AnimatedGridItemAnimationController {
     }
   }
 
-  private skipPrevious(current: number) {
-    const indexesAsList = Array.from(this.indexes)
-    const currentIndex = indexesAsList.findIndex(([id]) => id === current)
-
-    indexesAsList.slice(0, currentIndex).forEach(([, animation]) => {
-      if (!animation.isDone) {
-        animation.skip()
-      }
-    })
+  private get(id: number) {
+    return this.animations.get(id)
   }
 
-  private get(id: number) {
-    return this.indexes.get(id)
+  private markAsAnimated(id: number) {
+    this.waitingItems.splice(id)
+
+    if (!this.animatingItems.length) {
+      this.onExhaustQueueListener?.()
+    }
   }
 
   get isAnimating() {
     return this._isAnimating
+  }
+
+  set immediate(immediate: boolean) {
+    this._immediate = immediate
   }
 }

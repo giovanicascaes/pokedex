@@ -23,7 +23,7 @@ export interface PokemonListItemViewProps {
   artSrc: string | null
   animateArt?: boolean
   isOnPokedex?: boolean
-  onAnimationFinish: () => void
+  onAnimationFinish?: () => void
 }
 
 export interface PokemonCaughtBadgeProps

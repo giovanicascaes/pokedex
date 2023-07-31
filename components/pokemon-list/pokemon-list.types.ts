@@ -9,7 +9,7 @@ export interface PokemonListProps
     TransitionElement
   > {
   pokemons: PokemonSpeciesPokedex[]
-  skipInitialAnimation?: boolean
+  immediateAnimations?: boolean
   onCatch?: (pokemon: PokemonSpeciesPokedex) => void
   onRelease: (id: number) => void
   onLoad?: () => void

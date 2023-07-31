@@ -1,29 +1,30 @@
 import { useCallback, useEffect, useRef } from "react"
-import AnimatedGridItemAnimationController from "./animated-grid-item-animation-controller"
+import ItemsAnimationController from "./items-animation-controller"
 import {
   AnimatedGridItem,
   UseAnimationControllerArgs,
 } from "./animated-grid.types"
 
-export default function useAnimationController<T extends AnimatedGridItem>({
+export default function useItemsAnimationController<
+  T extends AnimatedGridItem
+>({
   items = [],
-  animateItemsAppearance = true,
+  immediate = false,
   animationConfig,
+  onExhaustQueue,
 }: UseAnimationControllerArgs<T>) {
   const animationControllerRef = useRef(
-    new AnimatedGridItemAnimationController(animationConfig)
+    new ItemsAnimationController(animationConfig, onExhaustQueue)
   )
   const onIntersectionChange = useCallback(
     (id: number, isIntersecting: boolean) => {
-      if (!animateItemsAppearance) return
-
       if (isIntersecting) {
         animationControllerRef.current.queue(id)
       } else {
         animationControllerRef.current.skip(id)
       }
     },
-    [animateItemsAppearance]
+    []
   )
 
   const getStyles = useCallback(
@@ -40,10 +41,8 @@ export default function useAnimationController<T extends AnimatedGridItem>({
   }, [items])
 
   useEffect(() => {
-    if (!animateItemsAppearance) {
-      animationControllerRef.current.skipAll()
-    }
-  }, [animateItemsAppearance])
+    animationControllerRef.current.immediate = immediate
+  }, [immediate])
 
   useEffect(() => {
     return () => {
