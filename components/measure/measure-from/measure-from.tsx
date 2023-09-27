@@ -1,21 +1,17 @@
-import { useResizeObserver } from "hooks"
-import { useEffect } from "react"
+import { useIsoMorphicEffect, useResizeObserver } from "hooks"
+import { useState } from "react"
 import { useMeasure } from "../measure-context"
 import { MeasureFromProps } from "./measure-from.types"
 
 export default function MeasureFrom({ children }: MeasureFromProps) {
   const [measureRef, measureRect] = useResizeObserver()
-  const [, { updateMeasures }] = useMeasure()
+  const [, { onMeasuresChange }] = useMeasure()
 
-  useEffect(() => {
+  useIsoMorphicEffect(() => {
     if (measureRect) {
-      updateMeasures(measureRect)
+      onMeasuresChange(measureRect)
     }
-  }, [measureRect, updateMeasures])
+  }, [measureRect, onMeasuresChange])
 
-  return (
-    <div ref={measureRef} className="invisible fixed -z-10">
-      {children}
-    </div>
-  )
+  return children(measureRef)
 }

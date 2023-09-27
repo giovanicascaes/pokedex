@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithConfig) {
     >
       <ThemeModeProvider>
         <PageProvider>
-          <AppShell enableScrollControl={Component.enableScrollControl}>
+          <AppShell controlledScroll={Component.controlledScroll}>
             {getLayout(<Component {...pageProps} />)}
           </AppShell>
         </PageProvider>

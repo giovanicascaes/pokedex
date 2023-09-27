@@ -1,5 +1,5 @@
-import { ReactNode } from "react"
+import { RefCallback } from "react"
 
 export interface MeasureFromProps {
-  children: ReactNode
+  children: (ref: RefCallback<Element>) => JSX.Element
 }

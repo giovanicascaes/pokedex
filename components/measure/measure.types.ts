@@ -9,7 +9,7 @@ export interface MeasureContextData {
 }
 
 export interface MeasureContextActions {
-  updateMeasures: (measures: DOMRect) => void
+  onMeasuresChange: (measures: DOMRect) => void
 }
 
 export type MeasureContextValue = [MeasureContextData, MeasureContextActions]

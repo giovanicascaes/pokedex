@@ -1,20 +1,20 @@
 import { uniqueSequential } from "utils"
 import { PageRenderingEvent } from "./app-shell.types"
 
-export default class PageScrollController {
+export default class AppScrollController {
   private readonly _scrollHistory: Map<string, number> = new Map()
   private _isEnabled: boolean = true
-  private _isTransitioningPage: boolean = false
-  private waitForPageToLoad: boolean = false
+  private _isLeavingPage: boolean = false
+  private _waitForPageToLoad: boolean = false
   private _scrollTop: number = 0
   private readonly pageHistory: string[] = []
   private _scrollEl: HTMLElement | null = null
   private _currentPath: string = "/"
-  private childrenPaths: string[] = []
+  private _childrenPaths: string[] = []
   private readonly listeners: Map<PageRenderingEvent, Array<() => void>> =
     new Map([
       ["pageLoadComplete", []],
-      ["pageTransitionComplete", []],
+      ["pageUnmountComplete", []],
     ])
 
   enable({
@@ -25,8 +25,8 @@ export default class PageScrollController {
     waitForPageToLoad: boolean
   }) {
     this._isEnabled = true
-    this.childrenPaths = childrenPaths
-    this.waitForPageToLoad = waitForPageToLoad
+    this._childrenPaths = childrenPaths
+    this._waitForPageToLoad = waitForPageToLoad
   }
 
   disable() {
@@ -34,15 +34,15 @@ export default class PageScrollController {
   }
 
   async placeScroll() {
-    if (this._isEnabled && this.waitForPageToLoad) {
+    if (this._isEnabled && this._waitForPageToLoad) {
       await new Promise<void>((resolve) => {
         this.addListener("pageLoadComplete", resolve)
       })
     }
 
-    if (this._isTransitioningPage) {
+    if (this._isLeavingPage) {
       await new Promise<void>((resolve) => {
-        this.addListener("pageTransitionComplete", resolve)
+        this.addListener("pageUnmountComplete", resolve)
       })
     }
 
@@ -114,12 +114,12 @@ export default class PageScrollController {
     )
 
     return visitedPathsSinceLastAccess.every((path) =>
-      this.childrenPaths.includes(path)
+      this._childrenPaths.includes(path)
     )
   }
 
-  get isTransitioningPage() {
-    return this._isTransitioningPage
+  get isLeavingPage() {
+    return this._isLeavingPage
   }
 
   set scrollEl(scrollEl: HTMLElement) {
@@ -134,11 +134,11 @@ export default class PageScrollController {
     this._scrollTop = scrollTop
   }
 
-  set isTransitioningPage(isTransitioningPage: boolean) {
-    this._isTransitioningPage = isTransitioningPage
+  set isLeavingPage(isLeavingPage: boolean) {
+    this._isLeavingPage = isLeavingPage
 
-    if (!this._isTransitioningPage) {
-      this.consumeListeners("pageTransitionComplete")
+    if (!this._isLeavingPage) {
+      this.consumeListeners("pageUnmountComplete")
     }
   }
 }

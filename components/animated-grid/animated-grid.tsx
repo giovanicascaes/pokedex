@@ -1,19 +1,11 @@
-import { animated, easings, useSpring, useTransition } from "@react-spring/web"
+import { animated } from "@react-spring/web"
 import { IntersectionObserver } from "components"
-import { usePrevious, useResizeObserver } from "hooks"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useResizeObserver } from "hooks"
 import { omit } from "utils"
-import {
-  AnimatedGridData,
-  AnimatedGridItem,
-  AnimatedGridItemData,
-  AnimatedGridProps,
-} from "./animated-grid.types"
-import useItemsAnimationController from "./use-items-animation-controller"
-
-const ITEM_GRID_POSITION_TRANSITION_DURATION = 300
-
-const CONTAINER_TRANSITION_DURATION = 300
+import { AnimatedGridItem, AnimatedGridProps } from "./animated-grid.types"
+import useGrid from "./use-grid"
+import useGridAnimation from "./use-grid-animation"
+import useGridItemsAnimation from "./use-grid-items-animation"
 
 const DEFAULT_GAP_X = 20
 
@@ -40,122 +32,42 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
   itemHeight,
   gapX = DEFAULT_GAP_X,
   gapY = DEFAULT_GAP_Y,
-  fillColumnWidth = false,
   animationConfig = DEFAULT_ANIMATION_CONFIG,
   immediateAnimations = false,
-  onLoad,
+  fillColumnWidth = false,
+  onInitialDimensions,
   children,
 }: AnimatedGridProps<T>) {
-  const [isListLoaded, setIsListLoaded] = useState(false)
+  const [resizeObserverRef, containerRect] = useResizeObserver()
 
-  const handleOnExhaustQueue = useCallback(() => {
-    if (isListLoaded) return
+  const containerWidth = containerRect?.width ?? 0
 
-    onLoad?.()
-    setIsListLoaded(true)
-  }, [isListLoaded, onLoad])
-
-  const [resizeObserverRef, containerRect] = useResizeObserver({
-    computeInitialRect: true,
-  })
-  const { getStyles, handleOnIntersectionChange, hideItem } =
-    useItemsAnimationController({
-      items,
-      animationConfig,
-      immediate: immediateAnimations,
-      onExhaustQueue: handleOnExhaustQueue,
-    })
-
-  const [{ gridWidth, gridHeight, gridItemWidth }, gridItems] = useMemo<
-    AnimatedGridData<T>
-  >(() => {
-    if (!containerRect) {
-      return [
-        {
-          gridWidth: 0,
-          gridHeight: 0,
-          gridItemWidth: 0,
-        },
-        [],
-      ]
-    }
-
-    const gridItemWidth = fillColumnWidth
-      ? containerRect.width / columns
-      : itemWidth
-    const gridItems = items.map((item, i) => {
-      const currColIdx = i % columns
-      const currRowIdx = Math.trunc(i / columns)
-      const x = currColIdx * gridItemWidth + currColIdx * gapX
-      const y = currRowIdx * itemHeight + currRowIdx * gapY
-
-      return {
-        ...item,
-        x,
-        y,
-      }
-    })
-    const numberOfRows = Math.ceil(gridItems.length / columns)
-
-    return [
-      {
-        gridWidth: fillColumnWidth
-          ? containerRect.width
-          : columns * itemWidth + (columns - 1) * gapX,
-        gridHeight: numberOfRows * itemHeight + (numberOfRows - 1) * gapY,
-        gridItemWidth,
-      },
-      gridItems,
-    ]
-  }, [
+  const [
+    { width: gridWidth, height: gridHeight, itemWidth: gridItemWidth },
+    gridItems,
+  ] = useGrid({
+    items,
     columns,
-    containerRect,
-    fillColumnWidth,
+    itemWidth,
+    itemHeight,
     gapX,
     gapY,
-    itemHeight,
-    itemWidth,
-    items,
-  ])
-  const prevContainerRect = usePrevious(containerRect)
-
-  const gridTransition = useTransition(gridItems, {
-    key: ({ id }: AnimatedGridItemData<T>) => id,
-    from: ({ x, y }) => ({
-      x,
-      y,
-    }),
-    enter: ({ x, y }) => ({
-      x,
-      y,
-    }),
-    update: ({ x, y }) => ({ x, y }),
-    config: {
-      mass: 5,
-      tension: 500,
-      friction: 100,
-      duration: ITEM_GRID_POSITION_TRANSITION_DURATION,
-      easing: easings.easeOutSine,
-    },
+    fillColumnWidth,
+    containerWidth,
   })
 
-  const [gridStyles, gridApi] = useSpring(() => ({
-    config: {
-      duration: CONTAINER_TRANSITION_DURATION,
-      easing: easings.linear,
-    },
-  }))
+  const gridStyles = useGridAnimation({
+    gridWidth,
+    gridContainerWidth: containerWidth,
+    immediate: immediateAnimations,
+    onInitialDimensions,
+  })
 
-  useEffect(() => {
-    if (containerRect) {
-      gridApi.start({
-        to: {
-          x: (containerRect.width - gridWidth) / 2,
-        },
-        immediate: !prevContainerRect,
-      })
-    }
-  }, [containerRect, gridApi, gridWidth, onLoad, prevContainerRect])
+  const { transition, onItemVisibilityChange } = useGridItemsAnimation({
+    items: gridItems,
+    animationConfig,
+    immediate: immediateAnimations,
+  })
 
   if (!items.length) {
     return null
@@ -171,29 +83,27 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
           ...gridStyles,
         }}
       >
-        {gridTransition((gridItemStyles, item) => {
+        {transition((itemStyles, item) => {
           const { id } = item
+
           return (
             <animated.li
               key={id}
               className="absolute"
               style={{
-                opacity: 0,
                 width: gridItemWidth,
-                ...gridItemStyles,
-                ...getStyles(id),
+                ...itemStyles,
               }}
             >
               <IntersectionObserver
                 disconnectOnceNoLongerVisible
                 rootMargin="20%"
                 onIntersectionChange={(isIntersecting: boolean) => {
-                  handleOnIntersectionChange(item.id, isIntersecting)
+                  onItemVisibilityChange(item.id, isIntersecting)
                 }}
               >
                 {children({
                   item: omit(item, "x", "y") as unknown as T,
-                  onRemove: () => hideItem(item.id),
                 })}
               </IntersectionObserver>
             </animated.li>

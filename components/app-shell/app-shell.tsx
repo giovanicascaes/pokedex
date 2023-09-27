@@ -13,16 +13,16 @@ import { useRouterEvent } from "hooks"
 import { useRouter } from "next/router"
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
 import { AppShellProps } from "./app-shell.types"
-import PageScrollController from "./page-scroll-controller"
+import AppScrollController from "./app-scroll-controller"
 
 export default function AppShell({
-  enableScrollControl = { enabled: false },
+  controlledScroll = { enabled: false },
   children,
 }: AppShellProps) {
-  const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false)
+  const [isRestoringScroll, setIsRestoringScroll] = useState(false)
   const pageTransitionRef = useRef<PageTransitionElement>(null)
   const { pathname: currentPath } = useRouter()
-  const scrollControllerRef = useRef(new PageScrollController())
+  const scrollControllerRef = useRef(new AppScrollController())
 
   const scrollRef = useCallback((scrollEl: HTMLElement | null) => {
     if (scrollEl) scrollControllerRef.current.scrollEl = scrollEl
@@ -40,7 +40,7 @@ export default function AppShell({
 
   useRouterEvent("routeChangeStart", () => {
     scrollControllerRef.current.saveCurrentPathScroll()
-    scrollControllerRef.current.isTransitioningPage = true
+    scrollControllerRef.current.isLeavingPage = true
   })
 
   useEffect(() => {
@@ -48,16 +48,16 @@ export default function AppShell({
   }, [currentPath])
 
   useEffect(() => {
-    const { enabled } = enableScrollControl
+    const { enabled } = controlledScroll
 
     if (enabled) {
-      const { childrenPaths, waitForPageToLoad = false } = enableScrollControl
+      const { childrenPaths, waitForPageToLoad = false } = controlledScroll
 
       scrollControllerRef.current.enable({ childrenPaths, waitForPageToLoad })
     } else {
       scrollControllerRef.current.disable()
     }
-  }, [enableScrollControl])
+  }, [controlledScroll])
 
   useEffect(() => {
     return () => {
@@ -68,20 +68,22 @@ export default function AppShell({
   }, [])
 
   const onPageTransitionStart = useCallback(async () => {
-    if (!scrollControllerRef.current.isTransitioningPage) {
+    if (!scrollControllerRef.current.isLeavingPage) {
       return
     }
 
-    setShouldRestoreScroll(
+    setIsRestoringScroll(
       scrollControllerRef.current.shouldRestorePreviousPosition
     )
+
     await scrollControllerRef.current.placeScroll()
-    await pageTransitionRef.current?.resume()
-    setShouldRestoreScroll(false)
+
+    setIsRestoringScroll(false)
+    pageTransitionRef.current?.resume()
   }, [])
 
   const onPageTransitionComplete = useCallback(() => {
-    scrollControllerRef.current.isTransitioningPage = false
+    scrollControllerRef.current.isLeavingPage = false
   }, [])
 
   const onPageLoadComplete = useCallback(() => {
@@ -89,7 +91,7 @@ export default function AppShell({
   }, [])
 
   const data: ScrollControlContextData = {
-    shouldRestoreScroll,
+    isRestoringScroll,
   }
 
   const actions: ScrollControlContextActions = {

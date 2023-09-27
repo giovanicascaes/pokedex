@@ -65,7 +65,7 @@ const reducers: {
       pokedex: [...state.pokedex, { ...action.pokemon, isOnPokedex: true }],
     }
   },
-  [PokemonActionTypes.RemovePokemonFromPokedex](state, action) {
+  [PokemonActionTypes.RemoveFromPokedex](state, action) {
     return {
       ...state,
       pokedex: state.pokedex.filter((pokemon) => pokemon.id !== action.id),
@@ -130,9 +130,9 @@ export function PokemonProvider({ children }: PokemonProviderProps) {
           pokemon,
         })
       },
-      removePokemonFromPokedex(id: number) {
+      removeFromPokedex(id: number) {
         dispatch({
-          type: PokemonActionTypes.RemovePokemonFromPokedex,
+          type: PokemonActionTypes.RemoveFromPokedex,
           id,
         })
       },

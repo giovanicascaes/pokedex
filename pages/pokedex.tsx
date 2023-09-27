@@ -5,9 +5,9 @@ import { useEffect } from "react"
 import { NextPageWithConfig } from "types"
 
 const Pokedex: NextPageWithConfig = () => {
-  const [{ pokedex }, { removePokemonFromPokedex }] = usePokemon()
+  const [{ pokedex }, { removeFromPokedex }] = usePokemon()
   const [, { setUpBreadcrumb }] = usePage()
-  const [{ shouldRestoreScroll }, { onPageLoadComplete }] = useScrollControl()
+  const [{ isRestoringScroll }, { onPageLoadComplete }] = useScrollControl()
 
   useIsoMorphicEffect(() => {
     return setUpBreadcrumb([{ label: "Pokedéx" }])
@@ -24,8 +24,8 @@ const Pokedex: NextPageWithConfig = () => {
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={pokedex}
-          immediateAnimations={shouldRestoreScroll}
-          onRelease={removePokemonFromPokedex}
+          immediateAnimations={isRestoringScroll}
+          onRelease={removeFromPokedex}
           onLoad={onPageLoadComplete}
           className="mx-auto"
         />
@@ -42,7 +42,7 @@ const Pokedex: NextPageWithConfig = () => {
   )
 }
 
-Pokedex.enableScrollControl = {
+Pokedex.controlledScroll = {
   enabled: true,
   childrenPaths: ["/pokemon/[key]"],
   waitForPageToLoad: true,

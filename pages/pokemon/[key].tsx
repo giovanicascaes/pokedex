@@ -49,7 +49,7 @@ const Pokemon: NextPageWithConfig<PokemonProps> = ({
   )
 }
 
-Pokemon.enableScrollControl = {
+Pokemon.controlledScroll = {
   enabled: false,
 }
 

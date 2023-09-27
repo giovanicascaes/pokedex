@@ -1,25 +1,21 @@
 import { ReactElement } from "react"
-import { WithRequired } from "types"
-
-type AnimatedGridItemId = number
-
-export interface AnimatedGridItem {
-  id: AnimatedGridItemId
-}
 
 export interface AnimatedGridChildrenFnProps<T> {
   item: T
-  onRemove: () => Promise<void>
 }
 
-interface AnimationValuesLookup<T = any> {
-  [key: string]: T
+interface GridTrailItemAnimationValuesLookup {
+  [key: string]: any
 }
 
-export type GridItemsAnimationConfig = Record<
+export type GridTrailItemAnimationConfig = Record<
   "from" | "enter" | "leave",
-  AnimationValuesLookup
+  GridTrailItemAnimationValuesLookup
 >
+
+export interface GridTrailItemAnimationRunToken {
+  cancel?: () => void
+}
 
 export interface AnimatedGridProps<T> {
   items?: T[]
@@ -28,17 +24,23 @@ export interface AnimatedGridProps<T> {
   itemHeight: number
   gapX?: number
   gapY?: number
-  fillColumnWidth?: boolean
-  animationConfig?: GridItemsAnimationConfig
+  animationConfig?: GridTrailItemAnimationConfig
   immediateAnimations?: boolean
-  onLoad?: () => void
+  fillColumnWidth?: boolean
+  onInitialDimensions?: () => void
   children: (props: AnimatedGridChildrenFnProps<T>) => ReactElement
 }
 
-export interface AnimatedGridContainerData {
-  gridWidth: number
-  gridHeight: number
-  gridItemWidth: number
+export interface AnimatedGridDimensions {
+  width: number
+  height: number
+  itemWidth: number
+}
+
+type AnimatedGridItemId = number
+
+export interface AnimatedGridItem {
+  id: AnimatedGridItemId
 }
 
 export interface AnimatedGridItemStyle {
@@ -49,17 +51,40 @@ export interface AnimatedGridItemStyle {
 export type AnimatedGridItemData<T> = T & AnimatedGridItemStyle
 
 export type AnimatedGridData<T> = readonly [
-  AnimatedGridContainerData,
+  AnimatedGridDimensions,
   Array<AnimatedGridItemData<T>>
 ]
 
-export interface ItemAnimationRunToken {
-  cancel?: () => void
+export interface UseGridItemsAnimationArgs<T>
+  extends Required<Pick<AnimatedGridProps<T>, "animationConfig">> {
+  items?: Array<AnimatedGridItemData<T>>
+  immediate?: boolean
 }
 
-export interface UseAnimationControllerArgs<T>
-  extends Pick<AnimatedGridProps<T>, "items">,
-    Required<Pick<AnimatedGridProps<T>, "animationConfig">> {
+export type UseGridItemsAnimationTransitionRenderFn<T> = (
+  styles: { [x: string]: any },
+  item: AnimatedGridItemData<T>
+) => JSX.Element
+
+export interface UseGridAnimationArgs {
+  gridWidth: number
+  gridContainerWidth: number
   immediate?: boolean
-  onExhaustQueue?: () => void
+  onInitialDimensions?: () => void
+}
+
+export interface UseGridArgs<T>
+  extends Required<
+    Pick<
+      AnimatedGridProps<T>,
+      | "items"
+      | "columns"
+      | "itemWidth"
+      | "itemHeight"
+      | "gapX"
+      | "gapY"
+      | "fillColumnWidth"
+    >
+  > {
+  containerWidth: number
 }

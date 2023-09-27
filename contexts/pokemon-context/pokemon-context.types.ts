@@ -5,7 +5,7 @@ export enum PokemonActionTypes {
   SetViewingPokemon,
   ClearViewingPokemon,
   AddPokemonToPokedex,
-  RemovePokemonFromPokedex,
+  RemoveFromPokedex,
 }
 
 export interface PokemonSpeciesPokedex extends PokemonSpeciesSimple {
@@ -30,7 +30,7 @@ export type PokemonActions =
       pokemon: PokemonSpeciesPokedex
     }
   | {
-      type: PokemonActionTypes.RemovePokemonFromPokedex
+      type: PokemonActionTypes.RemoveFromPokedex
       id: number
     }
 
@@ -48,7 +48,7 @@ export interface PokemonContextActions {
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
   clearViewingPokemon: () => void
   addPokemonToPokedex: (pokemon: PokemonSpeciesPokedex) => void
-  removePokemonFromPokedex: (id: number) => void
+  removeFromPokedex: (id: number) => void
 }
 
 export type PokemonContextValue = [PokemonContextData, PokemonContextActions]

@@ -20,7 +20,7 @@ function Measure({ children }: MeasureProps) {
 
   const actions: MeasureContextActions = useMemo(
     () => ({
-      updateMeasures(measures: DOMRect) {
+      onMeasuresChange(measures: DOMRect) {
         setMeasures(measures)
       },
     }),

@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 
 export interface ScrollControlContextData {
-  shouldRestoreScroll: boolean
+  isRestoringScroll: boolean
 }
 
 export interface ScrollControlContextActions {

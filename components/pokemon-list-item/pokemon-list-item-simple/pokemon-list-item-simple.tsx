@@ -51,63 +51,70 @@ export default forwardRef<
   })
 
   return (
-    <Link
+    <div
       {...other}
       className={twMerge(
-        "group/list-item shadow dark:shadow-md relative rounded-2xl flex p-2 space-x-4 bg-white hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-900 cursor-pointer transition-all focus-default",
-        className
+        className,
+        "group/list-item shadow dark:shadow-md rounded-2xl bg-white hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-900 cursor-pointer transition-all focus-default w-full"
       )}
-      href={`/pokemon/${resourceName}`}
       ref={ref}
     >
-      <PokemonCatchReleaseAnimation
-        isOnPokedex={isOnPokedex}
-        onAnimationFinish={onAnimationFinish}
+      <Link
+        className={twMerge(className, "relative flex p-2 space-x-4")}
+        href={`/pokemon/${resourceName}`}
       >
-        {({ isAnimating, runAnimation }) => (
-          <>
-            <PokemonCatchReleaseAnimation.Animate>
-              <PokemonArt
-                artSrc={artSrc}
-                name={name}
-                width={80}
-                height={80}
-                animate={animateArt}
-              />
-            </PokemonCatchReleaseAnimation.Animate>
-            <div className="flex flex-col my-auto">
-              <span className="text-slate-400 group-hover/list-item:text-black dark:text-slate-100 dark:group-hover/list-item:text-white text-xs transition-colors">
-                #{pokemonId}
-              </span>
-              <div className="flex items-center space-x-1.5">
-                <span className="text-slate-600 group-hover/list-item:text-black dark:text-slate-400 dark:group-hover/list-item:text-white text-xl font-light truncate transition-colors">
-                  {name}
+        <PokemonCatchReleaseAnimation
+          isOnPokedex={isOnPokedex}
+          onAnimationFinish={onAnimationFinish}
+        >
+          {({ isAnimating, runAnimation }) => (
+            <>
+              <PokemonCatchReleaseAnimation.Animate>
+                <PokemonArt
+                  artSrc={artSrc}
+                  name={name}
+                  width={80}
+                  height={80}
+                  animate={animateArt}
+                />
+              </PokemonCatchReleaseAnimation.Animate>
+              <div className="flex flex-col my-auto">
+                <span className="text-slate-400 group-hover/list-item:text-black dark:text-slate-100 dark:group-hover/list-item:text-white text-xs transition-colors">
+                  #{pokemonId}
                 </span>
-                {badgeTransition(
-                  (style, show) =>
-                    show && (
-                      <animated.div className="w-[22px] h-[22px]" style={style}>
-                        <PokemonCaughtBadge isCaught={isOnPokedex} />
-                      </animated.div>
-                    )
-                )}
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-slate-600 group-hover/list-item:text-black dark:text-slate-400 dark:group-hover/list-item:text-white text-xl font-light truncate transition-colors">
+                    {name}
+                  </span>
+                  {badgeTransition(
+                    (style, show) =>
+                      show && (
+                        <animated.div
+                          className="w-[22px] h-[22px]"
+                          style={style}
+                        >
+                          <PokemonCaughtBadge isCaught={isOnPokedex} />
+                        </animated.div>
+                      )
+                  )}
+                </div>
               </div>
-            </div>
-            {!isAnimating && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault()
-                  runAnimation()
-                }}
-                className="z-10 flex items-center space-x-1 absolute top-1/2 -translate-y-1/2 right-4 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/list-item:opacity-100 group-hover/list-item:visible transition-all text-xs font-semibold bg-slate-300 hover:bg-red-500/90 active:bg-red-600/90 text-black dark:bg-slate-700/60 dark:hover:bg-red-400 dark:hover:active:bg-red-500 dark:text-white hover:text-white focus-default group/catch-button"
-              >
-                <MdCatchingPokemon size={22} />
-                <span>{isOnPokedex ? "Release" : "Catch"}</span>
-              </button>
-            )}
-          </>
-        )}
-      </PokemonCatchReleaseAnimation>
-    </Link>
+              {!isAnimating && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    runAnimation()
+                  }}
+                  className="z-10 flex items-center space-x-1 absolute top-1/2 -translate-y-1/2 right-4 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/list-item:opacity-100 group-hover/list-item:visible transition-all text-xs font-semibold bg-slate-300 hover:bg-red-500/90 active:bg-red-600/90 text-black dark:bg-slate-700/60 dark:hover:bg-red-400 dark:hover:active:bg-red-500 dark:text-white hover:text-white focus-default group/catch-button"
+                >
+                  <MdCatchingPokemon size={22} />
+                  <span>{isOnPokedex ? "Release" : "Catch"}</span>
+                </button>
+              )}
+            </>
+          )}
+        </PokemonCatchReleaseAnimation>
+      </Link>
+    </div>
   )
 })

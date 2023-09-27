@@ -8,7 +8,7 @@ import {
 import { useMedia } from "hooks"
 import { useMemo } from "react"
 import theme from "styles/theme"
-import { join, omit } from "utils"
+import { omit } from "utils"
 import { PokemonListProps } from "./pokemon-list.types"
 
 const LIST_VIEW_GRID_GAP = 10
@@ -66,16 +66,24 @@ export default function PokemonList({
         const PokemonListItem = isList
           ? PokemonListItemSimple
           : PokemonListItemCard
-        const firstPokemon = pokemons[0]
 
         return (
           <Measure>
             <Measure.From>
-              <PokemonListItem
-                {...omit(firstPokemon, "id")}
-                pokemonId={firstPokemon.id}
-                className={join(!isList && "w-min")}
-              />
+              {(measureRef) => {
+                const firstPokemon = pokemons[0]
+
+                return (
+                  <div className="relative">
+                    <PokemonListItem
+                      {...omit(firstPokemon, "id")}
+                      pokemonId={firstPokemon.id}
+                      className="invisible absolute -z-10 pointer-events-none"
+                      ref={measureRef}
+                    />
+                  </div>
+                )
+              }}
             </Measure.From>
             <Measure.Value>
               {(rect) =>
@@ -89,16 +97,15 @@ export default function PokemonList({
                     animationConfig={
                       isList ? listViewAnimationConfig : undefined
                     }
-                    fillColumnWidth={isList}
                     immediateAnimations={immediateAnimations}
-                    onLoad={onLoad}
+                    fillColumnWidth={isList}
+                    onInitialDimensions={onLoad}
                   >
-                    {({ item: pokemon, onRemove }) => {
+                    {({ item: pokemon }) => {
                       const { id } = pokemon
 
                       const handleOnAnimationFinish = async () => {
                         if (pokemon.isOnPokedex) {
-                          await onRemove()
                           onRelease(id)
                         } else {
                           onCatch?.(pokemon)
@@ -110,7 +117,6 @@ export default function PokemonList({
                           {...omit(pokemon, "id")}
                           pokemonId={id}
                           onAnimationFinish={handleOnAnimationFinish}
-                          className={join(!isList && "w-min")}
                         />
                       )
                     }}

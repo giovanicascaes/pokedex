@@ -13,16 +13,12 @@ type PokemonsProps = InferGetStaticPropsType<typeof getStaticProps>
 const Pokemons: NextPageWithConfig<PokemonsProps> = ({
   serverLoadedPokemons,
 }) => {
-  const [isListLoaded, setIsListLoaded] = useState(false)
+  const [isPokemonLoad, setIsPokemonLoad] = useState(false)
   const [
     { visible, preload, hasFetchedAll },
-    { loadMore, addPokemonToPokedex, removePokemonFromPokedex },
+    { loadMore, addPokemonToPokedex, removeFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
-  const [{ shouldRestoreScroll }, { onPageLoadComplete }] = useScrollControl()
-  console.log(
-    "🚀 ~ file: index.tsx:22 ~ shouldRestoreScroll:",
-    shouldRestoreScroll
-  )
+  const [{ isRestoringScroll }, { onPageLoadComplete }] = useScrollControl()
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -30,8 +26,8 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
     rootMargin: "50%",
   })
 
-  const onListLoad = useCallback(() => {
-    setIsListLoaded(true)
+  const onPokemonLoad = useCallback(() => {
+    setIsPokemonLoad(true)
     onPageLoadComplete()
   }, [onPageLoadComplete])
 
@@ -49,13 +45,13 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={visible}
-          immediateAnimations={shouldRestoreScroll}
+          immediateAnimations={isRestoringScroll}
           onCatch={addPokemonToPokedex}
-          onRelease={removePokemonFromPokedex}
-          onLoad={onListLoad}
+          onRelease={removeFromPokedex}
+          onLoad={onPokemonLoad}
           className="mx-auto"
         />
-        {isListLoaded && (
+        {isPokemonLoad && (
           <div
             className="w-full text-center font-light text-slate-400 mt-10"
             ref={intersectionObserverRef}
@@ -68,7 +64,7 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
   )
 }
 
-Pokemons.enableScrollControl = {
+Pokemons.controlledScroll = {
   enabled: true,
   childrenPaths: ["/pokemon/[key]"],
   waitForPageToLoad: true,

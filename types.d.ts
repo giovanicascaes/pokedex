@@ -11,7 +11,7 @@ export type WithNonLegacyRef<T, R> = Omit<T, "ref"> & {
   ref?: Ref<R>
 }
 
-export type PageScrollControlConfig =
+export type AppControlledScrollConfig =
   | {
       enabled: false
     }
@@ -23,5 +23,5 @@ export type PageScrollControlConfig =
 
 export type NextPageWithConfig<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactNode) => ReactNode
-  enableScrollControl?: PageScrollControlConfig
+  controlledScroll?: AppControlledScrollConfig
 }
