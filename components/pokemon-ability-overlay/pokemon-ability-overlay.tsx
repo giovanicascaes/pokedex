@@ -2,16 +2,16 @@ import { animated, useTransition } from "@react-spring/web"
 import { useScrollTop } from "hooks"
 import { MdClose } from "react-icons/md"
 import { twMerge } from "tailwind-merge"
-import { AbilityOverlayProps } from "./ability-overlay-types"
+import { PokemonAbilityOverlayProps } from "./pokemon-ability-overlay-types"
 
 const TRANSITION_DURATION = 150
 
-export default function AbilityDescriptionOverlay({
+export default function PokemonAbilityDescriptionOverlay({
   ability,
   onClose,
   className,
   ...other
-}: AbilityOverlayProps) {
+}: PokemonAbilityOverlayProps) {
   const [scrollTop, { onScroll }] = useScrollTop()
 
   const transition = useTransition(ability, {
@@ -27,8 +27,8 @@ export default function AbilityDescriptionOverlay({
         <animated.div
           {...other}
           className={twMerge(
-            "absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md [color-scheme:dark]",
-            className
+            className,
+            "absolute z-10 top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-slate-700/70 border-slate-600/70 dark:bg-slate-600/70 border dark:border-slate-500/40 backdrop-blur-md rounded-md [color-scheme:dark]"
           )}
           style={{ ...styles }}
         >

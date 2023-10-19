@@ -3,7 +3,6 @@ import { usePrevious } from "hooks"
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   AnimatedGridItem,
-  AnimatedGridItemData,
   UseGridItemsAnimationArgs,
   UseGridItemsAnimationTransitionRenderFn,
 } from "./animated-grid.types"
@@ -22,8 +21,8 @@ export default function useGridItemsAnimation<T extends AnimatedGridItem>({
     new GridTrailAnimationController(animationConfig)
   )
 
-  const itemsTransition = useTransition(displayedItems, {
-    key: ({ id }: AnimatedGridItemData<T>) => id,
+  const gridTransition = useTransition(displayedItems, {
+    key: ({ id }: AnimatedGridItem) => id,
     from: ({ x, y }) => ({
       x,
       y,
@@ -54,36 +53,34 @@ export default function useGridItemsAnimation<T extends AnimatedGridItem>({
   )
 
   useEffect(() => {
-    const animateRemovedItemsIfAny = async () => {
-      if (prevItems && prevItems.length > items.length) {
-        await Promise.allSettled(
+    ;(async () => {
+      if (prevItems && prevItems !== items) {
+        const itemsIdSet = new Set(items.map(({ id }) => id))
+
+        await Promise.all(
           prevItems
-            .filter((prevItem) =>
-              items.every((item) => item.id !== prevItem.id)
-            )
+            .filter(({ id }) => !itemsIdSet.has(id))
             .map(({ id }) => trailAnimationControllerRef.current.hide(id))
         )
       }
 
       setDisplayedItems(items)
-    }
-
-    animateRemovedItemsIfAny()
+    })()
   }, [items, prevItems])
 
   const transition = useCallback(
     (renderFn: UseGridItemsAnimationTransitionRenderFn<T>) =>
-      itemsTransition((styles, item) =>
+      gridTransition((gridStyles, item) =>
         renderFn(
           {
             ...animationConfig.from,
             ...trailAnimationControllerRef.current.getStyles(item.id),
-            ...styles,
+            ...gridStyles,
           },
           item
         )
       ),
-    [animationConfig, itemsTransition]
+    [animationConfig, gridTransition]
   )
 
   useEffect(() => {

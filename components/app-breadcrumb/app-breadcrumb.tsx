@@ -8,17 +8,12 @@ const BREADCRUMB_TRANSITION_DURATION = 150
 
 export default function AppBreadcrumb(props: AppBreadcrumbProps) {
   const [{ breadcrumb }] = usePage()
-  const breadcrumbId = useMemo(
-    () => breadcrumb.map(({ label }) => label).join(" / "),
-    [breadcrumb]
-  )
 
   const breadcrumbData = useMemo(
     () => ({
-      breadcrumbId,
       breadcrumb,
     }),
-    [breadcrumb, breadcrumbId]
+    [breadcrumb]
   )
 
   const transition = useTransition(breadcrumbData, {

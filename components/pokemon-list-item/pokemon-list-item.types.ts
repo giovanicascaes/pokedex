@@ -11,12 +11,6 @@ export interface PokemonListItemChildrenFnProps {
 }
 
 export interface PokemonListItemProps {
-  isOnPokedex?: boolean
-  onAnimationFinish?: () => void
-  children: (props: PokemonListItemChildrenFnProps) => ReactElement
-}
-
-export interface PokemonListItemViewProps {
   pokemonId: number
   resourceName: string
   name: string

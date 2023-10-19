@@ -58,16 +58,17 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
 
   const gridStyles = useGridAnimation({
     gridWidth,
-    gridContainerWidth: containerWidth,
+    containerWidth,
     immediate: immediateAnimations,
     onInitialDimensions,
   })
 
-  const { transition, onItemVisibilityChange } = useGridItemsAnimation({
-    items: gridItems,
-    animationConfig,
-    immediate: immediateAnimations,
-  })
+  const { transition: itemsTransition, onItemVisibilityChange } =
+    useGridItemsAnimation({
+      items: gridItems,
+      animationConfig,
+      immediate: immediateAnimations,
+    })
 
   if (!items.length) {
     return null
@@ -83,7 +84,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
           ...gridStyles,
         }}
       >
-        {transition((itemStyles, item) => {
+        {itemsTransition((itemStyles, item) => {
           const { id } = item
 
           return (

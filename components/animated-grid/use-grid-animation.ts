@@ -7,7 +7,7 @@ const CONTAINER_TRANSITION_DURATION = 300
 
 export default function useGridAnimation({
   gridWidth,
-  gridContainerWidth,
+  containerWidth,
   immediate = false,
   onInitialDimensions,
 }: UseGridAnimationArgs) {
@@ -24,10 +24,10 @@ export default function useGridAnimation({
   }))
 
   useIsoMorphicEffect(() => {
-    if (gridContainerWidth) {
+    if (containerWidth) {
       gridApi.start({
         to: {
-          x: (gridContainerWidth - gridWidth) / 2,
+          x: (containerWidth - gridWidth) / 2,
         },
         immediate: immediate || !isInitialDimensionsSet,
         onRest: () => {
@@ -40,7 +40,7 @@ export default function useGridAnimation({
     }
   }, [
     gridApi,
-    gridContainerWidth,
+    containerWidth,
     gridWidth,
     immediate,
     isInitialDimensionsSet,

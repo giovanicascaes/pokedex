@@ -7,19 +7,19 @@ import {
 
 const ANIMATION_DURATION = 300
 
-const ANIMATION_TRAIL = 100
+const TRAIL = 100
 
 class GridTrailItemAnimationController {
-  private readonly _config: GridTrailItemAnimationConfig
+  private readonly config: GridTrailItemAnimationConfig
   private readonly animation: Controller
   private readonly runToken: GridTrailItemAnimationRunToken = {}
   private _isRunning: boolean = false
   private _isDone: boolean = false
 
   constructor(config: GridTrailItemAnimationConfig) {
-    this._config = config
+    this.config = config
 
-    const { from } = this._config
+    const { from } = this.config
 
     this.animation = new Controller({
       config: {
@@ -36,18 +36,18 @@ class GridTrailItemAnimationController {
     })
   }
 
-  async enter(noDelay: boolean = false) {
+  async enter(ignoreDelay: boolean) {
     if (this._isRunning || this._isDone) return
 
     return new Promise<void>((resolve) => {
-      this._isRunning = true
       this.runToken.cancel = resolve
+      this._isRunning = true
 
-      const { enter: to } = this._config
+      const { enter: to } = this.config
 
       this.animation.start({
         to,
-        delay: noDelay ? 0 : ANIMATION_TRAIL,
+        delay: ignoreDelay ? 0 : TRAIL,
         onStart: () => {
           resolve()
         },
@@ -57,7 +57,7 @@ class GridTrailItemAnimationController {
 
   async leave() {
     return new Promise<void>((resolve) => {
-      const { leave: to } = this._config
+      const { leave: to } = this.config
 
       this.animation.start({
         to,
@@ -70,7 +70,7 @@ class GridTrailItemAnimationController {
 
   skip() {
     this.runToken.cancel?.()
-    this.animation.set(this._config.enter)
+    this.animation.set(this.config.enter)
     this.finish()
   }
 
@@ -98,7 +98,7 @@ class GridTrailItemAnimationController {
 }
 
 export default class GridTrailAnimationController {
-  private readonly _config: GridTrailItemAnimationConfig
+  private readonly config: GridTrailItemAnimationConfig
   private animations = new Map<number, GridTrailItemAnimationController>()
   private waiting: number[] = []
   private _queue: number[] = []
@@ -106,7 +106,7 @@ export default class GridTrailAnimationController {
   private _immediate: boolean = false
 
   constructor(config: GridTrailItemAnimationConfig) {
-    this._config = config
+    this.config = config
   }
 
   queue(id: number) {
@@ -136,7 +136,7 @@ export default class GridTrailAnimationController {
 
   start() {
     this._isAnimating = true
-    this.startNext()
+    this.startNext(true)
   }
 
   async hide(id: number) {
@@ -145,7 +145,7 @@ export default class GridTrailAnimationController {
 
   cancel() {
     this._queue.forEach((id) => {
-      const animation = this.get(id)!
+      const animation = this.get(id)
 
       if (animation.isRunning) {
         animation.cancel()
@@ -161,25 +161,25 @@ export default class GridTrailAnimationController {
     return this.get(id)?.styles
   }
 
-  private async run(id: number) {
-    const animation = this.get(id)!
+  private async run(id: number, ignoreDelay: boolean) {
+    const animation = this.get(id)
 
-    await animation.enter(id === this._queue[0])
+    await animation.enter(ignoreDelay)
     this.setAsAnimated(id)
   }
 
-  private async startNext() {
+  private async startNext(ignoreDelay = false) {
     const next = this._queue.shift()
 
     if (next) {
       this.skipPrevious(next)
-      const animation = this.get(next)!
+      const animation = this.get(next)
 
       if (!animation.isDone) {
         if (this._immediate) {
           this.skip(next)
         } else {
-          await this.run(next)
+          await this.run(next, ignoreDelay)
         }
       }
 
@@ -190,7 +190,8 @@ export default class GridTrailAnimationController {
   }
 
   private get(id: number) {
-    return this.animations.get(id)
+    // Within this project we will always have a valid ID being passed to this method
+    return this.animations.get(id)!
   }
 
   private setAsAnimated(id: number) {
@@ -206,7 +207,7 @@ export default class GridTrailAnimationController {
       if (!this.animations.has(item.id)) {
         this.animations.set(
           item.id,
-          new GridTrailItemAnimationController(this._config)
+          new GridTrailItemAnimationController(this.config)
         )
         this.waiting.push(item.id)
       }

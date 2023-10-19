@@ -1,5 +1,5 @@
-export * from "./button"
-export * from "./option"
-export * from "./options"
+export type { SelectButtonProps, SelectButtonVariant } from "./button"
+export type { SelectOptionChildrenFnArgs, SelectOptionProps } from "./option"
+export type { SelectOptionsChildrenFnArgs, SelectOptionsProps } from "./options"
 export { default as Select } from "./select"
 export * from "./select.types"

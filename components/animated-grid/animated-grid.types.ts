@@ -37,10 +37,8 @@ export interface AnimatedGridDimensions {
   itemWidth: number
 }
 
-type AnimatedGridItemId = number
-
 export interface AnimatedGridItem {
-  id: AnimatedGridItemId
+  id: number
 }
 
 export interface AnimatedGridItemStyle {
@@ -68,7 +66,7 @@ export type UseGridItemsAnimationTransitionRenderFn<T> = (
 
 export interface UseGridAnimationArgs {
   gridWidth: number
-  gridContainerWidth: number
+  containerWidth: number
   immediate?: boolean
   onInitialDimensions?: () => void
 }

@@ -102,7 +102,7 @@ export default function PokemonProfile({
       <AbilityOverlay
         ability={displayingAbility}
         onClose={() => setDisplayingAbility(undefined)}
-        className="!mt-0"
+        className="mt-0"
       />
     </div>
   )

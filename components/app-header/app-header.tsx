@@ -12,10 +12,10 @@ import { AppHeaderProps } from "./app-header.types"
 
 const POKEDEX_COUNT_BADGE_TRANSITION_DURATION = 130
 
-const actionButtonClassName =
+const actionClassName =
   "w-8 h-8 flex items-center justify-center rounded-full app-header-text"
 
-function HeaderActionButtons() {
+function Actions() {
   const [{ pokedex }] = usePokemon()
 
   const transition = useTransition(pokedex.length, {
@@ -44,7 +44,7 @@ function HeaderActionButtons() {
       <Link
         id={POKEDEX_LINK_ELEMENT_ID}
         href="/pokedex"
-        className={twJoin(actionButtonClassName, "relative focus-default")}
+        className={twJoin(actionClassName, "relative focus-default")}
       >
         {transition(
           (styles, count) =>
@@ -65,7 +65,7 @@ function HeaderActionButtons() {
         <HiOutlineDevicePhoneMobile size={20} />
       </Link>
       <ThemeSwitcher
-        buttonClassName={twJoin(actionButtonClassName, "focus-default")}
+        buttonClassName={twJoin(actionClassName, "focus-default")}
       />
     </div>
   )
@@ -84,7 +84,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
           </Link>
           <AppBreadcrumb className="ml-4" />
         </div>
-        <HeaderActionButtons />
+        <Actions />
       </div>
     </header>
   )
