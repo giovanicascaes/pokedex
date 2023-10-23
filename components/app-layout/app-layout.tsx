@@ -7,7 +7,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <>
       <PageLoadingIndicator />
       <PokemonProvider>
-        <AppHeader className="sticky top-0 z-10 flex-shrink-0" />
+        <AppHeader />
         <main className="h-full">{children}</main>
       </PokemonProvider>
     </>

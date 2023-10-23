@@ -27,7 +27,7 @@ const DEFAULT_ANIMATION_CONFIG = {
 
 export default function AnimatedGrid<T extends AnimatedGridItem>({
   items = [],
-  columns = 1,
+  columns,
   itemWidth,
   itemHeight,
   gapX = DEFAULT_GAP_X,
@@ -35,7 +35,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
   animationConfig = DEFAULT_ANIMATION_CONFIG,
   immediateAnimations = false,
   fillColumnWidth = false,
-  onInitialDimensions,
+  onLoad,
   children,
 }: AnimatedGridProps<T>) {
   const [resizeObserverRef, containerRect] = useResizeObserver()
@@ -60,7 +60,7 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
     gridWidth,
     containerWidth,
     immediate: immediateAnimations,
-    onInitialDimensions,
+    onInitialPositionSet: onLoad,
   })
 
   const { transition: itemsTransition, onItemVisibilityChange } =
@@ -92,8 +92,8 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
               key={id}
               className="absolute"
               style={{
-                width: gridItemWidth,
                 ...itemStyles,
+                width: gridItemWidth,
               }}
             >
               <IntersectionObserver

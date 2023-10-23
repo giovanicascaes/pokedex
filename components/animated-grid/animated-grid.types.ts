@@ -19,7 +19,7 @@ export interface GridTrailItemAnimationRunToken {
 
 export interface AnimatedGridProps<T> {
   items?: T[]
-  columns?: number
+  columns: number
   itemWidth: number
   itemHeight: number
   gapX?: number
@@ -27,7 +27,7 @@ export interface AnimatedGridProps<T> {
   animationConfig?: GridTrailItemAnimationConfig
   immediateAnimations?: boolean
   fillColumnWidth?: boolean
-  onInitialDimensions?: () => void
+  onLoad?: () => void
   children: (props: AnimatedGridChildrenFnProps<T>) => ReactElement
 }
 
@@ -68,7 +68,7 @@ export interface UseGridAnimationArgs {
   gridWidth: number
   containerWidth: number
   immediate?: boolean
-  onInitialDimensions?: () => void
+  onInitialPositionSet?: () => void
 }
 
 export interface UseGridArgs<T>

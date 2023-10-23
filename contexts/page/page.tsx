@@ -1,4 +1,3 @@
-import { useHistory } from "hooks"
 import { useCallback, useState } from "react"
 import { createContext } from "utils"
 import {
@@ -8,6 +7,7 @@ import {
   PageContextValue,
   PageProviderProps,
 } from "./page.types"
+import useHistory from "./use-history"
 
 const [Provider, useContext] = createContext<PageContextValue>({
   hookName: "usePage",

@@ -1,6 +1,6 @@
 import { PokemonDetails, Transition } from "components"
 import { usePage, usePokemon } from "contexts"
-import { useIsoMorphicEffect, useLastList } from "hooks"
+import { useIsoMorphicEffect, usePath } from "hooks"
 import { getPokemon } from "lib"
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import Head from "next/head"
@@ -12,26 +12,24 @@ type PokemonProps = InferGetServerSidePropsType<typeof getServerSideProps>
 const Pokemon: NextPageWithConfig<PokemonProps> = ({
   pokemon,
 }: PokemonProps) => {
-  const [, { setViewingPokemon, clearViewingPokemon }] = usePokemon()
+  const [, { setViewingPokemon }] = usePokemon()
   const [, { setUpBreadcrumb }] = usePage()
-  const lastList = useLastList()
+  const [firstPathSegment] = usePath()
 
   useEffect(() => {
-    setViewingPokemon(pokemon)
-
-    return () => {
-      clearViewingPokemon()
-    }
-  }, [clearViewingPokemon, pokemon, setViewingPokemon])
+    return setViewingPokemon(pokemon)
+  }, [pokemon, setViewingPokemon])
 
   useIsoMorphicEffect(() => {
-    const previousPath =
-      !lastList || lastList === "/"
-        ? { label: "Pokémon", href: "/" }
-        : { label: "Pokedéx", href: "/pokedex" }
+    if (!firstPathSegment) return
 
-    return setUpBreadcrumb([previousPath, { label: pokemon.name }])
-  }, [lastList, pokemon.name, setUpBreadcrumb])
+    const firstBreadcrumb =
+      firstPathSegment === "pokedex"
+        ? { label: "Pokedéx", href: "/pokedex" }
+        : { label: "Pokémon", href: "/" }
+
+    return setUpBreadcrumb([firstBreadcrumb, { label: pokemon.name }])
+  }, [firstPathSegment, pokemon.name, setUpBreadcrumb])
 
   return (
     <>

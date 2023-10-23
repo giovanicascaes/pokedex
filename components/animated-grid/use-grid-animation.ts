@@ -9,9 +9,9 @@ export default function useGridAnimation({
   gridWidth,
   containerWidth,
   immediate = false,
-  onInitialDimensions,
+  onInitialPositionSet,
 }: UseGridAnimationArgs) {
-  const [isInitialDimensionsSet, setIsInitialDimensionsSet] = useState(false)
+  const [isInitialPositionSet, setIsInitialPositionSet] = useState(false)
 
   const [gridStyles, gridApi] = useSpring(() => ({
     config: {
@@ -29,22 +29,21 @@ export default function useGridAnimation({
         to: {
           x: (containerWidth - gridWidth) / 2,
         },
-        immediate: immediate || !isInitialDimensionsSet,
-        onRest: () => {
-          if (!isInitialDimensionsSet) {
-            onInitialDimensions?.()
-            setIsInitialDimensionsSet(true)
-          }
-        },
+        immediate: immediate || !isInitialPositionSet,
       })
+
+      if (!isInitialPositionSet) {
+        onInitialPositionSet?.()
+        setIsInitialPositionSet(true)
+      }
     }
   }, [
     gridApi,
     containerWidth,
     gridWidth,
     immediate,
-    isInitialDimensionsSet,
-    onInitialDimensions,
+    isInitialPositionSet,
+    onInitialPositionSet,
   ])
 
   return gridStyles

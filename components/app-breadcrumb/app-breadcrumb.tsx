@@ -1,7 +1,6 @@
 import { animated, easings, useTransition } from "@react-spring/web"
 import { Breadcrumb } from "components"
-import { usePage } from "contexts"
-import { useMemo } from "react"
+import { PageBreadcrumbItem, usePage } from "contexts"
 import { AppBreadcrumbProps } from "./app-breadcrumb.types"
 
 const BREADCRUMB_TRANSITION_DURATION = 150
@@ -9,14 +8,8 @@ const BREADCRUMB_TRANSITION_DURATION = 150
 export default function AppBreadcrumb(props: AppBreadcrumbProps) {
   const [{ breadcrumb }] = usePage()
 
-  const breadcrumbData = useMemo(
-    () => ({
-      breadcrumb,
-    }),
-    [breadcrumb]
-  )
-
-  const transition = useTransition(breadcrumbData, {
+  const transition = useTransition(breadcrumb, {
+    key: ({ label }: PageBreadcrumbItem) => label,
     config: {
       easing: easings.linear,
       duration: BREADCRUMB_TRANSITION_DURATION,
@@ -33,19 +26,19 @@ export default function AppBreadcrumb(props: AppBreadcrumbProps) {
     exitBeforeEnter: true,
   })
 
-  return transition((styles, { breadcrumb }) => (
-    <animated.div style={{ ...styles }}>
-      <Breadcrumb {...props}>
-        {breadcrumb.map(({ label, href }) => (
-          <Breadcrumb.Item key={label} className="app-header-text">
+  return (
+    <Breadcrumb {...props}>
+      {transition((styles, { label, href }) => (
+        <animated.div style={{ ...styles }}>
+          <Breadcrumb.Item className="app-header-text">
             {href ? (
               <Breadcrumb.Link href={href}>{label}</Breadcrumb.Link>
             ) : (
               label
             )}
           </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
-    </animated.div>
-  ))
+        </animated.div>
+      ))}
+    </Breadcrumb>
+  )
 }

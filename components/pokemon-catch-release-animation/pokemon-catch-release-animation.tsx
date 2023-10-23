@@ -38,7 +38,7 @@ function PokemonCatchReleaseAnimationAnimate({
           {...other}
           pokemonRect={childrenRect}
           onAnimationFinish={onAnimationFinish}
-          className="absolute top-0 left-0 z-40 w-full h-full pointer-events-none"
+          className="absolute top-0 left-0 z-[60] w-full h-full pointer-events-none"
         >
           {children}
         </AnimationComponent>

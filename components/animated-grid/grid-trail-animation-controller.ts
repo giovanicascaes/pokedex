@@ -36,7 +36,7 @@ class GridTrailItemAnimationController {
     })
   }
 
-  async enter(ignoreDelay: boolean) {
+  async enter(startImmediately: boolean) {
     if (this._isRunning || this._isDone) return
 
     return new Promise<void>((resolve) => {
@@ -47,7 +47,7 @@ class GridTrailItemAnimationController {
 
       this.animation.start({
         to,
-        delay: ignoreDelay ? 0 : TRAIL,
+        delay: startImmediately ? 0 : TRAIL,
         onStart: () => {
           resolve()
         },
@@ -161,14 +161,14 @@ export default class GridTrailAnimationController {
     return this.get(id)?.styles
   }
 
-  private async run(id: number, ignoreDelay: boolean) {
+  private async run(id: number, startImmediately: boolean) {
     const animation = this.get(id)
 
-    await animation.enter(ignoreDelay)
+    await animation.enter(startImmediately)
     this.setAsAnimated(id)
   }
 
-  private async startNext(ignoreDelay = false) {
+  private async startNext(startImmediately = false) {
     const next = this._queue.shift()
 
     if (next) {
@@ -179,7 +179,7 @@ export default class GridTrailAnimationController {
         if (this._immediate) {
           this.skip(next)
         } else {
-          await this.run(next, ignoreDelay)
+          await this.run(next, startImmediately)
         }
       }
 

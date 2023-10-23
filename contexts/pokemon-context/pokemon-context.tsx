@@ -118,11 +118,12 @@ export function PokemonProvider({ children }: PokemonProviderProps) {
           type: PokemonActionTypes.SetViewingPokemon,
           pokemon,
         })
-      },
-      clearViewingPokemon() {
-        dispatch({
-          type: PokemonActionTypes.ClearViewingPokemon,
-        })
+
+        return () => {
+          dispatch({
+            type: PokemonActionTypes.ClearViewingPokemon,
+          })
+        }
       },
       addPokemonToPokedex(pokemon: PokemonSpeciesPokedex) {
         dispatch({

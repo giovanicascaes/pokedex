@@ -76,7 +76,11 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
   ref
 ) {
   return (
-    <header {...other} className={twMerge("p-2", className)} ref={ref}>
+    <header
+      {...other}
+      className={twMerge("p-2 sticky top-0 z-50 flex-shrink-0", className)}
+      ref={ref}
+    >
       <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="focus-default rounded">

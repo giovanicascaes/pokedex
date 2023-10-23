@@ -1,11 +1,15 @@
-import { Children, Fragment } from "react"
+import { Fragment, useMemo } from "react"
 import { twMerge } from "tailwind-merge"
+import { getChildrenAsArray } from "utils"
 import BreadcrumbItem from "./breadcrumb-item"
 import BreadcrumbLink from "./breadcrumb-link"
 import { BreadcrumbProps } from "./breadcrumb.types"
 
 function Breadcrumb({ children, className, ...other }: BreadcrumbProps) {
-  const childrenAsArray = Children.toArray(children).filter(Boolean)
+  const childrenAsArray = useMemo(
+    () => getChildrenAsArray(children),
+    [children]
+  )
   const childrenCount = childrenAsArray.length
 
   return (

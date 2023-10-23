@@ -99,7 +99,7 @@ export default function PokemonList({
                     }
                     immediateAnimations={immediateAnimations}
                     fillColumnWidth={isList}
-                    onInitialDimensions={onLoad}
+                    onLoad={onLoad}
                   >
                     {({ item: pokemon }) => {
                       const { id } = pokemon

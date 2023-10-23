@@ -46,7 +46,6 @@ export interface PokemonContextData {
 export interface PokemonContextActions {
   loadMore: () => void
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
-  clearViewingPokemon: () => void
   addPokemonToPokedex: (pokemon: PokemonSpeciesPokedex) => void
   removeFromPokedex: (id: number) => void
 }
