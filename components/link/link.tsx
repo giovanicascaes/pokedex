@@ -7,7 +7,7 @@ export default function Link({ disabled, className, ...other }: LinkProps) {
     <NextLink
       {...other}
       className={twMerge(
-        "text-sm font-medium focus-default-b",
+        "text-sm font-medium focus-b",
         disabled
           ? "text-slate-500 dark:text-slate-300 cursor-default"
           : "text-red-500 dark:text-red-400 hover:text-black dark:hover:text-white",

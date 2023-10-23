@@ -43,7 +43,7 @@ export default function PokemonTypeBadge({
         <Tooltip content="Double Damage">
           <span
             className={twMerge(
-              "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus-default",
+              "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full cursor-help text-[12px] w-5 h-5 bg-white/50 normal-case font-semibold focus",
               textColor,
               foregroundStyle === "light" && "bg-black/50"
             )}

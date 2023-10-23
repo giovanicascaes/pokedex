@@ -43,7 +43,7 @@ export default function PokemonAbilityDescriptionOverlay({
             </span>
             <button
               onClick={onClose}
-              className="absolute z-10 top-3 right-3 text-slate-300 dark:text-slate-300/90 hover:text-slate-200 dark:hover:text-white p-0.5 rounded cursor-pointer bg-slate-600 dark:bg-slate-800/80 hover:bg-slate-700 dark:hover:bg-slate-900/90 transition-colors focus-default"
+              className="absolute z-10 top-3 right-3 text-slate-300 dark:text-slate-300/90 hover:text-slate-200 dark:hover:text-white p-0.5 rounded cursor-pointer bg-slate-600 dark:bg-slate-800/80 hover:bg-slate-700 dark:hover:bg-slate-900/90 transition-colors focus"
             >
               <MdClose size={20} />
             </button>

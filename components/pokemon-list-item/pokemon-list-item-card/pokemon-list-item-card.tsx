@@ -70,14 +70,14 @@ export default forwardRef<PokemonListItemCardElement, PokemonListItemCardProps>(
               {!isAnimating && (
                 <button
                   onClick={runAnimation}
-                  className="peer flex items-center space-x-1 absolute -top-3.5 -right-3.5 z-10 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/card:opacity-100 group-hover/card:visible transition-all text-xs font-semibold bg-slate-200 hover:bg-red-500 hover:active:bg-red-600 text-slate-800 hover:text-white dark:bg-slate-500 dark:hover:bg-red-500/90 dark:active:bg-red-600/90 dark:text-white focus-default group/catch-button"
+                  className="peer flex items-center space-x-1 absolute -top-3.5 -right-3.5 z-10 rounded-full py-1.5 pl-1.5 pr-2.5 opacity-0 invisible group-hover/card:opacity-100 group-hover/card:visible transition-all text-xs font-semibold bg-slate-200 hover:bg-red-500 hover:active:bg-red-600 text-slate-800 hover:text-white dark:bg-slate-500 dark:hover:bg-red-500/90 dark:active:bg-red-600/90 dark:text-white focus group/catch-button"
                 >
                   <MdCatchingPokemon size={22} />
                   <span>{isOnPokedex ? "Release" : "Catch"}</span>
                 </button>
               )}
               <Link
-                className="relative flex px-4 py-10 shadow-md dark:shadow-black/50 rounded-xl bg-white dark:bg-slate-700 hover:rotate-yz-scale peer-hover:rotate-yz-scale hover:shadow-2xl peer-hover:shadow-2xl hover:dark:shadow-black/50 peer-hover:dark:shadow-black/50 transition-all focus-default"
+                className="relative flex px-4 py-10 shadow-md dark:shadow-black/50 rounded-xl bg-white dark:bg-slate-700 hover:hover-pokemon-card peer-hover:hover-pokemon-card hover:shadow-2xl peer-hover:shadow-2xl hover:dark:shadow-black/50 peer-hover:dark:shadow-black/50 transition-all focus"
                 href={`/pokemon/${resourceName}`}
                 scroll={false}
               >

@@ -44,7 +44,7 @@ function Actions() {
       <Link
         id={POKEDEX_LINK_ELEMENT_ID}
         href="/pokedex"
-        className={twJoin(actionClassName, "relative focus-default")}
+        className={twJoin(actionClassName, "relative focus")}
       >
         {transition(
           (styles, count) =>
@@ -64,9 +64,7 @@ function Actions() {
         )}
         <HiOutlineDevicePhoneMobile size={20} />
       </Link>
-      <ThemeSwitcher
-        buttonClassName={twJoin(actionClassName, "focus-default")}
-      />
+      <ThemeSwitcher buttonClassName={twJoin(actionClassName, "focus")} />
     </div>
   )
 }
@@ -83,7 +81,7 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
     >
       <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
         <div className="flex items-center">
-          <Link href="/" className="focus-default rounded">
+          <Link href="/" className="focus rounded">
             <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
           </Link>
           <AppBreadcrumb className="ml-4" />

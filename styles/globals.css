@@ -25,19 +25,19 @@
 }
 
 @layer utilities {
-  .focus-default-b {
+  .focus-b {
     @apply focus-visible:outline-none focus-visible:border-b-2 focus-visible:border-red-500 dark:focus-visible:border-red-400 focus-visible:border-opacity-50;
   }
 
-  .focus-default-b-none {
+  .focus-b-none {
     @apply focus-visible:border-b-0;
   }
 
-  .focus-default {
-    @apply focus-default-b-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
+  .focus {
+    @apply focus-b-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:focus-visible:ring-red-400 focus-visible:ring-opacity-50;
   }
 
-  .rotate-yz-scale {
+  .hover-pokemon-card {
     @apply [transform:rotateY(2deg)_rotateZ(2deg)_scale(1.03)];
   }
 }

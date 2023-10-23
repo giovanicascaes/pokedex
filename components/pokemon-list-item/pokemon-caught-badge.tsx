@@ -15,7 +15,7 @@ export default function PokemonCaughtBadge({
         onClick={(e) => e.preventDefault()}
       >
         <div
-          className="cursor-help rounded-full w-full h-full bg-white focus-default"
+          className="cursor-help rounded-full w-full h-full bg-white focus"
           tabIndex={0}
         >
           <MdCatchingPokemon className="w-full h-full top-0 left-0 text-red-500 dark:text-red-500/90 absolute" />
