@@ -1,17 +1,17 @@
 import { PokemonList } from "components"
-import { usePage, usePokemon, useScrollControl } from "contexts"
+import { usePage, usePokemon } from "contexts"
 import { useIsoMorphicEffect } from "hooks"
 import { useEffect } from "react"
 import { NextPageWithConfig } from "types"
 
 const Pokedex: NextPageWithConfig = () => {
   const [{ pokedex }, { removeFromPokedex }] = usePokemon()
-  const [, { setUpBreadcrumb }] = usePage()
-  const [{ isRestoringScroll }, { onPageLoadComplete }] = useScrollControl()
+  const [, { updateBreadcrumb }] = usePage()
+  const [, { onPageLoadComplete }] = usePage()
 
   useIsoMorphicEffect(() => {
-    return setUpBreadcrumb([{ label: "Pokedéx" }])
-  }, [setUpBreadcrumb])
+    return updateBreadcrumb([{ label: "Pokedéx" }])
+  }, [updateBreadcrumb])
 
   useEffect(() => {
     if (!pokedex.length) {
@@ -24,7 +24,6 @@ const Pokedex: NextPageWithConfig = () => {
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={pokedex}
-          immediateAnimations={isRestoringScroll}
           onRelease={removeFromPokedex}
           onLoad={onPageLoadComplete}
           className="mx-auto"
@@ -42,10 +41,8 @@ const Pokedex: NextPageWithConfig = () => {
   )
 }
 
-Pokedex.controlledScroll = {
-  enabled: true,
-  childrenPaths: ["/pokemon/[key]"],
-  waitForPageToLoad: true,
+Pokedex.scrollConfig = {
+  restoreScrollIfComingFrom: ["/pokemon/[key]"],
 }
 
 export async function getServerSideProps() {

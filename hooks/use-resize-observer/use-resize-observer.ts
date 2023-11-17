@@ -1,5 +1,6 @@
+import { useIsoMorphicEffect } from "hooks/use-iso-morphic-effect"
 import debounce from "lodash.debounce"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import {
   UseResizeObserverArgs,
   UseResizeObserverReturn,
@@ -12,7 +13,7 @@ export default function useResizeObserver({
   const [el, ref] = useState<Element | null>(null)
   const [rect, setRect] = useState<DOMRectReadOnly | null>(null)
 
-  useEffect(() => {
+  useIsoMorphicEffect(() => {
     if (!el) return
 
     const observerCallback = ([entry]: ResizeObserverEntry[]): void => {

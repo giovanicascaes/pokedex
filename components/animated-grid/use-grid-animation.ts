@@ -8,7 +8,6 @@ const CONTAINER_TRANSITION_DURATION = 300
 export default function useGridAnimation({
   gridWidth,
   containerWidth,
-  immediate = false,
   onInitialPositionSet,
 }: UseGridAnimationArgs) {
   const [isInitialPositionSet, setIsInitialPositionSet] = useState(false)
@@ -29,7 +28,7 @@ export default function useGridAnimation({
         to: {
           x: (containerWidth - gridWidth) / 2,
         },
-        immediate: immediate || !isInitialPositionSet,
+        immediate: !isInitialPositionSet,
       })
 
       if (!isInitialPositionSet) {
@@ -41,7 +40,6 @@ export default function useGridAnimation({
     gridApi,
     containerWidth,
     gridWidth,
-    immediate,
     isInitialPositionSet,
     onInitialPositionSet,
   ])

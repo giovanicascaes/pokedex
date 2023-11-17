@@ -1,116 +1,120 @@
 import {
   AppLayout,
   AppScroll,
+  AppScrollElement,
   PageTransition,
   PageTransitionElement,
 } from "components"
 import {
-  ScrollControlContextActions,
-  ScrollControlContextData,
-  ScrollControlProvider,
+  PageBreadcrumbItem,
+  PageContextActions,
+  PageContextData,
+  PageProvider,
+  ThemeModeProvider,
 } from "contexts"
-import { useRouterEvent } from "hooks"
+import { useEvent, useIsoMorphicEffect, useRouterEvent } from "hooks"
 import { useRouter } from "next/router"
-import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
+import { UIEventHandler, useCallback, useRef, useState } from "react"
 import { AppShellProps } from "./app-shell.types"
-import AppScrollController from "./app-scroll-controller"
+import useHistory from "./use-history"
 
 export default function AppShell({
-  controlledScroll = { enabled: false },
+  scrollConfig = false,
   children,
 }: AppShellProps) {
-  const [isRestoringScroll, setIsRestoringScroll] = useState(false)
-  const pageTransitionRef = useRef<PageTransitionElement>(null)
+  const isScrollEnabled = !!scrollConfig
+  const [breadcrumb, setBreadcrumb] = useState<PageBreadcrumbItem[]>([])
+  const [isPageLoaded, setIsPageLoaded] = useState(true)
+  const [isTransitionRunning, setIsTransitionRunning] = useState(false)
+  const pageTransitionRef = useRef<null | PageTransitionElement>(null)
+  const scrollElementRef = useRef<null | AppScrollElement>(null)
+  const scrollTopRef = useRef(0)
+  const scrollHistoryRef = useRef(new Map())
   const { pathname: currentPath } = useRouter()
-  const scrollControllerRef = useRef(new AppScrollController())
+  const history = useHistory()
 
-  const scrollRef = useCallback((scrollEl: HTMLElement | null) => {
-    if (scrollEl) scrollControllerRef.current.scrollEl = scrollEl
-  }, [])
+  const handleOnScroll = useCallback<UIEventHandler<AppScrollElement>>(
+    (event) => {
+      const { scrollTop: nextScrollTop } = event.currentTarget
 
-  const handleOnScroll = useCallback((event: UIEvent) => {
-    const { scrollTop: nextScrollTop } = event.currentTarget
+      scrollTopRef.current = nextScrollTop
+    },
+    []
+  )
 
-    scrollControllerRef.current.scrollTop = nextScrollTop
-  }, [])
+  const finishTransition = useEvent(() => {
+    const [, previousPath] = history
+    const shouldRestoreScroll =
+      scrollConfig &&
+      scrollConfig.restoreScrollIfComingFrom.includes(previousPath)
 
-  useRouterEvent("beforeHistoryChange", () => {
-    scrollControllerRef.current.pushHistoryEntry(currentPath)
+    scrollElementRef.current?.scrollTo({
+      top: shouldRestoreScroll
+        ? scrollHistoryRef.current.get(currentPath) ?? 0
+        : 0,
+    })
+    pageTransitionRef.current?.resume()
   })
 
   useRouterEvent("routeChangeStart", () => {
-    scrollControllerRef.current.saveCurrentPathScroll()
-    scrollControllerRef.current.isLeavingPage = true
+    if (isScrollEnabled) {
+      scrollHistoryRef.current.set(currentPath, scrollTopRef.current)
+    }
   })
 
-  useEffect(() => {
-    scrollControllerRef.current.currentPath = currentPath
-  }, [currentPath])
-
-  useEffect(() => {
-    const { enabled } = controlledScroll
-
-    if (enabled) {
-      const { childrenPaths, waitForPageToLoad = false } = controlledScroll
-
-      scrollControllerRef.current.enable({ childrenPaths, waitForPageToLoad })
-    } else {
-      scrollControllerRef.current.disable()
+  useIsoMorphicEffect(() => {
+    if (isTransitionRunning && isScrollEnabled) {
+      setIsPageLoaded(false)
     }
-  }, [controlledScroll])
+  }, [isTransitionRunning, isScrollEnabled])
 
-  useEffect(() => {
+  useIsoMorphicEffect(() => {
+    if (!isTransitionRunning && isPageLoaded) {
+      finishTransition()
+    }
+  }, [finishTransition, isPageLoaded, isTransitionRunning])
+
+  const data: PageContextData = {
+    breadcrumb,
+    history,
+  }
+
+  const updateBreadcrumb = useCallback((breadcrumb: PageBreadcrumbItem[]) => {
+    setBreadcrumb(breadcrumb)
+
     return () => {
-      // Not a React node
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      scrollControllerRef.current.removeAllListeners()
+      setBreadcrumb([])
     }
-  }, [])
-
-  const onPageTransitionStart = useCallback(async () => {
-    if (!scrollControllerRef.current.isLeavingPage) {
-      return
-    }
-
-    setIsRestoringScroll(
-      scrollControllerRef.current.shouldRestorePreviousPosition
-    )
-
-    await scrollControllerRef.current.placeScroll()
-
-    setIsRestoringScroll(false)
-    pageTransitionRef.current?.resume()
-  }, [])
-
-  const onPageTransitionComplete = useCallback(() => {
-    scrollControllerRef.current.isLeavingPage = false
   }, [])
 
   const onPageLoadComplete = useCallback(() => {
-    scrollControllerRef.current.onPageLoadComplete()
+    setIsPageLoaded(true)
   }, [])
 
-  const data: ScrollControlContextData = {
-    isRestoringScroll,
-  }
-
-  const actions: ScrollControlContextActions = {
+  const actions: PageContextActions = {
+    updateBreadcrumb,
     onPageLoadComplete,
   }
 
   return (
-    <AppScroll onScroll={handleOnScroll} ref={scrollRef}>
-      <AppLayout>
-        <ScrollControlProvider value={[data, actions]}>
-          <PageTransition
-            onTransitionStart={onPageTransitionStart}
-            onTransitionComplete={onPageTransitionComplete}
-            ref={pageTransitionRef}
-          >
-            {children}
-          </PageTransition>
-        </ScrollControlProvider>
-      </AppLayout>
-    </AppScroll>
+    <ThemeModeProvider>
+      <PageProvider value={[data, actions]}>
+        <AppScroll onScroll={handleOnScroll} ref={scrollElementRef}>
+          <AppLayout>
+            <PageTransition
+              onTransitionStart={() => {
+                setIsTransitionRunning(true)
+              }}
+              onTransitionComplete={() => {
+                setIsTransitionRunning(false)
+              }}
+              ref={pageTransitionRef}
+            >
+              {children}
+            </PageTransition>
+          </AppLayout>
+        </AppScroll>
+      </PageProvider>
+    </ThemeModeProvider>
   )
 }

@@ -1,5 +1,5 @@
 import { PokemonList } from "components"
-import { POKEMONS_PER_PAGE, usePokemon, useScrollControl } from "contexts"
+import { POKEMONS_PER_PAGE, usePage, usePokemon } from "contexts"
 import { useIntersectionObserver } from "hooks"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID, getPokemons } from "lib"
 import { InferGetStaticPropsType } from "next"
@@ -13,12 +13,12 @@ type PokemonsProps = InferGetStaticPropsType<typeof getStaticProps>
 const Pokemons: NextPageWithConfig<PokemonsProps> = ({
   serverLoadedPokemons,
 }) => {
-  const [isPokemonLoad, setIsPokemonLoad] = useState(false)
+  const [isPokemonListLoaded, setIsPokemonListLoaded] = useState(false)
   const [
-    { visible, preload, hasFetchedAll },
-    { loadMore, addPokemonToPokedex, removeFromPokedex },
+    { visible, hasFetchedAll },
+    { loadMore, addToPokedex, removeFromPokedex },
   ] = usePokemon(serverLoadedPokemons)
-  const [{ isRestoringScroll }, { onPageLoadComplete }] = useScrollControl()
+  const [, { onPageLoadComplete }] = usePage()
   const [intersectionObserverRef, isIntersecting] = useIntersectionObserver({
     root: env.isServer
       ? null
@@ -27,7 +27,7 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
   })
 
   const onPokemonLoad = useCallback(() => {
-    setIsPokemonLoad(true)
+    setIsPokemonListLoaded(true)
     onPageLoadComplete()
   }, [onPageLoadComplete])
 
@@ -45,13 +45,11 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
       <div className="flex flex-col px-14 pt-4 pb-8">
         <PokemonList
           pokemons={visible}
-          immediateAnimations={isRestoringScroll}
-          onCatch={addPokemonToPokedex}
+          onCatch={addToPokedex}
           onRelease={removeFromPokedex}
           onLoad={onPokemonLoad}
-          className="mx-auto"
         />
-        {isPokemonLoad && (
+        {isPokemonListLoaded && (
           <div
             className="w-full text-center font-light text-slate-400 mt-10"
             ref={intersectionObserverRef}
@@ -64,10 +62,8 @@ const Pokemons: NextPageWithConfig<PokemonsProps> = ({
   )
 }
 
-Pokemons.controlledScroll = {
-  enabled: true,
-  childrenPaths: ["/pokemon/[key]"],
-  waitForPageToLoad: true,
+Pokemons.scrollConfig = {
+  restoreScrollIfComingFrom: ["/pokemon/[key]"],
 }
 
 export async function getStaticProps() {

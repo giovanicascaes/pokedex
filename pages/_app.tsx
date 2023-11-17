@@ -1,6 +1,5 @@
 import { Inter } from "@next/font/google"
 import { AppShell } from "components"
-import { PageProvider, ThemeModeProvider } from "contexts"
 import { SHELL_LAYOUT_CONTAINER_ELEMENT_ID } from "lib"
 import type { AppProps } from "next/app"
 import "styles/globals.css"
@@ -24,13 +23,9 @@ export default function App({ Component, pageProps }: AppPropsWithConfig) {
         "font-sans bg-slate-50 dark:bg-slate-800 h-full"
       )}
     >
-      <ThemeModeProvider>
-        <PageProvider>
-          <AppShell controlledScroll={Component.controlledScroll}>
-            {getLayout(<Component {...pageProps} />)}
-          </AppShell>
-        </PageProvider>
-      </ThemeModeProvider>
+      <AppShell scrollConfig={Component.scrollConfig}>
+        {getLayout(<Component {...pageProps} />)}
+      </AppShell>
     </div>
   )
 }

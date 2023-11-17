@@ -1,6 +1,6 @@
 import { PokemonDetails, Transition } from "components"
 import { usePage, usePokemon } from "contexts"
-import { useIsoMorphicEffect, usePath } from "hooks"
+import { useIsoMorphicEffect } from "hooks"
 import { getPokemon } from "lib"
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import Head from "next/head"
@@ -13,23 +13,22 @@ const Pokemon: NextPageWithConfig<PokemonProps> = ({
   pokemon,
 }: PokemonProps) => {
   const [, { setViewingPokemon }] = usePokemon()
-  const [, { setUpBreadcrumb }] = usePage()
-  const [firstPathSegment] = usePath()
+  const [{ history }, { updateBreadcrumb }] = usePage()
 
   useEffect(() => {
     return setViewingPokemon(pokemon)
   }, [pokemon, setViewingPokemon])
 
   useIsoMorphicEffect(() => {
-    if (!firstPathSegment) return
+    const [prevPath] = history.slice(-2)
 
     const firstBreadcrumb =
-      firstPathSegment === "pokedex"
+      prevPath === "/pokedex"
         ? { label: "Pokedéx", href: "/pokedex" }
         : { label: "Pokémon", href: "/" }
 
-    return setUpBreadcrumb([firstBreadcrumb, { label: pokemon.name }])
-  }, [firstPathSegment, pokemon.name, setUpBreadcrumb])
+    return updateBreadcrumb([firstBreadcrumb, { label: pokemon.name }])
+  }, [history, pokemon.name, updateBreadcrumb])
 
   return (
     <>
@@ -40,15 +39,13 @@ const Pokemon: NextPageWithConfig<PokemonProps> = ({
       </Head>
       <div className="flex flex-col px-6 sm:px-16 md:px-32 pb-12 pt-8">
         <Transition watch={pokemon}>
-          {(pokemon) => <PokemonDetails pokemon={pokemon} />}
+          {(pokemonInTransition) => (
+            <PokemonDetails pokemon={pokemonInTransition} />
+          )}
         </Transition>
       </div>
     </>
   )
-}
-
-Pokemon.controlledScroll = {
-  enabled: false,
 }
 
 export async function getServerSideProps({

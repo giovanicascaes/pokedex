@@ -1,6 +1,6 @@
 export * from "./animated-grid"
 export * from "./app-breadcrumb"
-export * from "./app-header"
+export { default as AppHeader } from "./app-header"
 export * from "./app-layout"
 export * from "./app-scroll"
 export * from "./app-shell"

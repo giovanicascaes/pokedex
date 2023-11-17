@@ -12,7 +12,6 @@ const GRID_POSITION_TRANSITION_DURATION = 300
 
 export default function useGridItemsAnimation<T extends AnimatedGridItem>({
   items = [],
-  immediate = false,
   animationConfig,
 }: UseGridItemsAnimationArgs<T>) {
   const prevItems = usePrevious(items)
@@ -86,10 +85,6 @@ export default function useGridItemsAnimation<T extends AnimatedGridItem>({
   useEffect(() => {
     trailAnimationControllerRef.current.items = displayedItems
   }, [displayedItems])
-
-  useEffect(() => {
-    trailAnimationControllerRef.current.immediate = immediate
-  }, [immediate])
 
   useEffect(() => {
     return () => {

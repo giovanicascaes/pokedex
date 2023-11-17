@@ -52,6 +52,7 @@ export default forwardRef<
 
   return (
     <Link
+      {...other}
       className={twMerge(
         className,
         "flex focus group/list-item shadow dark:shadow-md rounded-2xl bg-white hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-900 cursor-pointer transition-all w-full"

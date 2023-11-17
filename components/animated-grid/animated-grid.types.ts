@@ -25,7 +25,6 @@ export interface AnimatedGridProps<T> {
   gapX?: number
   gapY?: number
   animationConfig?: GridTrailItemAnimationConfig
-  immediateAnimations?: boolean
   fillColumnWidth?: boolean
   onLoad?: () => void
   children: (props: AnimatedGridChildrenFnProps<T>) => ReactElement
@@ -56,7 +55,6 @@ export type AnimatedGridData<T> = readonly [
 export interface UseGridItemsAnimationArgs<T>
   extends Required<Pick<AnimatedGridProps<T>, "animationConfig">> {
   items?: Array<AnimatedGridItemData<T>>
-  immediate?: boolean
 }
 
 export type UseGridItemsAnimationTransitionRenderFn<T> = (
@@ -67,7 +65,6 @@ export type UseGridItemsAnimationTransitionRenderFn<T> = (
 export interface UseGridAnimationArgs {
   gridWidth: number
   containerWidth: number
-  immediate?: boolean
   onInitialPositionSet?: () => void
 }
 

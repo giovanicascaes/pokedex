@@ -5,7 +5,7 @@ import {
   useSpringRef,
   useTransition,
 } from "@react-spring/web"
-import { useIsoMorphicEffect } from "hooks"
+import { useEvent, useIsoMorphicEffect } from "hooks"
 import {
   forwardRef,
   useCallback,
@@ -45,6 +45,8 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
     },
     ref
   ) {
+    const onTransitionStartCb = useEvent(onTransitionStart)
+    const onTransitionCompleteCb = useEvent(onTransitionComplete)
     const [state, setState] = useState<PageTransitionState>("fading-in")
     const isRunningRef = useRef(true)
     const fadeOutRef = useSpringRef()
@@ -96,15 +98,15 @@ export default forwardRef<PageTransitionElement, PageTransitionProps>(
 
     useIsoMorphicEffect(() => {
       if (state === "fading-out") {
-        onTransitionStart?.()
+        onTransitionStartCb?.()
       }
-    }, [onTransitionStart, state])
+    }, [onTransitionStartCb, state])
 
     useIsoMorphicEffect(() => {
       if (state === "paused") {
-        onTransitionComplete?.()
+        onTransitionCompleteCb?.()
       }
-    }, [onTransitionComplete, state])
+    }, [onTransitionCompleteCb, state])
 
     useIsoMorphicEffect(() => {
       if (state === "fading-in") {

@@ -12,7 +12,8 @@ export interface PageContextData {
 }
 
 export interface PageContextActions {
-  setUpBreadcrumb: (breadcrumb: PageBreadcrumbItem[]) => () => void
+  updateBreadcrumb: (breadcrumb: PageBreadcrumbItem[]) => () => void
+  onPageLoadComplete: () => void
 }
 
 export type PageContextValue = [PageContextData, PageContextActions]

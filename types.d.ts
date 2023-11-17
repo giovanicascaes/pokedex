@@ -11,17 +11,14 @@ export type WithNonLegacyRef<T, R> = Omit<T, "ref"> & {
   ref?: Ref<R>
 }
 
-export type AppControlledScrollConfig =
+export type AppScrollConfig =
+  | undefined
+  | false
   | {
-      enabled: false
-    }
-  | {
-      enabled: true
-      childrenPaths: string[]
-      waitForPageToLoad?: boolean
+      restoreScrollIfComingFrom: string[]
     }
 
 export type NextPageWithConfig<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactNode) => ReactNode
-  controlledScroll?: AppControlledScrollConfig
+  scrollConfig?: AppScrollConfig
 }

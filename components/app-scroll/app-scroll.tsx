@@ -1,8 +1,8 @@
 import { forwardRef } from "react"
 import { twMerge } from "tailwind-merge"
-import { AppScrollProps } from "./app-scroll.types"
+import { AppScrollElement, AppScrollProps } from "./app-scroll.types"
 
-export default forwardRef<HTMLDivElement, AppScrollProps>(function AppScroll(
+export default forwardRef<AppScrollElement, AppScrollProps>(function AppScroll(
   { children, className, ...other },
   ref
 ) {

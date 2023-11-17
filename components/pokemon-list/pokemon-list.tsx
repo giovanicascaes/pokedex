@@ -13,13 +13,7 @@ import { PokemonListProps } from "./pokemon-list.types"
 
 const LIST_VIEW_GRID_GAP = 10
 
-const LIST_VIEW_ANIMATION_TRAIL = 100
-
-const LIST_VIEW_ANIMATION_DURATION = 300
-
 const listViewAnimationConfig = {
-  trail: LIST_VIEW_ANIMATION_TRAIL,
-  duration: LIST_VIEW_ANIMATION_DURATION,
   from: {
     opacity: 0,
     scale: 0.5,
@@ -42,7 +36,6 @@ const lgQuery = `(min-width: ${lg})`
 
 export default function PokemonList({
   pokemons,
-  immediateAnimations = false,
   onCatch,
   onRelease,
   onLoad,
@@ -97,7 +90,6 @@ export default function PokemonList({
                     animationConfig={
                       isList ? listViewAnimationConfig : undefined
                     }
-                    immediateAnimations={immediateAnimations}
                     fillColumnWidth={isList}
                     onLoad={onLoad}
                   >

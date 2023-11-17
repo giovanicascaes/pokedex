@@ -1,6 +1,8 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react"
 
+export type AppScrollElement = HTMLDivElement
+
 export type AppScrollProps = DetailedHTMLProps<
-  HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
+  HTMLAttributes<AppScrollElement>,
+  AppScrollElement
 >

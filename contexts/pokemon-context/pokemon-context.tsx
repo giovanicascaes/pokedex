@@ -59,7 +59,7 @@ const reducers: {
   [PokemonActionTypes.ClearViewingPokemon](state) {
     return { ...state, viewingPokemon: null }
   },
-  [PokemonActionTypes.AddPokemonToPokedex](state, action) {
+  [PokemonActionTypes.AddToPokedex](state, action) {
     return {
       ...state,
       pokedex: [...state.pokedex, { ...action.pokemon, isOnPokedex: true }],
@@ -125,9 +125,9 @@ export function PokemonProvider({ children }: PokemonProviderProps) {
           })
         }
       },
-      addPokemonToPokedex(pokemon: PokemonSpeciesPokedex) {
+      addToPokedex(pokemon: PokemonSpeciesPokedex) {
         dispatch({
-          type: PokemonActionTypes.AddPokemonToPokedex,
+          type: PokemonActionTypes.AddToPokedex,
           pokemon,
         })
       },

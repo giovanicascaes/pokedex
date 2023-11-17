@@ -4,7 +4,7 @@ import { ReactNode } from "react"
 export enum PokemonActionTypes {
   SetViewingPokemon,
   ClearViewingPokemon,
-  AddPokemonToPokedex,
+  AddToPokedex,
   RemoveFromPokedex,
 }
 
@@ -26,7 +26,7 @@ export type PokemonActions =
       type: PokemonActionTypes.ClearViewingPokemon
     }
   | {
-      type: PokemonActionTypes.AddPokemonToPokedex
+      type: PokemonActionTypes.AddToPokedex
       pokemon: PokemonSpeciesPokedex
     }
   | {
@@ -46,7 +46,7 @@ export interface PokemonContextData {
 export interface PokemonContextActions {
   loadMore: () => void
   setViewingPokemon: (pokemon: PokemonSpeciesDetailed) => void
-  addPokemonToPokedex: (pokemon: PokemonSpeciesPokedex) => void
+  addToPokedex: (pokemon: PokemonSpeciesPokedex) => void
   removeFromPokedex: (id: number) => void
 }
 

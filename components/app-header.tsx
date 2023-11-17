@@ -5,10 +5,8 @@ import { usePokemon } from "contexts"
 import { POKEDEX_LINK_ELEMENT_ID } from "lib"
 import Image from "next/image"
 import Link from "next/link"
-import { forwardRef } from "react"
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2"
-import { twJoin, twMerge } from "tailwind-merge"
-import { AppHeaderProps } from "./app-header.types"
+import { twJoin } from "tailwind-merge"
 
 const POKEDEX_COUNT_BADGE_TRANSITION_DURATION = 130
 
@@ -69,17 +67,10 @@ function Actions() {
   )
 }
 
-export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
-  { className, ...other },
-  ref
-) {
+export default function AppHeader() {
   return (
-    <header
-      {...other}
-      className={twMerge("p-2 sticky top-0 z-50 flex-shrink-0", className)}
-      ref={ref}
-    >
-      <div className="h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
+    <header className="sticky top-0 p-2 z-50">
+      <div className=" flex-shrink-0 h-[70px] bg-white/70 dark:bg-slate-700/70 rounded-2xl backdrop-blur-lg shadow-[0_0_8px_0_rgba(0,0,0,0.06)] px-6 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="focus rounded">
             <Image src={PokemonLogo} alt="Pokémon logo" height={40} priority />
@@ -90,4 +81,4 @@ export default forwardRef<HTMLElement, AppHeaderProps>(function AppHeader(
       </div>
     </header>
   )
-})
+}

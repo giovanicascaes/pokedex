@@ -103,7 +103,6 @@ export default class GridTrailAnimationController {
   private waiting: number[] = []
   private _queue: number[] = []
   private _isAnimating: boolean = false
-  private _immediate: boolean = false
 
   constructor(config: GridTrailItemAnimationConfig) {
     this.config = config
@@ -176,11 +175,7 @@ export default class GridTrailAnimationController {
       const animation = this.get(next)
 
       if (!animation.isDone) {
-        if (this._immediate) {
-          this.skip(next)
-        } else {
-          await this.run(next, startImmediately)
-        }
+        await this.run(next, startImmediately)
       }
 
       this.startNext()
@@ -212,9 +207,5 @@ export default class GridTrailAnimationController {
         this.waiting.push(item.id)
       }
     })
-  }
-
-  set immediate(immediate: boolean) {
-    this._immediate = immediate
   }
 }

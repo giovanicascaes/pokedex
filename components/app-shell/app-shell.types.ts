@@ -1,9 +1,9 @@
 import { ReactNode } from "react"
-import { AppControlledScrollConfig } from "types"
+import { AppScrollConfig } from "types"
 
 export interface AppShellProps {
   children: ReactNode
-  controlledScroll?: AppControlledScrollConfig
+  scrollConfig?: AppScrollConfig
 }
 
 export type PageRenderingEvent = "pageUnmountComplete" | "pageLoadComplete"

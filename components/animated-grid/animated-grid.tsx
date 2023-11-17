@@ -33,7 +33,6 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
   gapX = DEFAULT_GAP_X,
   gapY = DEFAULT_GAP_Y,
   animationConfig = DEFAULT_ANIMATION_CONFIG,
-  immediateAnimations = false,
   fillColumnWidth = false,
   onLoad,
   children,
@@ -59,7 +58,6 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
   const gridStyles = useGridAnimation({
     gridWidth,
     containerWidth,
-    immediate: immediateAnimations,
     onInitialPositionSet: onLoad,
   })
 
@@ -67,7 +65,6 @@ export default function AnimatedGrid<T extends AnimatedGridItem>({
     useGridItemsAnimation({
       items: gridItems,
       animationConfig,
-      immediate: immediateAnimations,
     })
 
   if (!items.length) {
